@@ -1,0 +1,76 @@
+* Game:
+
+** Data-driven tile-based MMORPG
+** Minimalistic graphics (could be n-curses)
+** Plenty of text
+** Huge complexity in a transparent way to the user 
+** Data-driven & scripted logic
+** Client-Server architecture
+** Multi-platform (PC-mobile)
+
+* Features:
+  
+** Huge base-map. For instance, it could be automatically generated with a openstreetmap database.
+** Within the base-map, procedurally generated content. 
+** Allows for power-users to generate their own world/adventure.
+  
+* What's the novely? brainstorming
+  
+** Customised relatively-short games (one month?)
+** Two factions
+** Players need to organise themselves to succeed. Social component.
+** More conversational/text elements. Menus. Text descriptions.
+** Arcade elements? nah
+** PC: Move right click, action left click, and keyboard. 
+** Tablet. click, drag, hold.
+** Entity-Action data-base design
+** Whenever user clicks on item, character "thinks" with a booble with all the possible actions (text-based) given by the dataset
+** Descriptions also work with a text booble and hyperlinks (to find a drawer in a desk)
+** Game elements:
+
+******* NOT ORIGINAL
+*** Exploration/gathering
+*** Sandbox elements (farming, fishing, crafting)
+*** RPG: Leveling-up, quests
+ 
+******* ORIGINAL?
+*** Text based stuff / hyperlinks
+*** Post-apocalyptic / two factions
+*** Arcade elements: double rolling, bullet hell
+
+*** FOCUS ON: Platform for story-telling-RPG-etc... Mechanics stay, but content can be changed through python. Focus on having good general mechanics: text/menus/click/move/tiles/etc...
+*** People can submit their adventures, quests characters or items. For instance, somebody could implement a dog with its graphics and AI behavior. 
+*** Offial server maintains main MMO story (Isle of Man)
+*** Users are welcome to submit sub-quests or create their own full servers
+*** All logic can be implemented by means of dataset entries + python scripts (plenty of examples allow for easy replication)
+*** Can be even a way of learning python/sql
+*** Supported front-ends in principle should be both text-based and 3D (rotmg style)
+*** Graphics can also be added through the database (add util for graphic creation)
+*** I think this would be the most interesting thing. Steam could hold the official server game. Accept donations.
+
+******* ORIGINAL THINGS IN MECHANICS
+*** Inter-action with entities with thought-boobles
+*** 
+
+*** Characters with a sub-set of skills
+*** Interaction with NPCS?: text question-answer
+*** Movemenet? right click follows direction., centered on screen
+*** Combat? Attack and wait. 
+*** 
+
+******* 
+
+
+
+* Story:
+
+** Defend community against hordes (radioactive/post-apocalyptic)
+** Two (good vs. evil) communities (The Stand - Isle of man)
+** Gather scarce resources from waste-lands (meds, oil, food, weapons)
+
+* Minimal possible set-up
+
+** Data driven (SQL + scripts)
+** MMORPG
+** Minimalistic (RotMG)
+

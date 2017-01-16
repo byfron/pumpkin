@@ -1,0 +1,50 @@
+* Texture atlas for tile textures/maps
+* Chunk world into regions that are dynamically generated.
+* For a given region generate the whole textured world mesh in a single VBO draw
+* Fragment shader maps the correct atlas texture
+* Auto Texture blending
+* 
+  
+classes:
+
+Entity (everything to be displayed)
+
+  + WorldChunk
+
+  + Object
+
+Tile
+  + TransitionTile
+
+World 
+
+Particles/Effects
+
+Camera
+
+Engine (main loop/input/etc...)
+
+==================================================
+
+Features:
+
+* Animations
+* GUI/text/overlays
+* point-view dependent sprite-change 
+* Multiple heights / climbable heights (stairs): Voxels with tiles under empty voxels
+* Texture atlas
+* Camera 
+* Input management
+* Tile texture blending
+* 2D + 3D items
+* Mouse picking
+  
+  
+* Visibility management
+* Lighting/Weather effects
+* Liquids
+
+  
+* Pathfinding
+* Goal-based AI
+* Voxel engine?

@@ -1,0 +1,46 @@
+set(COMP_SHADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders/glsl/)
+
+function(compileShader SHADER_FILE TYPE)
+
+    string(REPLACE ".sc" ".bin" OUT_FILE ${SHADER_FILE})
+    set(OUT_FILE ${COMP_SHADERS_DIR}/${OUT_FILE})
+    
+    set(SHADERC_ARGS -f ${SHADER_FILE} -o ${OUT_FILE} -i ${ROOT_DIR}/../bgfx/src --type ${TYPE} --platform linux)
+
+    set(COMMANDS "")
+    list( APPEND COMMANDS COMMAND "${CMAKE_COMMAND}" -E make_directory "${COMP_SHADERS_DIR}" )
+    list( APPEND COMMANDS COMMAND ${SHADER_COMPILER} ${SHADERC_ARGS})
+
+    add_custom_command(
+      MAIN_DEPENDENCY
+      ${SHADER_FILE}
+      OUTPUT
+      ${OUT_FILE}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      ${COMMANDS}
+      COMMENT "Compiling shader ${COMMANDS}"
+      VERBATIM
+      )
+
+endfunction()
+
+foreach(SHADER ${VSHADER_FILES})
+  compileShader(${SHADER} "v")
+endforeach()
+
+foreach(SHADER ${FSHADER_FILES})
+  compileShader(${SHADER} "f")
+endforeach()
+
+
+add_executable(test_3d test.cpp ${FSHADER_FILES} ${VSHADER_FILES})
+
+target_link_libraries(test_3d
+  ${BGFX_LIBRARIES}
+  ${BGFX_COMMON_LIBRARIES}
+  X11
+  dl
+  GL)
+
+#add_dependencies(test_3d ${OUT_FILE})
+add_custom_target(shader DEPENDS ${OUT_FILE})
