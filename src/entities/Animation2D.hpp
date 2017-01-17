@@ -54,8 +54,8 @@ public:
 
 	bool isTimeToSwitchFrames(float dt) {
 		m_time_since_last_anim += dt;
-		std::cout << m_time_since_last_anim << std::endl;
 		if (m_time_since_last_anim >= m_frame_period) {
+			m_time_since_last_anim = 0;
 			return true;
 		}
 		return false;
@@ -67,7 +67,6 @@ public:
 			return;
 		}
 		m_active_frame++;
-		m_time_since_last_anim = 0;
 	}
 	
 protected:
