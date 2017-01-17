@@ -52,6 +52,7 @@ private:
 
 	float m_gamepadSpeed;
 	float m_moveSpeed;
+	float m_rotateSpeed;
 
 	float m_dir_angle;
 

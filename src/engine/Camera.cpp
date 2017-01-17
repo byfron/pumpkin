@@ -187,6 +187,7 @@ void Camera::reset()
 	m_verticalAngle = 1.2f;
 	m_gamepadSpeed = 0.04f;
 	m_moveSpeed = 5.0f;
+	m_rotateSpeed = 3.0f;
 	m_keys = 0;
 
 	m_dir_angle = 0.0f;
@@ -274,7 +275,7 @@ void Camera::update(float _dt)
 	
 	if (m_keys & CAMERA_KEY_ROTATE_LEFT)
 	{
-		m_dir_angle = 0.005;
+		m_dir_angle = m_rotateSpeed * _dt;
 		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
 			
 		//rotate direction vector wrt the up vector
@@ -292,7 +293,7 @@ void Camera::update(float _dt)
 	if (m_keys & CAMERA_KEY_ROTATE_RIGHT)
 	{
 
-		m_dir_angle = -0.005;
+		m_dir_angle = -m_rotateSpeed * _dt;
 		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
 			
 		//rotate direction vector wrt the up vector
