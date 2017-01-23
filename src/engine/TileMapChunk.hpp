@@ -18,7 +18,8 @@ public:
 		     uint16_t width, uint16_t height);
 	~TileMapChunk();
 	void init();
-	void addTile(uint32_t row, uint32_t col, uint32_t type);
+	void addTile(uint32_t row, uint32_t col, uint32_t type, float scale);
+	void addWall(uint32_t row, uint32_t col, uint32_t type, float scale, float height);
 	void update(float delta);
 
 	typedef std::shared_ptr<TileMapChunk> Ptr;
@@ -30,8 +31,9 @@ protected:
 	bgfx::ProgramHandle m_program;
 	bgfx::TextureHandle m_textureColor;
 	bgfx::UniformHandle s_texColor;
-
-	std::vector<PosTexCoordVertex> m_vertexPool;
+	bgfx::UniformHandle u_lightPosRadius;
+	
+	std::vector<PosNormalTexCoordVertex> m_vertexPool;
 	std::vector<uint16_t> m_indices;
 
 	float tsize;

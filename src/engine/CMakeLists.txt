@@ -8,7 +8,9 @@ add_library(engine
   # TileMap.hpp
   # TileMap.cpp
   TileMapChunk.hpp
-  TileMapChunk.cpp)
+  TileMapChunk.cpp
+  InputManager.hpp
+  InputManager.cpp)
 
 target_link_libraries(engine
   utils_VertexUtils

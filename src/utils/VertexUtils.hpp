@@ -29,6 +29,28 @@ struct PosTexCoordVertex
 };
 
 
+struct PosNormalTexCoordVertex
+{
+	float m_x;
+	float m_y;
+	float m_z;
+	uint32_t m_normal;
+	int16_t m_u;
+	int16_t m_v;
+
+	static void init()
+	{
+		ms_decl
+			.begin()
+			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Normal,   4, bgfx::AttribType::Uint8, true)
+			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Int16, true)
+			.end();
+	};
+
+	static bgfx::VertexDecl ms_decl;
+};
+
 struct PosNormalTangentTexcoordVertex
 {
 	float m_x;

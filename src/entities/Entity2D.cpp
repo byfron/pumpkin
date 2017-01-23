@@ -3,33 +3,47 @@
 #include <iostream>
 #include <common/debugdraw/debugdraw.h>
 
-Entity2D::Entity2D() : m_height(0.5), m_width(0.5) {
+Entity2D::Entity2D(const std::string & texture,
+		   const std::string & shader,
+		   float w, float h) : m_height(h),
+				       m_width(w) {
+
+	PosNormalTangentTexcoordVertex::init();
+
+	m_flipped = 0;
+	m_atlas_offset[0] = 0;
+	m_atlas_offset[1] = 0;
+	// sprite texture width: this comes from the grid of the atlas!
+	// we pack it in the z coord of the atlas offset (vec4)
+	m_atlas_offset[2] = 1.0/4.0;
+	
+	m_transform = Eigen::MatrixXf(4,4);
 }
 
 Entity2D::~Entity2D() {
 	bgfx::destroyUniform(u_texOffset);
-
+	bgfx::destroyUniform(u_flip);
+	bgfx::destroyUniform(u_lightPosRadius);
 }
 
 void Entity2D::init() {
 
+	//TODO get from proto cfg?
 	m_textureColor = loadTexture("textures/character.ktx");
 	m_program  = loadProgram("vs_character", "fs_character");
 
-	// size of a single sprite
+	// size of a single sprite. TODO: This depends on the grid!!
 	int16_t tsize = 0x7fff/4;
-	
-	static PosTexCoordVertex s_playerVertices[] =
+
+	static PosNormalTexCoordVertex s_playerVertices[] =
 	{
 		// Horizonally aligned	
-		{  0.0f,      m_width/2.0f, 0.0f, tsize, tsize },
-		{  0.0f,     -m_width/2.0f, 0.0f, 0, tsize },
-		{ -m_height,  m_width/2.0f, 0.0f, tsize, 0 },
-		{ -m_height, -m_width/2.0f, 0.0f, 0, 0 }
+		{  0.0f,      m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), tsize, tsize },
+		{  0.0f,     -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f),  0, tsize },
+		{ -m_height,  m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), tsize, 0 },
+		{ -m_height, -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, 0 }
 
 	};
-
-	m_pos << 2.0, 2.0, 0.0;
 	
 	static const uint16_t s_playerTriStrip[] =
 	{
@@ -41,7 +55,7 @@ void Entity2D::init() {
 	m_vbh = bgfx::createVertexBuffer(
 		// Static data can be passed with bgfx::makeRef
 		bgfx::makeRef(s_playerVertices, sizeof(s_playerVertices) )
-		, PosTexCoordVertex::ms_decl
+		, PosNormalTexCoordVertex::ms_decl
 		);
 		
 	// Create static index buffer.
@@ -50,7 +64,9 @@ void Entity2D::init() {
 		bgfx::makeRef(s_playerTriStrip, sizeof(s_playerTriStrip) )
 		);
 
-	u_texOffset = bgfx::createUniform("tex0_offset",  bgfx::UniformType::Vec4);
+	u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
+	u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
+	u_lightPosRadius = bgfx::createUniform("u_lightPosRadius", bgfx::UniformType::Vec4, 1);
 	
 	// debugging
 	ddInit();
@@ -65,7 +81,7 @@ Eigen::Affine3f Entity2D::getTowardsCameraRotation() {
 	Eigen::Vector3f dir2D = Engine::camera().getDirection();
 
 	float pitch = Engine::camera().getPitch();
-	Eigen::Vector3f dir = eye - m_pos;
+	Eigen::Vector3f dir = eye - m_position;
 	
 	//rotate it so that the normal and the projection on XY are aligned
 	eye(2) = 0;
@@ -92,17 +108,22 @@ void Entity2D::update(float d) {
 	bgfx::setState(0
 		       | BGFX_STATE_DEFAULT
 		       | BGFX_STATE_PT_TRISTRIP
-		       | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA , BGFX_STATE_BLEND_INV_SRC_ALPHA )
+		       | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA ,
+					       BGFX_STATE_BLEND_INV_SRC_ALPHA )
 		);	
 
-	Eigen::Vector3f eye = Engine::camera().getEye();
+
+	float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
+	bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
+	
 	Eigen::Vector3f at = Engine::camera().getAt();
 
-	at(2) = 0;
-	m_pos = at;	
+//	at(2) = 0;
+//	m_pos = at;	
 
-
-	Eigen::Affine3f translation(Eigen::Translation3f(m_pos(0), m_pos(1), m_pos(2)));
+	Eigen::Affine3f translation(Eigen::Translation3f(m_position(0),
+							 m_position(1),
+							 m_position(2)));
 	Eigen::Affine3f rot = getTowardsCameraRotation();
 
 	Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
@@ -114,14 +135,14 @@ void Entity2D::update(float d) {
 	bgfx::setIndexBuffer(m_ibh);
 	bgfx::setTexture(0, s_texColor,  m_textureColor);
 
-	float atlas_offset[4];
-	getAtlasOffset(atlas_offset);
-	bgfx::setUniform(u_texOffset, atlas_offset, 1);
-       
+	bgfx::setUniform(u_texOffset, m_atlas_offset, 1);
+	bgfx::setUniform(u_flip, &m_flipped, 1);
+
 	// Submit primitive for rendering to view 0.
 	bgfx::submit(0, m_program);
 
 
+	//TODO refactor to debug helper
 	if (Engine::debugEnabled()) {
 		ddBegin(0);
 

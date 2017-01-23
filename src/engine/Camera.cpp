@@ -8,87 +8,7 @@
 
 #define FLT_MIN std::numeric_limits<float>::min()
 
-uint8_t Camera::m_keys;
-
-// static Camera* s_camera;
-
-// Camera* getCamera() {
-// 	return s_camera;
-// }
-
-// void createCamera() {
-// 	s_camera = new Camera();
-// }
-
-// void destroyCamera() {
-// 	delete s_camera;
-// }
-
-static void cmd(const void* _userData)
-{
-	cmdExec( (const char*)_userData);
-}
-
-static const InputBinding s_camBindings[] =
-{
-	{ entry::Key::KeyW,             entry::Modifier::None, 0, cmd, "move up"  },
-	{ entry::Key::GamepadUp,        entry::Modifier::None, 0, cmd, "move up"  },
-	{ entry::Key::KeyA,             entry::Modifier::None, 0, cmd, "move left"     },
-	{ entry::Key::GamepadLeft,      entry::Modifier::None, 0, cmd, "move left"     },
-	{ entry::Key::KeyS,             entry::Modifier::None, 0, cmd, "move down" },
-	{ entry::Key::GamepadDown,      entry::Modifier::None, 0, cmd, "move down" },
-	{ entry::Key::KeyD,             entry::Modifier::None, 0, cmd, "move right"    },
-	{ entry::Key::GamepadRight,     entry::Modifier::None, 0, cmd, "move right"    },
-	{ entry::Key::KeyQ,             entry::Modifier::None, 0, cmd, "rotate left"    },
-	{ entry::Key::KeyE,             entry::Modifier::None, 0, cmd, "rotate right"    },
-
-	INPUT_BINDING_END
-};
-
-
-int cmdRotate(CmdContext* /*_context*/, void* /*_userData*/, int _argc, char const* const* _argv)
-{
-	if (_argc > 1)
-	{
-		if (0 == strcmp(_argv[1], "left")) {
-			Camera::setKeyState(CAMERA_KEY_ROTATE_LEFT, true);
-			return 0;
-		}
-		else if (0 == strcmp(_argv[1], "right")) {
-			Camera::setKeyState(CAMERA_KEY_ROTATE_RIGHT, true);
-			return 0;
-		}
-	}
-}
-
-int cmdMove(CmdContext* /*_context*/, void* /*_userData*/, int _argc, char const* const* _argv)
-{
-	if (_argc > 1)
-	{
-		if (0 == strcmp(_argv[1], "left") )
-		{
-			Camera::setKeyState(CAMERA_KEY_LEFT, true);
-			return 0;
-		}
-		else if (0 == strcmp(_argv[1], "right") )
-		{
-			Camera::setKeyState(CAMERA_KEY_RIGHT, true);
-			return 0;
-		}
-		else if (0 == strcmp(_argv[1], "up") )
-		{
-			Camera::setKeyState(CAMERA_KEY_UP, true);
-			return 0;
-		}
-		else if (0 == strcmp(_argv[1], "down") )
-		{
-			Camera::setKeyState(CAMERA_KEY_DOWN, true);
-			return 0;
-		}
-	}
-
-	return 1;
-}
+//uint8_t Camera::m_keys;
 
 Camera::Camera()
 {
@@ -101,10 +21,10 @@ Camera::~Camera() {
 void Camera::init() {
 	
 	reset();
-	cmdAdd("move", cmdMove);
-	cmdAdd("rotate", cmdRotate);
+	// cmdAdd("move", cmdMove);
+	// cmdAdd("rotate", cmdRotate);
 
-	inputAddBindings("camBindings", s_camBindings);
+	// inputAddBindings("camBindings", s_camBindings);
 
 }
 
@@ -176,7 +96,7 @@ void Camera::reset()
 
 	m_eye[0] =   0.0f;
 	m_eye[1] =   0.0f;
-	m_eye[2] = -4.0f;
+	m_eye[2] = -5.0f;
 	m_at[0]  =   1.5f;
 	m_at[1]  =   1.5f;
 	m_at[2]  =  -2.5f;
@@ -188,7 +108,7 @@ void Camera::reset()
 	m_gamepadSpeed = 0.04f;
 	m_moveSpeed = 5.0f;
 	m_rotateSpeed = 3.0f;
-	m_keys = 0;
+	InputManager::m_keys = 0;
 
 	m_dir_angle = 0.0f;
 
@@ -202,8 +122,8 @@ void Camera::reset()
 
 void Camera::setKeyState(uint8_t _key, bool _down)
 {
-	m_keys &= ~_key;
-	m_keys |= _down ? _key : 0;
+	InputManager::m_keys &= ~_key;
+	InputManager::m_keys |= _down ? _key : 0;
 }
 
 void Camera::consumeOrbit(float _amount)
@@ -267,13 +187,13 @@ void Camera::update(float _dt)
 	m_verticalAngle   -= m_gamepadSpeed * inputGetGamepadAxis(handle, entry::GamepadAxis::RightY)/32768.0f;
 	const int32_t gpx = inputGetGamepadAxis(handle, entry::GamepadAxis::LeftX);
 	const int32_t gpy = inputGetGamepadAxis(handle, entry::GamepadAxis::LeftY);
-	m_keys |= gpx < -16834 ? CAMERA_KEY_LEFT     : 0;
-	m_keys |= gpx >  16834 ? CAMERA_KEY_RIGHT    : 0;
-	m_keys |= gpy < -16834 ? CAMERA_KEY_UP  : 0;
-	m_keys |= gpy >  16834 ? CAMERA_KEY_DOWN : 0;
+	InputManager::m_keys |= gpx < -16834 ? CAMERA_KEY_LEFT     : 0;
+	InputManager::m_keys |= gpx >  16834 ? CAMERA_KEY_RIGHT    : 0;
+	InputManager::m_keys |= gpy < -16834 ? CAMERA_KEY_UP  : 0;
+	InputManager::m_keys |= gpy >  16834 ? CAMERA_KEY_DOWN : 0;
 	
 	
-	if (m_keys & CAMERA_KEY_ROTATE_LEFT)
+	if (InputManager::m_keys & CAMERA_KEY_ROTATE_LEFT)
 	{
 		m_dir_angle = m_rotateSpeed * _dt;
 		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
@@ -290,7 +210,7 @@ void Camera::update(float _dt)
 		setKeyState(CAMERA_KEY_ROTATE_LEFT, false);
 	}
 	
-	if (m_keys & CAMERA_KEY_ROTATE_RIGHT)
+	if (InputManager::m_keys & CAMERA_KEY_ROTATE_RIGHT)
 	{
 
 		m_dir_angle = -m_rotateSpeed * _dt;
@@ -308,25 +228,25 @@ void Camera::update(float _dt)
 		setKeyState(CAMERA_KEY_ROTATE_RIGHT, false);		
 	}
 
-	if (m_keys & CAMERA_KEY_LEFT)
+	if (InputManager::m_keys & CAMERA_KEY_LEFT)
 	{
 		m_eye += m_cam_right_dir*m_moveSpeed*_dt;
 		setKeyState(CAMERA_KEY_LEFT, false);
 	}
 
-	if (m_keys & CAMERA_KEY_RIGHT)
+	if (InputManager::m_keys & CAMERA_KEY_RIGHT)
 	{       
 		m_eye -= m_cam_right_dir*m_moveSpeed*_dt;		
 		setKeyState(CAMERA_KEY_RIGHT, false);
 	}
 
-	if (m_keys & CAMERA_KEY_UP)
+	if (InputManager::m_keys & CAMERA_KEY_UP)
 	{
 		m_eye += m_cam_forward_dir * m_moveSpeed * _dt;		
 		setKeyState(CAMERA_KEY_UP, false);
 	}
 
-	if (m_keys & CAMERA_KEY_DOWN)
+	if (InputManager::m_keys & CAMERA_KEY_DOWN)
 	{
 		m_eye -= m_cam_forward_dir * m_moveSpeed * _dt;		
 		setKeyState(CAMERA_KEY_DOWN, false);

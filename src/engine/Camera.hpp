@@ -40,7 +40,9 @@ public:
 	Eigen::Vector3f & getDirection() { return m_cam_direction; }
 	Eigen::Vector3f & getEye() { return m_eye; }
 	Eigen::Vector3f & getAt() { return m_at; }
-	
+	Eigen::Vector3f & getForwardDir() { return m_cam_forward_dir; }
+	Eigen::Vector3f & getRightDir() { return m_cam_right_dir; }
+
 private:
 	
 	Interp3f m_target;
@@ -65,12 +67,10 @@ private:
 
 	Eigen::Vector3f m_cam_forward_dir;
 	Eigen::Vector3f m_cam_right_dir;
-
-	static uint8_t m_keys;
 };
 
-Camera* getCamera();
-void createCamera();
-void destroyCamera();
+//Camera* getCamera();
+//void createCamera();
+//void destroyCamera();
 
 #endif

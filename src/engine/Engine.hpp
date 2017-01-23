@@ -59,6 +59,8 @@ protected:
 	static bool m_debug;
 
 	ResourceManager _resource_manager;
+
+	InputManager m_input_manager;
 };
 
 

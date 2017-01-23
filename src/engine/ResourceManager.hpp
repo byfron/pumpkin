@@ -3,12 +3,15 @@
 #include <memory>
 #include <unordered_map>
 #include <assert.h>
+#include <Eigen/Dense>
 
 class Resource {
 public:
 	virtual void init() = 0;
 	virtual void update(float delta) = 0;
 	typedef std::shared_ptr<Resource> Ptr;
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 };
 
 class ResourceManager {

@@ -3,29 +3,27 @@
 
 #include <engine/ResourceManager.hpp>
 #include <utils/VertexUtils.hpp>
-#include <Eigen/Geometry>
 
 class Entity2D : public Resource {
 
 public:
 
-	Entity2D();
+	Entity2D(const std::string & texture,
+		 const std::string & shader,
+		 float w, float h);
+	
 	~Entity2D();
 	void init();
 	void update(float d);
-
-	virtual void getAtlasOffset(float *offset) {
-		offset[0] = 0;
-		offset[1] = 0;
-	}
 	
 	Eigen::Affine3f getTowardsCameraRotation();
-
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+	
+	void setPosition(const Eigen::Vector3f & p) {
+		m_position = p;
+	}
 
 protected:
 
-	Eigen::Matrix4f m_transform;
 	
 	uint16_t m_indices[6];
 	bgfx::UniformHandle s_texColor;
@@ -35,15 +33,25 @@ protected:
 	bgfx::IndexBufferHandle m_ibh;
 //	float m_transform[16];
 
-	Eigen::Vector3f m_pos;
 	
 	float m_height;
 	float m_width;
 	float m_pos_x;
 	float m_pos_y;
+	float m_sprite_width;
 
+	bgfx::UniformHandle u_flip;
 	bgfx::UniformHandle u_texOffset;
-	
+	bgfx::UniformHandle u_lightPosRadius;
+
+	int m_flipped;
+	float m_atlas_offset[4];
+	Eigen::Vector3f m_position;
+
+	Eigen::MatrixXf m_transform;
+
+public:
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 	
 };
 
