@@ -2,7 +2,7 @@ SET(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(BGFX_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libbgfxRelease.a)
 SET(BX_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libbxRelease.a)
 SET(BGFX_COMMON_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libexample-commonRelease.a)
-SET(SHADER_COMPILER ${ROOT_DIR}/bgfx/tools/bin/linux/shaderc)
+SET(SHADER_COMPILER ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/shadercRelease)
 
 include_directories(${PROTOBUF_GENERATED_HEADERS})
 
