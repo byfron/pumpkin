@@ -8,17 +8,17 @@ include_directories(${PROTOBUF_GENERATED_HEADERS})
 
 message(STATUS ${PROTOBUF_GENERATED_HEADERS})
 
-add_library(cabbage)
-target_link_libraries(cabbage
+add_library(pumpkin_engine)
+target_link_libraries(pumpkin_engine
   ${BGFX_LIBRARIES}
   ${BX_LIBRARIES}
   ${BGFX_COMMON_LIBRARIES}
   X11
   dl
   GL
-  engine)
+  graphics_engine)
 
 
-#add_subdirectory(examples)
-add_subdirectory(shaders)
 add_subdirectory(src)
+add_subdirectory(data/shaders)
+

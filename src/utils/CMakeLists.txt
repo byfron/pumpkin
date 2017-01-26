@@ -1,7 +1,15 @@
-add_library(utils_VertexUtils
+add_library(utils_meshUtils
   VertexUtils.hpp
-  VertexUtils.cpp)
+  VertexUtils.cpp
+  MeshFactory.hpp
+  )
 
+add_library(utils_camera
+  Camera.hpp
+  Camera.cpp
+  )
 
-target_link_libraries(utils_VertexUtils
-  ${BGFX_COMMON_LIBRARIES})
+add_library(utils_inputManager
+  InputManager.hpp
+  InputManager.cpp
+  )

@@ -4,6 +4,19 @@
 #include <common/common.h>
 #include <common/bgfx_utils.h>
 
+namespace pumpkin {
+
+#define NORMAL_POSX packF4u( 1.0f,  0.0f,  0.0f)
+#define NORMAL_NEGX packF4u(-1.0f,  0.0f,  0.0f)
+#define NORMAL_POSY packF4u( 0.0f,  1.0f,  0.0f)
+#define NORMAL_NEGY packF4u( 0.0f, -1.0f,  0.0f)
+#define NORMAL_POSZ packF4u( 0.0f,  0.0f,  1.0f)
+#define NORMAL_NEGZ packF4u( 0.0f,  0.0f, -1.0f)
+
+template <typename T>
+class MeshObject;
+struct MeshProperties;
+
 uint32_t packUint32(uint8_t _x, uint8_t _y, uint8_t _z, uint8_t _w);
 uint32_t packF4u(float _x, float _y = 0.0f, float _z = 0.0f, float _w = 0.0f);
 
@@ -75,5 +88,12 @@ struct PosNormalTangentTexcoordVertex
 	static bgfx::VertexDecl ms_decl;
 };
 
+namespace VertexUtils {
 
+MeshObject<PosNormalTexCoordVertex> constructTile(const MeshProperties & prop);	
+MeshObject<PosNormalTexCoordVertex> constructWall(const MeshProperties & prop);
+MeshObject<PosNormalTexCoordVertex> constructVPlane(const MeshProperties & prop);
+}
+
+}
 #endif
