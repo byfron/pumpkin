@@ -26,7 +26,7 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 	bgfx::init(args.m_type, args.m_pciId);
 
 	m_width = 1280;
-	m_height = 720;
+	m_height = 1024;
 
 	bgfx::reset(m_width, m_height, InputManager::m_reset);
 	bgfx::setDebug(InputManager::m_debug);

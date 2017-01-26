@@ -48,9 +48,11 @@ public:
 			// Fill layer
 //			layer->addMeshObject(TileProperties(i,j, 0 , 0.0f));
 
+
+			// TEST TO SHOW SOMEHING
 			float scale = 0.5;
-			for (int i = 0; i < 10; i++)
-				for (int j = 0; j < 10; j++)
+			for (int i = 0; i < 20; i++)
+				for (int j = 0; j < 20; j++)
 					layer->addTile(i, j, 0, scale);
 
 			layer->addWall(0, 0, 0, 0.5, 0.5);
@@ -75,7 +77,7 @@ private:
 
 std::string m_config_file;
 
-	//NOTE this should not be part of Voyage!!!
+	//NOTE this namespace should not be called voyage
 voyage::TileMapCfg m_tilemap_cfg;
 
 };

@@ -72,7 +72,11 @@ public:
 		m_keys &= ~_key;
 		m_keys |= _down ? _key : 0;
 	}
-       	
+
+	static bool isLeftMouseButtonPressed() {
+		return m_mouseState.m_buttons[entry::MouseButton::Left];
+	}
+	
 	static bool processEvents(uint32_t & width, uint32_t & height) {
 		m_mouse.update(float(m_mouseState.m_mx),
 			       float(m_mouseState.m_my),
