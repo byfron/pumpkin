@@ -1,5 +1,6 @@
 set(COMP_SHADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/glsl/)
 
+#TODO: automatize the script for every shader in the folder
 set(FSHADER_FILES "")
 set(VSHADER_FILES "")
 list(APPEND FSHADER_FILES "fs_terrain.sc")
@@ -11,7 +12,7 @@ function(compileShader SHADER_FILE TYPE)
 
     string(REPLACE ".sc" ".bin" OUT_FILE ${SHADER_FILE})
     set(OUT_FILE ${COMP_SHADERS_DIR}/${OUT_FILE})
-    
+
     set(SHADERC_ARGS -f ${SHADER_FILE} -o ${OUT_FILE} -i ${ROOT_DIR}/bgfx/src --type ${TYPE} --platform linux)
 
     set(COMMANDS "")
@@ -46,6 +47,6 @@ foreach(SHADER ${FSHADER_FILES})
 endforeach()
 
 
-add_custom_target(shaders DEPENDS 
+add_custom_target(shaders DEPENDS
   ${OUTPUT_VSHADERS}
   ${OUTPUT_FSHADERS})

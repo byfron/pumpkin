@@ -9,7 +9,7 @@
 #include <animation.pb.h>
 
 namespace pumpkin {
-	
+
 class TextureAtlasFactory {
 
 public:
@@ -28,14 +28,14 @@ public:
 
 		//TODO: check atlas sanity (sizes make sense)
 	}
-	
+
 	void generate(TextureAtlas* atlas) {
 
 		atlas->m_id = m_atlas_cfg.resource_id();
-		atlas->m_atlas_file = m_atlas_cfg.atlas_file();
+		atlas->m_atlas_file = std::string(TEXTURE_FILE_PATH) + m_atlas_cfg.atlas_file();
 		atlas->m_grid_width = m_atlas_cfg.grid_width();
 		atlas->m_grid_height = m_atlas_cfg.grid_height();
-			
+
 	}
 private:
 

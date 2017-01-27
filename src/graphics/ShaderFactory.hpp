@@ -9,7 +9,7 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 namespace pumpkin {
-	
+
 class ShaderFactory {
 public:
 	ShaderFactory(std::string config_file) : m_config_file(config_file)  {
@@ -39,9 +39,9 @@ private:
 private:
 
 	//ShaderProperties - inputs for the shader
-	
+
 	std::string m_config_file;
 	voyage::ShaderCfg m_shader_cfg;
-	
+
 };
 }

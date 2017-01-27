@@ -22,6 +22,8 @@ target_link_libraries(graphics_engine
   utils_camera
   utils_inputManager
   ${BGFX_COMMON_LIBRARIES}
+  ${BX_LIBRARIES}
+  ${BGFX_LIBRARIES}
 )
 
 add_dependencies(graphics_engine shaders)
