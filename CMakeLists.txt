@@ -1,6 +1,7 @@
 SET(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(BGFX_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libbgfxRelease.a)
-SET(BX_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libbxRelease.a)
+#SET(BX_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libbxRelease.a)
+SET(BX_LIBRARIES ${ROOT_DIR}/bx/.build/linux64_gcc/bin/libbxRelease.a)
 SET(BGFX_COMMON_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libexample-commonRelease.a)
 SET(SHADER_COMPILER ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/shadercRelease)
 
@@ -10,9 +11,6 @@ message(STATUS ${PROTOBUF_GENERATED_HEADERS})
 
 add_library(pumpkin_engine)
 target_link_libraries(pumpkin_engine
-  ${BGFX_LIBRARIES}
-  ${BX_LIBRARIES}
-  ${BGFX_COMMON_LIBRARIES}
   X11
   dl
   GL
@@ -20,5 +18,4 @@ target_link_libraries(pumpkin_engine
 
 
 add_subdirectory(src)
-add_subdirectory(data/shaders)
-
+add_subdirectory(data)
