@@ -1,5 +1,6 @@
 build
 third-party
 tests
-CMakeFiles*
+build*
 *#*
+*~*
