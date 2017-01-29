@@ -1,12 +1,16 @@
 #include "TileMap.hpp"
-#include "TileMapLayerFactory.hpp"
+//#include "TileMapLayerFactory.hpp"
 
 namespace pumpkin {
-	
-TileMap::TileMap(const std::string & config_file) {
 
-	TileMapLayerFactory factory(config_file);
-	factory.generate(this);	
+TileMap::TileMap() {
+
+}
+	
+bool TileMap::load(const Configuration<voyage::TileMapCfg> & conf) {
+
+//	TileMapLayerFactory factory(conf);
+//	factory.generate(this);	
 }
 
 void TileMap::update(float delta) {

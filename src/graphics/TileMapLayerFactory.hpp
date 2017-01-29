@@ -1,29 +1,15 @@
 #pragma once
 #include "TileMapLayer.hpp"
-#include <fcntl.h>
-#include <fstream>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <tilemap.pb.h>
+#include <utils/Configuration.hpp>
 
 namespace pumpkin {
 	
 class TileMapLayerFactory {
 
 public:
-	TileMapLayerFactory(std::string config_file) : m_config_file(config_file)  {
-
-		int fileDescriptor = open(m_config_file.c_str(), O_RDONLY);
-		google::protobuf::io::FileInputStream fileInput(fileDescriptor);
-		fileInput.SetCloseOnDelete( true );
-
-		if (!google::protobuf::TextFormat::Parse(&fileInput, &m_tilemap_cfg))
-		{
-			//log
-			std::cout << "Failed to parse file!" << std::endl;
-		}
-
-		//TODO: check atlas sanity (sizes make sense)
+	TileMapLayerFactory(const Configuration<voyage::TileMapCfg> & conf) {
+		m_tilemap_cfg = conf.config();
 	}
 
 	void generate(TileMap* tilemap) {
@@ -53,15 +39,15 @@ public:
 			float scale = 0.5;
 			for (int i = 0; i < 20; i++)
 				for (int j = 0; j < 20; j++)
-					layer->addTile(i, j, 0, scale);
+					layer->addTile(i, j, scale);
 
-			layer->addWall(0, 0, 0, 0.5, 0.5);
-			layer->addWall(0, 1, 0, 0.5, 1.0);
+			layer->addWall(0, 0, 0.5, 0.5);
+			layer->addWall(0, 1, 0.5, 1.0);
 
-			layer->addWall(5, 6, 0, 0.5, 0.5);
-			layer->addWall(6, 6, 0, 0.5, 0.25);
+			layer->addWall(5, 6, 0.5, 0.5);
+			layer->addWall(6, 6, 0.5, 0.25);
 
-			layer->addWall(4, 6, 0, 0.5, 0.5);
+			layer->addWall(4, 6, 0.5, 0.5);
 
 			
 			// Initialise internals

@@ -57,15 +57,16 @@ void TileMapLayer::createUniforms() {
 
 }
 
-void TileMapLayer::addMeshObject(const TileProperties & tile) {
+void TileMapLayer::addMeshObject(uint32_t row, uint32_t col, uint32_t type,
+				 float scale, float height) {
 
-	switch(TileMapUtils::tileIdToMeshObjectType(tile.type)) {
+	switch(TileMapUtils::tileIdToMeshObjectType(type)) {
 	case MeshType::WALL_MESH:
-		addWall(tile.row, tile.col, tile.type, m_tile_scale, tile.height);
+		addWall(row, col, scale, height);
 		break;
 
 	case MeshType::TILE_MESH:
-		addTile(tile.row, tile.col, tile.type, m_tile_scale);
+		addTile(row, col, scale);
 		break;
 	}
 }
@@ -82,7 +83,7 @@ void TileMapLayer::addMeshToPool(const MeshObject<T> & mesh) {
 	}
 }
 
-void TileMapLayer::addWall(uint32_t row, uint32_t col, uint32_t type,
+void TileMapLayer::addWall(uint32_t row, uint32_t col,
 			   float scale, float height) {
 
 	MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
@@ -92,7 +93,7 @@ void TileMapLayer::addWall(uint32_t row, uint32_t col, uint32_t type,
 	addMeshToPool(mesh);
 }
 
-void TileMapLayer::addTile(uint32_t row, uint32_t col, uint32_t type, float scale) {
+void TileMapLayer::addTile(uint32_t row, uint32_t col, float scale) {
 
 	MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
 		construct(MeshType::TILE_MESH,

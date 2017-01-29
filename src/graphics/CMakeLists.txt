@@ -21,6 +21,7 @@ target_link_libraries(graphics_engine
   utils_meshUtils
   utils_camera
   utils_inputManager
+  proto
   ${BGFX_COMMON_LIBRARIES}
   ${BX_LIBRARIES}
   ${BGFX_LIBRARIES}

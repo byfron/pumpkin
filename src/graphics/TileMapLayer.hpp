@@ -7,23 +7,13 @@
 #include <memory>
 
 namespace pumpkin {
-	
-struct TileProperties {
-	TileProperties(int r, int c, uint32_t t, float h) :
-		row(r), col(c), type(t), height(h) {}
-	int row;
-	int col;
-	uint32_t type;
-	float height;
-};
  
 struct TileMapLayerProperties {
 
-	TileMapLayerProperties(int w, int h, std::string dfile, uint32_t atlas, uint32_t shader) :
-		width(w), height(h), data_file(dfile), atlas_id(atlas), shader_id(shader) {}
+	TileMapLayerProperties(int w, int h, uint32_t atlas, uint32_t shader) :
+		width(w), height(h), atlas_id(atlas), shader_id(shader) {}
 	int width;
 	int height;
-	std::string data_file;
 	uint32_t shader_id;
 	uint32_t atlas_id;
 };
@@ -36,14 +26,15 @@ public:
 	TileMapLayer(const TileMapLayerProperties & properties);
 	~TileMapLayer();
 	
-	void addMeshObject(const TileProperties & tile);
+	void addMeshObject(uint32_t row, uint32_t col, uint32_t type,
+			   float scale, float height);
 	
 	template <typename T>
 	void addMeshToPool(const MeshObject<T> & mesh);
 	
-	void addWall(uint32_t row, uint32_t col, uint32_t type,
+	void addWall(uint32_t row, uint32_t col,
 		     float scale, float height);
-	void addTile(uint32_t row, uint32_t col, uint32_t type,
+	void addTile(uint32_t row, uint32_t col,
 		     float scale);
 	
 	void init();
@@ -69,7 +60,7 @@ protected:
 
 	float m_tile_scale;
 	TileMapLayerProperties m_properties;
-	std::vector<TileProperties> m_tilemap_data;	
+
 };
 
 }

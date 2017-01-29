@@ -2,6 +2,8 @@
 #define TILEMAP_H_HEADER_GUARD
 
 #include "TileMapLayer.hpp"
+#include <utils/Configuration.hpp>
+#include <tilemap.pb.h>
 #include <memory>
 #include <vector>
 
@@ -11,7 +13,10 @@ class TileMap {
 public:
 	typedef Eigen::Matrix<uint16_t, Eigen::Dynamic, Eigen::Dynamic> LayerData;
 	
-	TileMap(const std::string & cfg_file);
+	TileMap();
+
+	bool load(const Configuration<voyage::TileMapCfg> &);
+		
 	void update(float delta);
 
 	void clear() {
