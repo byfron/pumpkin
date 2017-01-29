@@ -9,6 +9,8 @@ list(APPEND CONFIG_FILES "main_character_atlas.cfg")
 list(APPEND CONFIG_FILES "main_character_shader.cfg")
 list(APPEND CONFIG_FILES "terrain_atlas.cfg")
 list(APPEND CONFIG_FILES "terrain_shader.cfg")
+list(APPEND CONFIG_FILES "mask_data.txt")
+list(APPEND CONFIG_FILES "map_data.txt")
 
 foreach(CONFIG_FILE ${CONFIG_FILES})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_FILE}
