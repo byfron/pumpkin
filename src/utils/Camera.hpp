@@ -39,6 +39,8 @@ public:
 		float dest[3];
 	};
 
+	void setSpeed(float s) { m_moveSpeed = s; }
+	
 	Eigen::Vector3f & getDirection() { return m_cam_direction; }
 	Eigen::Vector3f & getEye() { return m_eye; }
 	Eigen::Vector3f & getAt() { return m_at; }
