@@ -4,6 +4,7 @@
 #include "Animation.hpp"
 #include <utils/VertexUtils.hpp>
 #include <utils/Camera.hpp>
+#include <utils/Configuration.hpp>
 #include <iostream>
 #include <common/entry/input.h>
 
@@ -49,20 +50,29 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 }
 
 void GraphicsEngine::initResources() {
+	// Move this to voyage engine?
+	loadTextures();
+	loadShaders();
+}
 
-	// Moe this to voyage engine?
-	// this should eventually be put together in a global cfg file
+void GraphicsEngine::loadTextures() {
 
-	//TODO: put the CONFIG_FILE_PATH inside ResourceManager!
+	Configuration<voyage::AtlasListCfg> texture_list(
+		std::string(CONFIG_FILE_PATH) + "textures.cfg");
+	for (int i = 0; i < texture_list.config().texture().size(); i++) {
+		ResourceManager::pushResource<TextureAtlas, voyage::AtlasCfg>
+			 (texture_list.config().texture(i));
+	}
+}
 
-	ResourceManager::pushResource<TextureAtlas>(std::string(CONFIG_FILE_PATH) +
-						    "main_character_atlas.cfg");
-	ResourceManager::pushResource<TextureAtlas>(std::string(CONFIG_FILE_PATH) +
-						    "terrain_atlas.cfg");
-	ResourceManager::pushResource<Shader>(std::string(CONFIG_FILE_PATH) +
-					      "main_character_shader.cfg");
-	ResourceManager::pushResource<Shader>(std::string(CONFIG_FILE_PATH) +
-					      "terrain_shader.cfg");
+void GraphicsEngine::loadShaders() {
+
+	Configuration<voyage::ShaderListCfg> shader_list(
+		std::string(CONFIG_FILE_PATH) + "shaders.cfg");
+	for (int i = 0; i < shader_list.config().shader().size(); i++) {
+		ResourceManager::pushResource<Shader, voyage::ShaderCfg>
+			 (shader_list.config().shader(i));
+	}
 }
 
 void GraphicsEngine::run() {

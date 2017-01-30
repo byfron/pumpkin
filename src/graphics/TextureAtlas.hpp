@@ -9,6 +9,7 @@
 #include <vector>
 #include <assert.h>
 #include <memory>
+#include <texture_atlas.pb.h>
 
 namespace pumpkin {
 
@@ -19,7 +20,7 @@ public:
 
 	typedef std::shared_ptr<TextureAtlas> Ptr;
 
-	TextureAtlas(const std::string & atlas_cfg_file);
+	TextureAtlas(const voyage::AtlasCfg &);
 
 	static uint32_t type() { return TEXTURE_ATLAS_RESOURCE_TYPE; }
 

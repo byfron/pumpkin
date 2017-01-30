@@ -33,8 +33,8 @@ public:
 		return _resource_map[type].count(id) > 0;
 	}
 
-	template <typename T>
-	static void pushResource(std::string cfg) {
+	template <typename T, typename TConf>
+	static void pushResource(const TConf & cfg) {
 		Resource::Ptr r = std::make_shared<T>(cfg);
 		uint32_t res_id = r->getId();
 

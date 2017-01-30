@@ -1,6 +1,5 @@
 #include "Shader.hpp"
 #include "ShaderFactory.hpp"
-#include <common/bgfx_utils.h>
 #include <bx/readerwriter.h>
 
 namespace pumpkin {
@@ -76,10 +75,8 @@ bgfx::ProgramHandle pumpkinLoadProgram(const char* _vsName, const char* _fsName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-Shader::Shader(const std::string & shader_cfg) {
-
-	ShaderFactory factory(shader_cfg);
+Shader::Shader(const voyage::ShaderCfg & cfg) {
+	ShaderFactory factory(cfg);
 	factory.generate(this);
 }
 

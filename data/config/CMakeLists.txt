@@ -3,12 +3,10 @@
 set(CONFIG_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CONFIG_FILES "")
+list(APPEND CONFIG_FILES "shaders.cfg")
+list(APPEND CONFIG_FILES "textures.cfg")
 list(APPEND CONFIG_FILES "map.cfg")
 list(APPEND CONFIG_FILES "main_character_anim.cfg")
-list(APPEND CONFIG_FILES "main_character_atlas.cfg")
-list(APPEND CONFIG_FILES "main_character_shader.cfg")
-list(APPEND CONFIG_FILES "terrain_atlas.cfg")
-list(APPEND CONFIG_FILES "terrain_shader.cfg")
 list(APPEND CONFIG_FILES "mask_data.txt")
 list(APPEND CONFIG_FILES "map_data.txt")
 

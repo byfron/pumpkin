@@ -2,10 +2,10 @@
 #include "TextureAtlasFactory.hpp"
 
 namespace pumpkin {
-TextureAtlas::TextureAtlas(const std::string & atlas_cfg_file) {
+TextureAtlas::TextureAtlas(const voyage::AtlasCfg &cfg) {
 
 	// generate atlas frames
-	TextureAtlasFactory factory(atlas_cfg_file);
+	TextureAtlasFactory factory(cfg);
 	factory.generate(this);
 }
 

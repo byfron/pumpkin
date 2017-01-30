@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Shader.hpp"
-#include <utils/Configuration.hpp>
 #include <shader.pb.h>
 
 namespace pumpkin {
@@ -9,14 +8,12 @@ namespace pumpkin {
 class ShaderFactory {
 public:
 
-	typedef Configuration<voyage::ShaderCfg> Config;
-
-	ShaderFactory(std::string config_file) : m_shader_cfg(Config(config_file))  {}
+	ShaderFactory(const voyage::ShaderCfg & cfg) : m_shader_cfg(cfg)  {}
 	void generate(Shader* shader) {
 
-		shader->m_id = m_shader_cfg.config().resource_id();
-		shader->m_vs_shader = m_shader_cfg.config().vertex_shader();
-		shader->m_fs_shader = m_shader_cfg.config().fragment_shader();
+		shader->m_id = m_shader_cfg.resource_id();
+		shader->m_vs_shader = m_shader_cfg.vertex_shader();
+		shader->m_fs_shader = m_shader_cfg.fragment_shader();
 	}
 private:
 
@@ -24,7 +21,7 @@ private:
 private:
 
 	//ShaderProperties - inputs for the shader
-	Config m_shader_cfg;
+	voyage::ShaderCfg m_shader_cfg;
 
 };
 }
