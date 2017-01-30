@@ -1,0 +1,4 @@
+#pragma once
+
+#define TEXTURE_ATLAS_RESOURCE_TYPE 0
+#define SHADER_RESOURCE_TYPE 1

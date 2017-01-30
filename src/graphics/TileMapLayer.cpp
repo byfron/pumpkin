@@ -3,9 +3,9 @@
 #include <utils/TileMapUtils.hpp>
 
 namespace pumpkin {
-	
+
 TileMapLayer::TileMapLayer(const TileMapLayerProperties & properties)  :
-	m_properties(properties) 
+	m_properties(properties)
 {
 }
 
@@ -14,7 +14,7 @@ TileMapLayer::~TileMapLayer() {
 	bgfx::destroyDynamicIndexBuffer(m_dibh);
 	bgfx::destroyDynamicVertexBuffer(m_dvbh);
 
-	destroyUniforms();       
+	destroyUniforms();
 }
 
 void TileMapLayer::destroyUniforms() {
@@ -29,12 +29,11 @@ void TileMapLayer::init() {
 	// refactor loadShader/loadTextureAtlas
 	m_shader = ResourceManager::getResource<Shader>(m_properties.shader_id);
 	m_texture_atlas = ResourceManager::getResource<TextureAtlas>(m_properties.atlas_id);
-		
+
 	// initialise graphics containers
 	m_texture_atlas->init();
-	m_shader->init();	
+	m_shader->init();
 
-	initialiseBuffers();
 	createUniforms();
 }
 
@@ -44,11 +43,11 @@ void TileMapLayer::initialiseBuffers() {
 
 	int vertexCount = m_vertexPool.size();
 	int indexCount = m_indices.size();
-	
+
 	const bgfx::Memory* mem;
 	mem = bgfx::makeRef(&m_vertexPool[0], sizeof(PosNormalTexCoordVertex) * vertexCount);
-	m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);	
-	mem = bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * indexCount);	
+	m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);
+	mem = bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * indexCount);
 	m_dibh = bgfx::createDynamicIndexBuffer(mem);
 }
 
@@ -90,7 +89,9 @@ void TileMapLayer::addWall(uint32_t row, uint32_t col,
 
 	MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
 		construct(MeshType::WALL_MESH,
-			  MeshProperties(row, col, scale, 1.0, height));
+			  MeshProperties(row, col, scale, 1.0, height,
+					 m_texture_atlas->getSpriteWidthCoord(),
+					 m_texture_atlas->getSpriteHeightCoord()));
 
 	addMeshToPool(mesh);
 }
@@ -99,7 +100,9 @@ void TileMapLayer::addTile(uint32_t row, uint32_t col, float scale) {
 
 	MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
 		construct(MeshType::TILE_MESH,
-			  MeshProperties(row, col, scale, 1.0, 0.0));
+			  MeshProperties(row, col, scale, 1.0, 0.0,
+					 m_texture_atlas->getSpriteWidthCoord(),
+					 m_texture_atlas->getSpriteHeightCoord()));
 	addMeshToPool(mesh);
 }
 
@@ -109,7 +112,7 @@ void TileMapLayer::update(float dt) {
 	// try light now
 	float lightPosRadius[4] = { 10.0, 4.0, 1.0, 10.0};
 	bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
-	
+
 	bgfx::setVertexBuffer(m_dvbh);
 	bgfx::setIndexBuffer(m_dibh);
 	bgfx::setTexture(0, u_texColor,  m_texture_atlas->getColorHandle());

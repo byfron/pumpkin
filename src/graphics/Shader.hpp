@@ -2,12 +2,12 @@
 
 #include "ResourceManager.hpp"
 #include <common/common.h>
-#pragma once
-
+#include "common/defines.hpp"
 #include <string>
 #include <iostream>
 #include <memory>
 #include <common/bgfx_utils.h>
+#include <shader.pb.h>
 
 namespace pumpkin {
 
@@ -18,7 +18,7 @@ public:
 	friend class ShaderFactory;
 	typedef std::shared_ptr<Shader> Ptr;
 
-	Shader(const std::string & shader_cfg_file);
+	Shader(const voyage::ShaderCfg & cfg);
 	Shader(std::string fs,
 	       std::string vs) : m_vs_shader(vs), m_fs_shader(fs) {
 	}
@@ -26,6 +26,8 @@ public:
 	~Shader() {
 		bgfx::destroyProgram(m_program);
 	}
+
+	static uint32_t type() { return SHADER_RESOURCE_TYPE; }
 
 	void init();
 

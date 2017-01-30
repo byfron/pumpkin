@@ -4,3 +4,4 @@
 #include <graphics/AnimationFactory.hpp>
 #include <graphics/GraphicsEngine.hpp>
 #include <graphics/TileMap.hpp>
+#include <utils/Configuration.hpp>

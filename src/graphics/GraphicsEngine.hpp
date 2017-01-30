@@ -7,7 +7,7 @@
 #include <utils/InputManager.hpp>
 
 namespace pumpkin {
-	
+
 class GraphicsEngine : public entry::AppI {
 
 public:
@@ -40,6 +40,9 @@ public:
 	}
 
 	void initResources();
+	void loadShaders();
+	void loadTextures();
+
 	virtual void frame(const float) {};
 	virtual void init_engine() {};
 
