@@ -42,18 +42,18 @@ MeshObject<PosNormalTexCoordVertex> constructTile(const MeshProperties & prop) {
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
 	float z_pos = 0.0; //prop.z_pos
-	
+
 	PosNormalTexCoordVertex v_tile[4] = {
-		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0x7fff, 0x7fff},
-		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0x7fff, 0},
+		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, prop.tsize_y},
+		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col, z_pos, NORMAL_NEGZ, prop.tsize_x, 0},
 		{row, col, z_pos, NORMAL_NEGZ, 0, 0},
 	};
-	
+
 	int i_tile[6] = {
 		3,2,1,
 		1,0,3
-	};			
+	};
 
 	for (int i = 0; i < 4; i++) {
 		mesh.addVertex(v_tile[i]);
@@ -65,7 +65,7 @@ MeshObject<PosNormalTexCoordVertex> constructTile(const MeshProperties & prop) {
 
 	return mesh;
 }
-	
+
 // Move this to a static function in vertex_utils
 MeshObject<PosNormalTexCoordVertex> constructWall(const MeshProperties & prop) {
 
@@ -78,43 +78,43 @@ MeshObject<PosNormalTexCoordVertex> constructWall(const MeshProperties & prop) {
 	// 20 vertices. 4 per each side and 4 for the top
 	PosNormalTexCoordVertex v_wall[20] = {
 		//top -z normal
-		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0x7fff, 0x7fff},
-		{row + s_tsize, col, -h, NORMAL_NEGZ, 0x7fff, 0},
+		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, prop.tsize_y},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col, -h, NORMAL_NEGZ, prop.tsize_x, 0},
 		{row, col, -h, NORMAL_NEGZ, 0, 0},
 
 		//side A
-		{row, col + s_tsize, -h, NORMAL_POSX, 0x7fff, 0x7fff},     // A(0,1,-1)---B(0,0,-1)
-		{row, col,           -h, NORMAL_POSX, 0x7fff,0},           //  |             |
-		{row, col + s_tsize,  0, NORMAL_POSX, 0, 0x7fff},          //  |             |
-		{row, col,            0, NORMAL_POSX, 0, 0},               // C(0,1,0) ---D(0,0,0)
+		{row, col + s_tsize, -h, NORMAL_POSX, prop.tsize_x, prop.tsize_y},
+		{row, col,           -h, NORMAL_POSX, prop.tsize_x,0},
+		{row, col + s_tsize,  0, NORMAL_POSX, 0, prop.tsize_y},
+		{row, col,            0, NORMAL_POSX, 0, 0},
 
 		//side B
-		{row,           col, -h, NORMAL_POSY, 0x7fff, 0x7fff},
-		{row + s_tsize, col, -h, NORMAL_POSY, 0x7fff, 0},
-		{row,           col,  0, NORMAL_POSY, 0, 0x7fff},
+		{row,           col, -h, NORMAL_POSY, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col, -h, NORMAL_POSY, prop.tsize_x, 0},
+		{row,           col,  0, NORMAL_POSY, 0, prop.tsize_y},
 		{row + s_tsize, col,  0, NORMAL_POSY, 0, 0},
 
 		//side C
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, 0x7fff, 0x7fff}, //A(1,1,1)---B(1,0,1)
-		{row + s_tsize, col,           -h, NORMAL_NEGX, 0x7fff, 0},      //C(1,1,0)---D(1,0,0)
-		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, 0x7fff},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col,           -h, NORMAL_NEGX, prop.tsize_x, 0},
+		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, prop.tsize_y},
 		{row + s_tsize, col,            0, NORMAL_NEGX, 0, 0},
-			
+
 		//side D
-		{row,           col + s_tsize, -h, NORMAL_NEGY, 0x7fff, 0x7fff}, //A(0,1,1)---B(1,1,1)
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, 0x7fff, 0},      //C(0,1,0)---D(1,1,0)
-		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, 0x7fff},
+		{row,           col + s_tsize, -h, NORMAL_NEGY, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, prop.tsize_x, 0},
+		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, prop.tsize_y},
 		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGY, 0, 0}
 	};
 
 	int i_wall[30] = {
 		3,2,1, //top
 		1,0,3,
-			
+
 		4,6,7, //side A
 		7,5,4,
-			
+
 		8,10,11, //side B
 		11,9,8,
 
@@ -124,7 +124,7 @@ MeshObject<PosNormalTexCoordVertex> constructWall(const MeshProperties & prop) {
 		17,19,18, //side D
 		18,16,17
 	};
-		
+
 	for (int i = 0; i < 20; i++) {
 		mesh.addVertex(v_wall[i]);
 	}
@@ -142,20 +142,19 @@ MeshObject<PosNormalTexCoordVertex> constructVPlane(const MeshProperties & prop)
 
 	MeshObject<PosNormalTexCoordVertex> mesh;
 
-	float meshsize = prop.width * prop.scale;	
-	int16_t tsize = 0x7fff/4;//prop.texture_gridsize;		
+	float meshsize = prop.width * prop.scale;
 	float height = prop.height;
 	float width = prop.width;
-	
+
 	PosNormalTexCoordVertex v_plane[] =
 	{
-		// Horizonally aligned	
-		{ 0.0f,    width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), tsize, tsize},
-		{ 0.0f,   -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f),  0, tsize},
-		{-height,  width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), tsize, 0},
+		// Horizonally aligned
+		{ 0.0f,    width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), prop.tsize_x, prop.tsize_y},
+		{ 0.0f,   -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f),  0, prop.tsize_y},
+		{-height,  width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), prop.tsize_x, 0},
 		{-height, -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, 0}
 	};
-	
+
 	int i_plane[4] = {
 		0,1,2,3
 	};
@@ -168,8 +167,8 @@ MeshObject<PosNormalTexCoordVertex> constructVPlane(const MeshProperties & prop)
 		mesh.addIndex(i_plane[i]);
 	}
 
-	return mesh;			
+	return mesh;
 }
-	
+
 }
 }

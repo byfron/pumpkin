@@ -37,6 +37,15 @@ public:
 		return m_textureColor;
 	}
 
+	uint16_t getSpriteWidthCoord() const {
+		return 0x7fff/m_grid_width;
+	}
+
+	uint16_t getSpriteHeightCoord() const {
+		std::cout << m_grid_height;
+		return 0x7fff/m_grid_height;
+	}
+
 	// const AtlasFrame & getFrame(uint32_t id) const {
 	// 	assert(id < m_frames.size());
 	// 	return m_framfaes[id];
