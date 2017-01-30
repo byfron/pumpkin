@@ -4,7 +4,7 @@
 #include <common/common.h>
 #pragma once
 
-#include "common/common.hpp"
+#include "common/defines.hpp"
 #include <string>
 #include <iostream>
 #include <memory>
