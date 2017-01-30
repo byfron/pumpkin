@@ -90,9 +90,9 @@ struct PosNormalTangentTexcoordVertex
 
 namespace VertexUtils {
 
-MeshObject<PosNormalTexCoordVertex> constructTile(const MeshProperties & prop);	
-MeshObject<PosNormalTexCoordVertex> constructWall(const MeshProperties & prop);
-MeshObject<PosNormalTexCoordVertex> constructVPlane(const MeshProperties & prop);
+MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop);	
+MeshObject<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop);
+MeshObject<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop);
 }
 
 }

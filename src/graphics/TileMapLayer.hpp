@@ -56,7 +56,7 @@ protected:
 	bgfx::UniformHandle u_texNormal;
 	bgfx::UniformHandle u_lightPosRadius;
 
-	std::vector<PosNormalTexCoordVertex> m_vertexPool;
+	std::vector<PosNormalTangentTexcoordVertex> m_vertexPool;
 	std::vector<uint16_t> m_indices;
 
 	float m_tile_scale;

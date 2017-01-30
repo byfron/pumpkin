@@ -45,8 +45,8 @@ void TileMapLayer::initialiseBuffers() {
 	int indexCount = m_indices.size();
 
 	const bgfx::Memory* mem;
-	mem = bgfx::makeRef(&m_vertexPool[0], sizeof(PosNormalTexCoordVertex) * vertexCount);
-	m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);
+	mem = bgfx::makeRef(&m_vertexPool[0], sizeof(PosNormalTangentTexcoordVertex) * vertexCount);
+	m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTangentTexcoordVertex::ms_decl);
 	mem = bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * indexCount);
 	m_dibh = bgfx::createDynamicIndexBuffer(mem);
 }
@@ -87,7 +87,7 @@ void TileMapLayer::addMeshToPool(const MeshObject<T> & mesh) {
 void TileMapLayer::addWall(uint32_t row, uint32_t col,
 			   float scale, float height) {
 
-	MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
+	MeshObject<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
 		construct(MeshType::WALL_MESH,
 			  MeshProperties(row, col, scale, 1.0, height,
 					 m_texture_atlas->getSpriteWidthCoord(),
@@ -98,7 +98,7 @@ void TileMapLayer::addWall(uint32_t row, uint32_t col,
 
 void TileMapLayer::addTile(uint32_t row, uint32_t col, float scale) {
 
-	MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
+	MeshObject<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
 		construct(MeshType::TILE_MESH,
 			  MeshProperties(row, col, scale, 1.0, 0.0,
 					 m_texture_atlas->getSpriteWidthCoord(),
@@ -116,7 +116,8 @@ void TileMapLayer::update(float dt) {
 	bgfx::setVertexBuffer(m_dvbh);
 	bgfx::setIndexBuffer(m_dibh);
 	bgfx::setTexture(0, u_texColor,  m_texture_atlas->getColorHandle());
-	bgfx::setTexture(1, u_texNormal, m_texture_atlas->getNormalHandle());
+	if (m_texture_atlas->hasNormalMap())
+		bgfx::setTexture(1, u_texNormal, m_texture_atlas->getNormalHandle());
 	bgfx::submit(0, m_shader->getHandle());			
 }
 

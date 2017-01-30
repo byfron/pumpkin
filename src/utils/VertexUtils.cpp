@@ -35,18 +35,18 @@ bgfx::VertexDecl PosNormalTangentTexcoordVertex::ms_decl;
 
 namespace VertexUtils {
 
-MeshObject<PosNormalTangentTexCoordVertex> constructTile(const MeshProperties & prop) {
+MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTangentTexCoordVertex> mesh;
+	MeshObject<PosNormalTangentTexcoordVertex> mesh;
 	float row = prop.row * prop.scale;
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
 	float z_pos = 0.0; //prop.z_pos
 	
-	PosNormalTangentTexCoordVertex v_tile[4] = {
-		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0x7fff, 0x7fff},
-		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, 0x7fff, 0},
+	PosNormalTangentTexcoordVertex v_tile[4] = {
+		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0, prop.tsize_y},
+		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, 0},
 		{row, col, z_pos, NORMAL_NEGZ, 0, 0, 0},
 	};
 	
@@ -67,44 +67,44 @@ MeshObject<PosNormalTangentTexCoordVertex> constructTile(const MeshProperties & 
 }
 	
 // Move this to a static function in vertex_utils
-MeshObject<PosNormalTangentTexCoordVertex> constructWall(const MeshProperties & prop) {
+MeshObject<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTangentTexCoordVertex> mesh;
+	MeshObject<PosNormalTangentTexcoordVertex> mesh;
 	float row = prop.row * prop.scale;
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
 	float h = prop.height;
 
 	// 20 vertices. 4 per each side and 4 for the top
-	PosNormalTangentTexCoordVertex v_wall[20] = {
+	PosNormalTangentTexcoordVertex v_wall[20] = {
 		//top -z normal
-		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0, 0x7fff, 0x7fff},
-		{row + s_tsize, col, -h, NORMAL_NEGZ, 0, 0x7fff, 0},
+		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, 0, prop.tsize_y},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col, -h, NORMAL_NEGZ, 0, prop.tsize_x, 0},
 		{row, col, -h, NORMAL_NEGZ, 0, 0, 0},
 
 		//side A
-		{row, col + s_tsize, -h, NORMAL_POSX, 0, 0x7fff, 0x7fff},
-		{row, col,           -h, NORMAL_POSX, 0, 0x7fff,0},
-		{row, col + s_tsize,  0, NORMAL_POSX, 0, 0, 0x7fff},
+		{row, col + s_tsize, -h, NORMAL_POSX, 0, prop.tsize_x, prop.tsize_y},
+		{row, col,           -h, NORMAL_POSX, 0, prop.tsize_x,0},
+		{row, col + s_tsize,  0, NORMAL_POSX, 0, 0, prop.tsize_y},
 		{row, col,            0, NORMAL_POSX, 0, 0, 0},
 
 		//side B
-		{row,           col, -h, NORMAL_POSY, 0, 0x7fff, 0x7fff},
-		{row + s_tsize, col, -h, NORMAL_POSY, 0, 0x7fff, 0},
-		{row,           col,  0, NORMAL_POSY, 0, 0, 0x7fff},
+		{row,           col, -h, NORMAL_POSY, 0, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col, -h, NORMAL_POSY, 0, prop.tsize_x, 0},
+		{row,           col,  0, NORMAL_POSY, 0, 0, prop.tsize_y},
 		{row + s_tsize, col,  0, NORMAL_POSY, 0, 0, 0},
 
 		//side C
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, 0, 0x7fff, 0x7fff},
-		{row + s_tsize, col,           -h, NORMAL_NEGX, 0, 0x7fff, 0},
-		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, 0, 0x7fff},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, 0, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col,           -h, NORMAL_NEGX, 0, prop.tsize_x, 0},
+		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, 0, prop.tsize_y},
 		{row + s_tsize, col,            0, NORMAL_NEGX, 0, 0, 0},
 			
 		//side D
-		{row,           col + s_tsize, -h, NORMAL_NEGY, 0, 0x7fff, 0x7fff},
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, 0, 0x7fff, 0},
-		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, 0, 0x7fff},
+		{row,           col + s_tsize, -h, NORMAL_NEGY, 0, prop.tsize_x, prop.tsize_y},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, 0, prop.tsize_x, 0},
+		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, 0, prop.tsize_y},
 		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGY, 0, 0, 0}
 	};
 
@@ -138,22 +138,21 @@ MeshObject<PosNormalTangentTexCoordVertex> constructWall(const MeshProperties & 
 }
 
 
-MeshObject<PosNormalTexCoordVertex> constructVPlane(const MeshProperties & prop) {
+MeshObject<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTexCoordVertex> mesh;
+	MeshObject<PosNormalTangentTexcoordVertex> mesh;
 
 	float meshsize = prop.width * prop.scale;	
-	int16_t tsize = 0x7fff/4;//prop.texture_gridsize;		
 	float height = prop.height;
 	float width = prop.width;
 	
-	PosNormalTexCoordVertex v_plane[] =
+	PosNormalTangentTexcoordVertex v_plane[] =
 	{
 		// Horizonally aligned	
-		{ 0.0f,    width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), tsize, tsize},
-		{ 0.0f,   -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f),  0, tsize},
-		{-height,  width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), tsize, 0},
-		{-height, -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, 0}
+		{ 0.0f,    width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, prop.tsize_x,prop.tsize_y},
+		{ 0.0f,   -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, 0, prop.tsize_y},
+		{-height,  width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, prop.tsize_x, 0},
+		{-height, -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, 0, 0}
 	};
 	
 	int i_plane[4] = {

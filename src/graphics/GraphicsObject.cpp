@@ -15,7 +15,6 @@ GraphicsObject::GraphicsObject() :
 		m_flipped(0),
 		m_transform(Eigen::MatrixXf(4,4)){
 
-	PosNormalTangentTexcoordVertex::init();
 	m_atlas_offset[0] = 0.0;
 	m_atlas_offset[1] = 0.0;
 	m_atlas_offset[2] = 1.0/4.0;
@@ -27,8 +26,6 @@ GraphicsObject::GraphicsObject(const std::string & config_file) :
 
 	GraphicsObjectFactory factory(config_file);
 	factory.generate(this);
-
-	PosNormalTangentTexcoordVertex::init();
 
 	// sprite texture width: this comes from the grid of the atlas!
 	// we pack it in the z coord of the atlas offset (vec4)
@@ -87,13 +84,13 @@ void GraphicsObject::initialiseBuffers() {
 		// size of a single sprite. TODO: This depends on the grid!!
 	int16_t tsize = 0x7fff/4;
 
-	static PosNormalTexCoordVertex s_playerVertices[] =
+	static PosNormalTangentTexcoordVertex s_playerVertices[] =
 	{
 		// Horizonally aligned
-		{  0.0f,      m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), tsize, tsize },
-		{  0.0f,     -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f),  0, tsize },
-		{ -m_height,  m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), tsize, 0 },
-		{ -m_height, -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, 0 }
+		{  0.0f,      m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, tsize, tsize },
+		{  0.0f,     -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, 0, tsize },
+		{ -m_height,  m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, tsize, 0 },
+		{ -m_height, -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, 0, 0 }
 
 	};
 
@@ -108,7 +105,7 @@ void GraphicsObject::initialiseBuffers() {
 	m_vbh = bgfx::createVertexBuffer(
 		// Static data can be passed with bgfx::makeRef
 		bgfx::makeRef(s_playerVertices, sizeof(s_playerVertices) )
-		, PosNormalTexCoordVertex::ms_decl
+		, PosNormalTangentTexcoordVertex::ms_decl
 		);
 
 	// Create static index buffer.
@@ -205,7 +202,7 @@ void GraphicsObject::update(float d) {
 
 	bgfx::setVertexBuffer(m_vbh);
 	bgfx::setIndexBuffer(m_ibh);
-	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getHandle());
+	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getColorHandle());
 
 	bgfx::setUniform(u_texOffset, m_atlas_offset, 1);
 	bgfx::setUniform(u_flip, &m_flipped, 1);

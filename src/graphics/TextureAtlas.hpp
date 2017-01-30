@@ -31,7 +31,8 @@ public:
 
 	void init() {
 		m_textureColor = loadTexture(m_atlas_color.c_str());
-		m_textureNormal = loadTexture(m_atlas_normal.c_str());
+		if (m_has_normalmap)
+			m_textureNormal = loadTexture(m_atlas_normal.c_str());
 	}
 
 	bgfx::TextureHandle & getColorHandle() {
@@ -51,6 +52,10 @@ public:
 		return 0x7fff/m_grid_height;
 	}
 
+	bool hasNormalMap() const {
+		return m_has_normalmap;
+	}
+	
 	// const AtlasFrame & getFrame(uint32_t id) const {
 	// 	assert(id < m_frames.size());
 	// 	return m_framfaes[id];
@@ -66,6 +71,8 @@ protected:
 
 	int m_grid_width;
 	int m_grid_height;
+
+	bool m_has_normalmap;
 
 	// TODO load all atlases from a config file of atlases?
 	// Load them when we need them better I guess.
