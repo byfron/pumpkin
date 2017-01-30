@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceManager.hpp"
+#include "common/defines.hpp"
 #include <common/common.h>
 #include <common/bgfx_utils.h>
 #include <iostream> // CHANGE THIS WITH PROPER LOG
@@ -12,15 +13,17 @@
 namespace pumpkin {
 
 class TextureAtlasFactory;
-	
+
 class TextureAtlas : public Resource {
 public:
 
-	typedef std::shared_ptr<TextureAtlas> Ptr;	
+	typedef std::shared_ptr<TextureAtlas> Ptr;
 
 	TextureAtlas(const std::string & atlas_cfg_file);
 
-	~TextureAtlas() {       	
+	static uint32_t type() { return TEXTURE_ATLAS_RESOURCE_TYPE; }
+
+	~TextureAtlas() {
 		bgfx::destroyTexture(m_textureColor);
 	}
 
@@ -37,21 +40,21 @@ public:
 	// 	assert(id < m_frames.size());
 	// 	return m_framfaes[id];
 	// }
-	
+
 protected:
 
-	friend TextureAtlasFactory;	
+	friend TextureAtlasFactory;
 	bgfx::TextureHandle m_textureColor;
 	std::string m_atlas_file;
 
 	int m_grid_width;
 	int m_grid_height;
-	
+
 	// TODO load all atlases from a config file of atlases?
 	// Load them when we need them better I guess.
 	// Make TextureAtlasFactory
 	//grid size
-	
+
 };
 
 }

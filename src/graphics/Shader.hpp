@@ -4,10 +4,12 @@
 #include <common/common.h>
 #pragma once
 
+#include "common/common.hpp"
 #include <string>
 #include <iostream>
 #include <memory>
 #include <common/bgfx_utils.h>
+
 
 namespace pumpkin {
 
@@ -26,6 +28,8 @@ public:
 	~Shader() {
 		bgfx::destroyProgram(m_program);
 	}
+
+	static uint32_t type() { return SHADER_RESOURCE_TYPE; }
 
 	void init();
 
