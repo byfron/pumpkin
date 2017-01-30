@@ -22,14 +22,19 @@ public:
 
 	~TextureAtlas() {       	
 		bgfx::destroyTexture(m_textureColor);
+		bgfx::destroyTexture(m_textureNormal);
 	}
 
 	void init() {
-		std::cout << "initialising texure: " << m_atlas_file << std::endl;
-		m_textureColor = loadTexture(m_atlas_file.c_str());
+		m_textureColor = loadTexture(m_atlas_color.c_str());
+		m_textureNormal = loadTexture(m_atlas_normal.c_str());
 	}
 
-	bgfx::TextureHandle & getHandle() {
+	bgfx::TextureHandle & getColorHandle() {
+		return m_textureColor;
+	}
+
+	bgfx::TextureHandle & getNormalHandle() {
 		return m_textureColor;
 	}
 
@@ -42,7 +47,9 @@ protected:
 
 	friend TextureAtlasFactory;	
 	bgfx::TextureHandle m_textureColor;
-	std::string m_atlas_file;
+	bgfx::TextureHandle m_textureNormal;
+	std::string m_atlas_color;
+	std::string m_atlas_normal;
 
 	int m_grid_width;
 	int m_grid_height;

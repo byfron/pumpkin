@@ -35,19 +35,19 @@ bgfx::VertexDecl PosNormalTangentTexcoordVertex::ms_decl;
 
 namespace VertexUtils {
 
-MeshObject<PosNormalTexCoordVertex> constructTile(const MeshProperties & prop) {
+MeshObject<PosNormalTangentTexCoordVertex> constructTile(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTexCoordVertex> mesh;
+	MeshObject<PosNormalTangentTexCoordVertex> mesh;
 	float row = prop.row * prop.scale;
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
 	float z_pos = 0.0; //prop.z_pos
 	
-	PosNormalTexCoordVertex v_tile[4] = {
-		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0x7fff, 0x7fff},
-		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0x7fff, 0},
-		{row, col, z_pos, NORMAL_NEGZ, 0, 0},
+	PosNormalTangentTexCoordVertex v_tile[4] = {
+		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0, 0x7fff},
+		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0x7fff, 0x7fff},
+		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, 0x7fff, 0},
+		{row, col, z_pos, NORMAL_NEGZ, 0, 0, 0},
 	};
 	
 	int i_tile[6] = {
@@ -67,45 +67,45 @@ MeshObject<PosNormalTexCoordVertex> constructTile(const MeshProperties & prop) {
 }
 	
 // Move this to a static function in vertex_utils
-MeshObject<PosNormalTexCoordVertex> constructWall(const MeshProperties & prop) {
+MeshObject<PosNormalTangentTexCoordVertex> constructWall(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTexCoordVertex> mesh;
+	MeshObject<PosNormalTangentTexCoordVertex> mesh;
 	float row = prop.row * prop.scale;
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
 	float h = prop.height;
 
 	// 20 vertices. 4 per each side and 4 for the top
-	PosNormalTexCoordVertex v_wall[20] = {
+	PosNormalTangentTexCoordVertex v_wall[20] = {
 		//top -z normal
-		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0x7fff, 0x7fff},
-		{row + s_tsize, col, -h, NORMAL_NEGZ, 0x7fff, 0},
-		{row, col, -h, NORMAL_NEGZ, 0, 0},
+		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, 0, 0x7fff},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0, 0x7fff, 0x7fff},
+		{row + s_tsize, col, -h, NORMAL_NEGZ, 0, 0x7fff, 0},
+		{row, col, -h, NORMAL_NEGZ, 0, 0, 0},
 
 		//side A
-		{row, col + s_tsize, -h, NORMAL_POSX, 0x7fff, 0x7fff},     // A(0,1,-1)---B(0,0,-1)
-		{row, col,           -h, NORMAL_POSX, 0x7fff,0},           //  |             |
-		{row, col + s_tsize,  0, NORMAL_POSX, 0, 0x7fff},          //  |             |
-		{row, col,            0, NORMAL_POSX, 0, 0},               // C(0,1,0) ---D(0,0,0)
+		{row, col + s_tsize, -h, NORMAL_POSX, 0, 0x7fff, 0x7fff},
+		{row, col,           -h, NORMAL_POSX, 0, 0x7fff,0},
+		{row, col + s_tsize,  0, NORMAL_POSX, 0, 0, 0x7fff},
+		{row, col,            0, NORMAL_POSX, 0, 0, 0},
 
 		//side B
-		{row,           col, -h, NORMAL_POSY, 0x7fff, 0x7fff},
-		{row + s_tsize, col, -h, NORMAL_POSY, 0x7fff, 0},
-		{row,           col,  0, NORMAL_POSY, 0, 0x7fff},
-		{row + s_tsize, col,  0, NORMAL_POSY, 0, 0},
+		{row,           col, -h, NORMAL_POSY, 0, 0x7fff, 0x7fff},
+		{row + s_tsize, col, -h, NORMAL_POSY, 0, 0x7fff, 0},
+		{row,           col,  0, NORMAL_POSY, 0, 0, 0x7fff},
+		{row + s_tsize, col,  0, NORMAL_POSY, 0, 0, 0},
 
 		//side C
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, 0x7fff, 0x7fff}, //A(1,1,1)---B(1,0,1)
-		{row + s_tsize, col,           -h, NORMAL_NEGX, 0x7fff, 0},      //C(1,1,0)---D(1,0,0)
-		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, 0x7fff},
-		{row + s_tsize, col,            0, NORMAL_NEGX, 0, 0},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, 0, 0x7fff, 0x7fff},
+		{row + s_tsize, col,           -h, NORMAL_NEGX, 0, 0x7fff, 0},
+		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, 0, 0x7fff},
+		{row + s_tsize, col,            0, NORMAL_NEGX, 0, 0, 0},
 			
 		//side D
-		{row,           col + s_tsize, -h, NORMAL_NEGY, 0x7fff, 0x7fff}, //A(0,1,1)---B(1,1,1)
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, 0x7fff, 0},      //C(0,1,0)---D(1,1,0)
-		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, 0x7fff},
-		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGY, 0, 0}
+		{row,           col + s_tsize, -h, NORMAL_NEGY, 0, 0x7fff, 0x7fff},
+		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, 0, 0x7fff, 0},
+		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, 0, 0x7fff},
+		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGY, 0, 0, 0}
 	};
 
 	int i_wall[30] = {

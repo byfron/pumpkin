@@ -18,7 +18,8 @@ TileMapLayer::~TileMapLayer() {
 }
 
 void TileMapLayer::destroyUniforms() {
-	
+
+	bgfx::destroyUniform(u_texNormal);
 	bgfx::destroyUniform(u_texColor);
 	bgfx::destroyUniform(u_lightPosRadius);
 }
@@ -52,6 +53,7 @@ void TileMapLayer::initialiseBuffers() {
 }
 
 void TileMapLayer::createUniforms() {
+	u_texNormal = bgfx::createUniform("s_texNormal",  bgfx::UniformType::Int1);
 	u_texColor  = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
 	u_lightPosRadius = bgfx::createUniform("u_lightPosRadius", bgfx::UniformType::Vec4, 1);
 
@@ -110,7 +112,8 @@ void TileMapLayer::update(float dt) {
 	
 	bgfx::setVertexBuffer(m_dvbh);
 	bgfx::setIndexBuffer(m_dibh);
-	bgfx::setTexture(0, u_texColor,  m_texture_atlas->getHandle());				
+	bgfx::setTexture(0, u_texColor,  m_texture_atlas->getColorHandle());
+	bgfx::setTexture(1, u_texNormal, m_texture_atlas->getNormalHandle());
 	bgfx::submit(0, m_shader->getHandle());			
 }
 

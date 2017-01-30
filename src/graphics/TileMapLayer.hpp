@@ -53,6 +53,7 @@ protected:
 	bgfx::DynamicIndexBufferHandle m_dibh;
 
 	bgfx::UniformHandle u_texColor;
+	bgfx::UniformHandle u_texNormal;
 	bgfx::UniformHandle u_lightPosRadius;
 
 	std::vector<PosNormalTexCoordVertex> m_vertexPool;
