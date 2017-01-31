@@ -4,6 +4,7 @@
 #include "common/defines.hpp"
 #include <common/common.h>
 #include <common/bgfx_utils.h>
+#include <common/math.hpp>
 #include <iostream> // CHANGE THIS WITH PROPER LOG
 #include <string>
 #include <vector>
@@ -13,6 +14,12 @@
 
 namespace pumpkin {
 
+struct AtlasFrame {
+	typedef Eigen::Matrix<int16_t, 2, 1> Corner;
+	Corner top_left;
+	Corner bottom_right;
+};
+	
 class TextureAtlasFactory;
 
 class TextureAtlas : public Resource {
@@ -43,14 +50,26 @@ public:
 		return m_textureColor;
 	}
 
-	uint16_t getSpriteWidthCoord() const {
-		uint16_t texel_size = 0x7fff / (32 * m_grid_height);
-		return 0x7fff/m_grid_width - texel_size/2;
-	}
+	// gets atlas frames in texture coordinates
+	std::vector<AtlasFrame> getAtlasFrames(const std::vector<Vec2i> & coords) {
 
-	uint16_t getSpriteHeightCoord() const {
-		uint16_t texel_size = 0x7fff / (32 * m_grid_height);
-		return 0x7fff/m_grid_height - texel_size/2;
+		uint16_t texel_height = 0x7fff / (m_sprite_height * m_grid_height);
+		uint16_t frame_height = 0x7fff/m_grid_height;
+		uint16_t texel_width = 0x7fff / (m_sprite_width * m_grid_width);
+		uint16_t frame_width = 0x7fff/m_grid_width;
+		std::vector<AtlasFrame> out;
+		
+		for (auto coord: coords) {
+			AtlasFrame af;
+			af.top_left = AtlasFrame::Corner(frame_width*coord(0) + texel_width/2.0,
+							 frame_height*coord(1) + texel_height/2.0);
+
+			af.bottom_right = AtlasFrame::Corner(frame_width*(coord(0)+1)-texel_width/2.0,
+							     frame_height*(coord(1)+1)-texel_height/2.0);
+			out.push_back(af);
+		}
+
+		return out;
 	}
 
 	bool hasNormalMap() const {
@@ -72,6 +91,8 @@ protected:
 
 	int m_grid_width;
 	int m_grid_height;
+	int m_sprite_width;
+	int m_sprite_height;
 
 	bool m_has_normalmap;
 

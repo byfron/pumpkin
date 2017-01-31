@@ -33,9 +33,10 @@ public:
 	void addMeshToPool(const MeshObject<T> & mesh);
 	
 	void addWall(uint32_t row, uint32_t col,
-		     float scale, float height);
+		     float scale, float height,
+		     const std::vector<AtlasFrame> &);
 	void addTile(uint32_t row, uint32_t col,
-		     float scale);
+		     float scale, const std::vector<AtlasFrame> &);
 	
 	void init();
 	void createUniforms();

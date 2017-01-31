@@ -43,9 +43,12 @@ void main()
 			normalize(v_normal)
 			);
 
-	vec3 normal;
-	normal.xy = texture2D(s_texNormal, v_texcoord0).xy * 2.0 - 1.0;
-	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy) );
+// If we have no normal map, use the geometry normal!
+
+	vec3 normal = v_normal;
+//	normal.xy = texture2D(s_texNormal, v_texcoord0).xy * 2.0 - 1.0;
+//	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy) );
+	
 	vec3 view = -normalize(v_view);
 
 	vec3 lightColor;

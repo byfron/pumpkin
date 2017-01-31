@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utils/VertexUtils.hpp>
+#include <graphics/TextureAtlas.hpp>
 #include <vector>
 
 namespace pumpkin {
@@ -10,26 +11,26 @@ enum class MeshType {
 	WALL_MESH,
 	PLANE_MESH
 };
-
+	
 struct MeshProperties {
 	MeshProperties(uint32_t r,
 		       uint32_t c,
 		       float s,
 		       float w,
 		       float h,
-		       int16_t ts_x = 0x7fff,
-		       int16_t ts_y = 0x7fff) :
-		row(r), col(c), scale(s), width(w), height(h),
-		tsize_x(ts_x), tsize_y(ts_y) {}
+		       const std::vector<AtlasFrame> &af) :
+		row(r), col(c), scale(s),
+		width(w), height(h), atlas_frames(af) {}
 
 	uint32_t row;
 	uint32_t col;
 	float width;
 	float height;
 	float scale;
-	int16_t tsize_x;
-	int16_t tsize_y;
+	std::vector<AtlasFrame> atlas_frames;
 };
+
+	
 
 template <typename T>
 class MeshObject {

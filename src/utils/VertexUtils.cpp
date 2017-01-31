@@ -43,16 +43,14 @@ MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & 
 	float s_tsize = prop.width * prop.scale;
 	float z_pos = 0.0; //prop.z_pos
 
-
-	// avoid bleeding!. TODO: add full tex. coordinates in MeshProperties
-	uint16_t texel_size = 0x7fff / (32 * 8);
-
+	assert(prop.atlas_frames.size() > 0);
+	AtlasFrame frame = prop.atlas_frames[0];
 	
 	PosNormalTangentTexcoordVertex v_tile[4] = {
-		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, texel_size/2, prop.tsize_y},
-		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, prop.tsize_y},
-		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, texel_size/2},
-		{row, col, z_pos, NORMAL_NEGZ, 0, texel_size/2, texel_size/2},
+	{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, frame.bottom_right(1), frame.top_left(0)},
+	{row + s_tsize, col+s_tsize, z_pos,NORMAL_NEGZ,0,frame.bottom_right(1), frame.bottom_right(0)},
+	{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, frame.top_left(1), frame.bottom_right(0)},	
+	{row, col, z_pos, NORMAL_NEGZ, 0, frame.top_left(1),frame.top_left(0)},
 	};
 	
 	int i_tile[6] = {
@@ -80,37 +78,41 @@ MeshObject<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & 
 	float s_tsize = prop.width * prop.scale;
 	float h = prop.height;
 
+	assert(prop.atlas_frames.size() > 1);
+	AtlasFrame topf = prop.atlas_frames[0];
+	AtlasFrame sidef = prop.atlas_frames[1];
+		 
 	// 20 vertices. 4 per each side and 4 for the top
 	PosNormalTangentTexcoordVertex v_wall[20] = {
-		//top -z normal
-		{row, col + s_tsize, -h, NORMAL_NEGZ, 0, 0, prop.tsize_y},
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0, prop.tsize_x, prop.tsize_y},
-		{row + s_tsize, col, -h, NORMAL_NEGZ, 0, prop.tsize_x, 0},
-		{row, col, -h, NORMAL_NEGZ, 0, 0, 0},
+	//top -z normal
+	{row, col + s_tsize,-h,NORMAL_NEGZ,0, topf.bottom_right(1), topf.top_left(0)},
+	{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0, topf.bottom_right(1), topf.bottom_right(0)},
+	{row + s_tsize, col, -h, NORMAL_NEGZ, 0, topf.top_left(1), topf.bottom_right(0)},
+	{row, col, -h, NORMAL_NEGZ, 0, topf.top_left(1),topf.top_left(0)},
 
-		//side A
-		{row, col + s_tsize, -h, NORMAL_POSX, 0, prop.tsize_x, prop.tsize_y},
-		{row, col,           -h, NORMAL_POSX, 0, prop.tsize_x,0},
-		{row, col + s_tsize,  0, NORMAL_POSX, 0, 0, prop.tsize_y},
-		{row, col,            0, NORMAL_POSX, 0, 0, 0},
+	//side A
+	{row, col + s_tsize, -h, NORMAL_POSX, 0, sidef.bottom_right(1), sidef.top_left(0)},
+	{row, col,           -h, NORMAL_POSX, 0, sidef.top_left(1), sidef.top_left(0)},
+	{row, col + s_tsize,  0, NORMAL_POSX, 0, sidef.bottom_right(1), sidef.bottom_right(0)},
+	{row, col,            0, NORMAL_POSX, 0, sidef.top_left(1), sidef.bottom_right(0)},
 
-		//side B
-		{row,           col, -h, NORMAL_POSY, 0, prop.tsize_x, prop.tsize_y},
-		{row + s_tsize, col, -h, NORMAL_POSY, 0, prop.tsize_x, 0},
-		{row,           col,  0, NORMAL_POSY, 0, 0, prop.tsize_y},
-		{row + s_tsize, col,  0, NORMAL_POSY, 0, 0, 0},
+	//side B
+	{row,           col, -h, NORMAL_POSY, 0, sidef.bottom_right(1), sidef.top_left(0)},
+	{row + s_tsize, col, -h, NORMAL_POSY, 0, sidef.top_left(1), sidef.top_left(0)},
+	{row,           col,  0, NORMAL_POSY, 0, sidef.bottom_right(1), sidef.bottom_right(0)},
+	{row + s_tsize, col,  0, NORMAL_POSY, 0, sidef.top_left(1), sidef.bottom_right(0)},
 
-		//side C
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGX, 0, prop.tsize_x, prop.tsize_y},
-		{row + s_tsize, col,           -h, NORMAL_NEGX, 0, prop.tsize_x, 0},
-		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGX, 0, 0, prop.tsize_y},
-		{row + s_tsize, col,            0, NORMAL_NEGX, 0, 0, 0},
-			
-		//side D
-		{row,           col + s_tsize, -h, NORMAL_NEGY, 0, prop.tsize_x, prop.tsize_y},
-		{row + s_tsize, col + s_tsize, -h, NORMAL_NEGY, 0, prop.tsize_x, 0},
-		{row          , col + s_tsize,  0, NORMAL_NEGY, 0, 0, prop.tsize_y},
-		{row + s_tsize, col + s_tsize,  0, NORMAL_NEGY, 0, 0, 0}
+	//side C
+	{row + s_tsize, col + s_tsize,-h,NORMAL_NEGX, 0, sidef.top_left(1),sidef.top_left(0)},
+	{row + s_tsize, col,          -h,NORMAL_NEGX, 0, sidef.bottom_right(1),sidef.top_left(0)},
+	{row + s_tsize, col + s_tsize, 0,NORMAL_NEGX, 0, sidef.top_left(1),sidef.bottom_right(0)},
+	{row + s_tsize, col,           0,NORMAL_NEGX, 0, sidef.bottom_right(1), sidef.bottom_right(0)},
+		       
+	//side D
+	{row,           col + s_tsize,-h,NORMAL_NEGY, 0, sidef.top_left(1),sidef.top_left(0)},
+	{row + s_tsize, col + s_tsize,-h,NORMAL_NEGY, 0, sidef.bottom_right(1),sidef.top_left(0)},
+	{row          , col + s_tsize, 0,NORMAL_NEGY, 0, sidef.top_left(1),sidef.bottom_right(0)},
+	{row + s_tsize, col + s_tsize, 0,NORMAL_NEGY, 0, sidef.bottom_right(1),sidef.bottom_right(0)},
 	};
 
 	int i_wall[30] = {
@@ -150,14 +152,18 @@ MeshObject<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties 
 	float meshsize = prop.width * prop.scale;	
 	float height = prop.height;
 	float width = prop.width;
+
+	assert(prop.atlas_frames.size() > 0);
+	AtlasFrame frame = prop.atlas_frames[0];
 	
 	PosNormalTangentTexcoordVertex v_plane[] =
 	{
-		// Horizonally aligned	
-		{ 0.0f,    width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, prop.tsize_x,prop.tsize_y},
-		{ 0.0f,   -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, 0, prop.tsize_y},
-		{-height,  width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, prop.tsize_x, 0},
-		{-height, -width/2.0f, 0.0f, packF4u( 0.0f, 0.0f, 1.0f), 0, 0, 0}
+	// Horizonally aligned	
+	{ 0.0f,width/2.0f, 0.0f,packF4u(0.0f,0.0f,1.0f),0,frame.bottom_right(0),frame.bottom_right(1)},
+	{ 0.0f,-width/2.0f, 0.0f,packF4u(0.0f,0.0f,1.0f),0,frame.top_left(0),frame.bottom_right(1)},
+	{-height,width/2.0f,0.0f,packF4u(0.0f,0.0f,1.0f),0,frame.bottom_right(0),frame.top_left(1)},
+	{-height,-width/2.0f,0.0f,packF4u(0.0f,0.0f,1.0f),0, frame.top_left(0),frame.top_left(1)},
+
 	};
 	
 	int i_plane[4] = {

@@ -61,13 +61,16 @@ void TileMapLayer::createUniforms() {
 void TileMapLayer::addMeshObject(uint32_t row, uint32_t col, uint32_t type,
 				 float scale, float height) {
 
+	
+	std::vector<Vec2i> atlas_frame_coords = TileMapUtils::tileIdToAtlasFrameCoords(type);
+
 	switch(TileMapUtils::tileIdToMeshObjectType(type)) {
 	case MeshType::WALL_MESH:
-		addWall(row, col, scale, height);
+		addWall(row, col, scale, height, m_texture_atlas->getAtlasFrames(atlas_frame_coords));
 		break;
 
 	case MeshType::TILE_MESH:
-		addTile(row, col, scale);
+		addTile(row, col, scale, m_texture_atlas->getAtlasFrames(atlas_frame_coords));
 		break;
 	}
 }
@@ -85,24 +88,25 @@ void TileMapLayer::addMeshToPool(const MeshObject<T> & mesh) {
 }
 
 void TileMapLayer::addWall(uint32_t row, uint32_t col,
-			   float scale, float height) {
+			   float scale, float height,
+			   const std::vector<AtlasFrame> & frame_list) {
 
 	MeshObject<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
 		construct(MeshType::WALL_MESH,
 			  MeshProperties(row, col, scale, 1.0, height,
-					 m_texture_atlas->getSpriteWidthCoord(),
-					 m_texture_atlas->getSpriteHeightCoord()));
+					 frame_list));
 
 	addMeshToPool(mesh);
 }
 
-void TileMapLayer::addTile(uint32_t row, uint32_t col, float scale) {
+void TileMapLayer::addTile(uint32_t row, uint32_t col, float scale,
+			   const std::vector<AtlasFrame> & frame_list) {
 
 	MeshObject<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
 		construct(MeshType::TILE_MESH,
 			  MeshProperties(row, col, scale, 1.0, 0.0,
-					 m_texture_atlas->getSpriteWidthCoord(),
-					 m_texture_atlas->getSpriteHeightCoord()));
+					 frame_list));
+
 	addMeshToPool(mesh);
 }
 
@@ -110,7 +114,7 @@ void TileMapLayer::update(float dt) {
 
 	// LightingManager::getLights()
 	// try light now
-	float lightPosRadius[4] = { 0.0, 0.0, 3.0, 1.0};
+	float lightPosRadius[4] = { 2.0, 2.0, 5.0, 10.0};
 	bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
 
 	bgfx::setVertexBuffer(m_dvbh);

@@ -24,6 +24,8 @@ public:
 
 		atlas->m_grid_width = m_atlas_cfg.grid_width();
 		atlas->m_grid_height = m_atlas_cfg.grid_height();
+		atlas->m_sprite_width = m_atlas_cfg.sprite_width();
+		atlas->m_sprite_height = m_atlas_cfg.sprite_height();
 	}
 
 private:

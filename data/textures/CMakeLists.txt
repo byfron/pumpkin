@@ -3,6 +3,7 @@ set(TEXTURE_FILES "")
 list(APPEND TEXTURE_FILES "character.ktx")
 list(APPEND TEXTURE_FILES "test.ktx")
 list(APPEND TEXTURE_FILES "map_atlas_color.ktx")
+list(APPEND TEXTURE_FILES "map_atlas_color_8x8.ktx")
 list(APPEND TEXTURE_FILES "map_atlas_normal.ktx")
 
 foreach(TEXTURE_FILE ${TEXTURE_FILES})
