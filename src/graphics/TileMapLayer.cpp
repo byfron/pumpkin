@@ -110,7 +110,7 @@ void TileMapLayer::update(float dt) {
 
 	// LightingManager::getLights()
 	// try light now
-	float lightPosRadius[4] = { 10.0, 4.0, 1.0, 10.0};
+	float lightPosRadius[4] = { 0.0, 0.0, 3.0, 1.0};
 	bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
 
 	bgfx::setVertexBuffer(m_dvbh);

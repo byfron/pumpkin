@@ -42,12 +42,17 @@ MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & 
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
 	float z_pos = 0.0; //prop.z_pos
+
+
+	// avoid bleeding!. TODO: add full tex. coordinates in MeshProperties
+	uint16_t texel_size = 0x7fff / (32 * 8);
+
 	
 	PosNormalTangentTexcoordVertex v_tile[4] = {
-		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, 0, prop.tsize_y},
+		{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, texel_size/2, prop.tsize_y},
 		{row + s_tsize, col + s_tsize, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, prop.tsize_y},
-		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, 0},
-		{row, col, z_pos, NORMAL_NEGZ, 0, 0, 0},
+		{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, prop.tsize_x, texel_size/2},
+		{row, col, z_pos, NORMAL_NEGZ, 0, texel_size/2, texel_size/2},
 	};
 	
 	int i_tile[6] = {

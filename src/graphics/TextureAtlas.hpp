@@ -44,12 +44,13 @@ public:
 	}
 
 	uint16_t getSpriteWidthCoord() const {
-		return 0x7fff/m_grid_width;
+		uint16_t texel_size = 0x7fff / (32 * m_grid_height);
+		return 0x7fff/m_grid_width - texel_size/2;
 	}
 
 	uint16_t getSpriteHeightCoord() const {
-		std::cout << m_grid_height;
-		return 0x7fff/m_grid_height;
+		uint16_t texel_size = 0x7fff / (32 * m_grid_height);
+		return 0x7fff/m_grid_height - texel_size/2;
 	}
 
 	bool hasNormalMap() const {
