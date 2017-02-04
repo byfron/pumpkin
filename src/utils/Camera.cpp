@@ -7,7 +7,7 @@
 #include <limits>
 
 namespace pumpkin {
-	
+
 #define FLT_MIN std::numeric_limits<float>::min()
 
 //uint8_t Camera::m_keys;
@@ -21,7 +21,7 @@ Camera::~Camera() {
 }
 
 void Camera::init() {
-	
+
 	reset();
 	// cmdAdd("move", cmdMove);
 	// cmdAdd("rotate", cmdRotate);
@@ -82,7 +82,7 @@ void Camera::reset()
 	m_target.dest[0] = 2.0f;
 	m_target.dest[1] = 2.0f;
 	m_target.dest[2] = 0.0f;
-	
+
 	m_pos.curr[0] =  0.0f;
 	m_pos.curr[1] =  0.0f;
 	m_pos.curr[2] = -2.0f;
@@ -92,7 +92,7 @@ void Camera::reset()
 
 	m_cam_forward_dir = Eigen::Vector3f(0.0, 1.0, 0.0);
 	m_cam_right_dir = Eigen::Vector3f(-1.0, 0.0, 0.0);
-	
+
 	m_orbit[0] = 0.0f;
 	m_orbit[1] = 0.0f;
 
@@ -177,7 +177,7 @@ float Camera::getPitch() {
 
 	Eigen::Vector3f a = m_cam_forward_dir/m_cam_forward_dir.norm();
 	Eigen::Vector3f b = m_cam_direction/m_cam_direction.norm();
-	
+
 	return acosf(a.dot(b));
 }
 
@@ -193,69 +193,69 @@ void Camera::update(float _dt)
 	InputManager::m_keys |= gpx >  16834 ? CAMERA_KEY_RIGHT    : 0;
 	InputManager::m_keys |= gpy < -16834 ? CAMERA_KEY_UP  : 0;
 	InputManager::m_keys |= gpy >  16834 ? CAMERA_KEY_DOWN : 0;
-	
-	
+
+
 	if (InputManager::m_keys & CAMERA_KEY_ROTATE_LEFT)
 	{
 		m_dir_angle = m_rotateSpeed * _dt;
 		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
-			
+
 		//rotate direction vector wrt the up vector
 		Eigen::Matrix3f rot =  Eigen::AngleAxisf(m_dir_angle, axis).toRotationMatrix();
-		
+
 		m_cam_direction = rot * m_cam_direction;
 		m_cam_forward_dir = rot * m_cam_forward_dir;
 		m_cam_right_dir = rot * m_cam_right_dir;
 
 		m_eye = m_at - m_cam_direction*5;
-		
+
 		setKeyState(CAMERA_KEY_ROTATE_LEFT, false);
 	}
-	
+
 	if (InputManager::m_keys & CAMERA_KEY_ROTATE_RIGHT)
 	{
 
 		m_dir_angle = -m_rotateSpeed * _dt;
 		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
-			
+
 		//rotate direction vector wrt the up vector
 		Eigen::Matrix3f rot =  Eigen::AngleAxisf(m_dir_angle, axis).toRotationMatrix();
-		
+
 		m_cam_direction = rot * m_cam_direction;
 		m_cam_forward_dir = rot * m_cam_forward_dir;
 		m_cam_right_dir = rot * m_cam_right_dir;
 
 		m_eye = m_at - m_cam_direction*5;
 
-		setKeyState(CAMERA_KEY_ROTATE_RIGHT, false);		
+		setKeyState(CAMERA_KEY_ROTATE_RIGHT, false);
 	}
 
 	if (InputManager::m_keys & CAMERA_KEY_LEFT)
 	{
-		m_eye += m_cam_right_dir*m_moveSpeed*_dt;
+		//	m_eye += m_cam_right_dir*m_moveSpeed*_dt;
 		setKeyState(CAMERA_KEY_LEFT, false);
 	}
 
 	if (InputManager::m_keys & CAMERA_KEY_RIGHT)
-	{       
-		m_eye -= m_cam_right_dir*m_moveSpeed*_dt;		
+	{
+//		m_eye -= m_cam_right_dir*m_moveSpeed*_dt;
 		setKeyState(CAMERA_KEY_RIGHT, false);
 	}
 
 	if (InputManager::m_keys & CAMERA_KEY_UP)
 	{
-		m_eye += m_cam_forward_dir * m_moveSpeed * _dt;		
+		//	m_eye += m_cam_forward_dir * m_moveSpeed * _dt;
 		setKeyState(CAMERA_KEY_UP, false);
 	}
 
 	if (InputManager::m_keys & CAMERA_KEY_DOWN)
 	{
-		m_eye -= m_cam_forward_dir * m_moveSpeed * _dt;		
+		//	m_eye -= m_cam_forward_dir * m_moveSpeed * _dt;
 		setKeyState(CAMERA_KEY_DOWN, false);
 	}
 
-	m_at = m_eye + m_cam_direction*5;
-	m_cam_up = m_cam_right_dir.cross(m_cam_direction);	
+//	m_at = m_eye + m_cam_direction*5;
+	m_cam_up = m_cam_right_dir.cross(m_cam_direction);
 }
 
 void Camera::vecFromLatLong(float _vec[3], float _u, float _v)
@@ -280,6 +280,35 @@ void Camera::latLongFromVec(float& _u, float& _v, const float _vec[3])
 
 	_u = (bx::pi + phi)*bx::invPi*0.5f;
 	_v = theta*bx::invPi;
+}
+
+Eigen::MatrixXf Camera::getTowardsCameraRotation(Vec3f pos) {
+
+	Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
+	Eigen::Vector3f norm = Eigen::Vector3f(1.0, 0.0, 0.0);
+	Eigen::Vector3f eye = getEye();
+	Eigen::Vector3f dir2D = getDirection();
+
+	float pitch = getPitch();
+	Eigen::Vector3f dir = eye - pos;
+
+	//rotate it so that the normal and the projection on XY are aligned
+	eye(2) = 0;
+	dir2D(2) = 0;
+	dir2D.normalize();
+	dir.normalize();
+
+	float dot = norm(0)*dir2D(0) + norm(1) * dir2D(1);
+	float det = norm(0)*dir2D(1) - norm(1) * dir2D(0);
+	float angle = atan2f(det, dot);
+
+	Eigen::Affine3f rot = Eigen::Affine3f(
+		Eigen::AngleAxisf(angle, Eigen::Vector3f(0.0, 0.0, 1.0)));
+
+	Eigen::Affine3f rot_up = Eigen::Affine3f(
+	 	Eigen::AngleAxisf(1.2 + M_PI/2, Eigen::Vector3f(0.0, -1.0, 0.0)));
+
+	return (rot * rot_up).matrix();
 }
 
 
