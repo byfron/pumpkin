@@ -2,6 +2,7 @@
 #define TILEMAP_H_HEADER_GUARD
 
 #include "TileMapLayer.hpp"
+#include <common/debugdraw/debugdraw.h>
 #include <utils/Configuration.hpp>
 #include <tilemap.pb.h>
 #include <memory>
@@ -27,12 +28,15 @@ public:
 		m_tilemap_layers.push_back(layer);
 	}
 
+	void reset_debug() { m_debug_highlight_tiles.clear(); }
+	void highlightTile(Vec2i tile) { m_debug_highlight_tiles.push_back(tile); }
+	
 	typedef std::shared_ptr<TileMap> Ptr;
 private:
 
  	// each layer is created with one specific texture atlas
  	std::vector<TileMapLayer::Ptr> m_tilemap_layers;       
-	
+	std::vector<Vec2i> m_debug_highlight_tiles;
 };
 
 }

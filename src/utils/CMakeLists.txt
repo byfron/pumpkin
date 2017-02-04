@@ -13,3 +13,8 @@ add_library(utils_inputManager
   InputManager.hpp
   InputManager.cpp
   )
+
+add_library(utils_tilemapUtils
+  TileMapUtils.hpp
+  TileMapUtils.cpp
+  )

@@ -32,12 +32,15 @@ public:
 	void createUniforms();
 	bool loadTextureAtlas(uint32_t);
 	bool loadShader(uint32_t);
-	
-	
-	Eigen::Affine3f getTowardsCameraRotation();
+	       
+	static Eigen::MatrixXf getTowardsCameraRotation(Vec3f);
 	
 	void setPosition(const Eigen::Vector3f & p) {
 		m_position = p;
+	}
+
+	void setRotation(const Eigen::MatrixXf & rot) {
+		m_rotation = rot;
 	}
 
 protected:
@@ -62,6 +65,7 @@ protected:
 	int m_flipped;
 	float m_atlas_offset[4];
 	Eigen::Vector3f m_position;
+	Eigen::MatrixXf m_rotation;
 	Eigen::MatrixXf m_transform;
 
 	std::string m_texture;

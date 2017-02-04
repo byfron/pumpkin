@@ -145,35 +145,6 @@ void GraphicsObject::createUniforms() {
 	u_lightPosRadius = bgfx::createUniform("u_lightPosRadius", bgfx::UniformType::Vec4, 1);
 }
 
-Eigen::Affine3f GraphicsObject::getTowardsCameraRotation() {
-
-	Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
-	Eigen::Vector3f norm = Eigen::Vector3f(1.0, 0.0, 0.0);
-	Eigen::Vector3f eye = GraphicsEngine::camera().getEye();
-	Eigen::Vector3f dir2D = GraphicsEngine::camera().getDirection();
-
-	float pitch = GraphicsEngine::camera().getPitch();
-	Eigen::Vector3f dir = eye - m_position;
-
-	//rotate it so that the normal and the projection on XY are aligned
-	eye(2) = 0;
-	dir2D(2) = 0;
-	dir2D.normalize();
-	dir.normalize();
-
-	float dot = norm(0)*dir2D(0) + norm(1) * dir2D(1);
-	float det = norm(0)*dir2D(1) - norm(1) * dir2D(0);
-	float angle = atan2f(det, dot);
-
-	Eigen::Affine3f rot = Eigen::Affine3f(
-		Eigen::AngleAxisf(angle, Eigen::Vector3f(0.0, 0.0, 1.0)));
-
-	Eigen::Affine3f rot_up = Eigen::Affine3f(
-	 	Eigen::AngleAxisf(1.2 + M_PI/2, Eigen::Vector3f(0.0, -1.0, 0.0)));
-
-	return rot * rot_up;
-}
-
 void GraphicsObject::update(float d) {
 
 	// Set render states.
@@ -193,11 +164,15 @@ void GraphicsObject::update(float d) {
 	Eigen::Affine3f translation(Eigen::Translation3f(m_position(0),
 							 m_position(1),
 							 m_position(2)));
-	Eigen::Affine3f rot = getTowardsCameraRotation();
+	// TODO: Rotation!
+
+//	m_rotation = getTowardsCameraRotation();
+//	Eigen::Affine3f rotation = Eigen::Affine3f(m_rotation);
 
 	Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
 
-	m_transform = (translation * rot).matrix();
+	// TODO: this is being computed in Bodycmp already. Maybe pass directly the transf.
+	m_transform = (translation.matrix() * m_rotation);
 	bgfx::setTransform(m_transform.data());
 
 	bgfx::setVertexBuffer(m_vbh);

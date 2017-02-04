@@ -7,6 +7,10 @@ add_library(graphics_engine
   Animation.cpp
   GraphicsObject.hpp
   GraphicsObject.cpp
+  DebugGraphicsObject.hpp
+  DebugGraphicsObject.cpp
+  DebugManager.hpp
+  DebugManager.cpp
   Shader.hpp
   Shader.cpp
   TextureAtlas.hpp
@@ -21,6 +25,7 @@ target_link_libraries(graphics_engine
   utils_meshUtils
   utils_camera
   utils_inputManager
+  utils_tilemapUtils
   proto
   ${BGFX_COMMON_LIBRARIES}
   ${BX_LIBRARIES}
