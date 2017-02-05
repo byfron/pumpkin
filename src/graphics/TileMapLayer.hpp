@@ -30,11 +30,12 @@ public:
 			   float scale, float height);
 	
 	template <typename T>
-	void addMeshToPool(const MeshObject<T> & mesh);
+	void addMeshToPool(const Mesh<T> & mesh);
 	
 	void addWall(uint32_t row, uint32_t col,
 		     float scale, float height,
 		     const std::vector<AtlasFrame> &);
+	
 	void addTile(uint32_t row, uint32_t col,
 		     float scale, const std::vector<AtlasFrame> &);
 	

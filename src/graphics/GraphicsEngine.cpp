@@ -2,6 +2,7 @@
 #include "ResourceManager.hpp"
 #include "TextureAtlas.hpp"
 #include "Animation.hpp"
+#include <utils/Mesh.hpp>
 #include <utils/VertexUtils.hpp>
 #include <utils/Camera.hpp>
 #include <utils/Configuration.hpp>
@@ -54,6 +55,16 @@ void GraphicsEngine::initResources() {
 	// Move this to voyage engine?
 	loadTextures();
 	loadShaders();
+}
+
+void GraphicsEngine::loadMeshes() {
+
+	// Configuration<voyage::MeshListCfg> mesh_list(
+	// 	std::string(CONFIG_FILE_PATH) + "meshes.cfg");
+	// for (int i = 0; i < mesh_list.config().mesh().size(); i++) {
+	// 	ResourceManager::pushResource<Mesh, voyage::MeshCfg>
+	// 		 (mesh_list.config().mesh(i));
+	// }
 }
 
 void GraphicsEngine::loadTextures() {

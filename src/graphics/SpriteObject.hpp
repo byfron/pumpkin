@@ -13,7 +13,7 @@ namespace pumpkin {
 class SpriteObjectFactory;
 class AnimationFactory;	
 	
-class SpriteObject : public GraphicsObject {
+class SpriteObject : public GraphicsObject<> {
 
 public:
 

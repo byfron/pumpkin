@@ -35,9 +35,12 @@ bgfx::VertexDecl PosNormalTangentTexcoordVertex::ms_decl;
 
 namespace VertexUtils {
 
-MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop) {
+//I could load this from protobufs!!
 
-	MeshObject<PosNormalTangentTexcoordVertex> mesh;
+Mesh<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop) {
+
+	Mesh<PosNormalTangentTexcoordVertex> mesh;
+	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
 	float row = prop.row * prop.scale;
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
@@ -70,9 +73,10 @@ MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & 
 }
 	
 // Move this to a static function in vertex_utils
-MeshObject<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop) {
+Mesh<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTangentTexcoordVertex> mesh;
+	Mesh<PosNormalTangentTexcoordVertex> mesh;
+	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
 	float row = prop.row * prop.scale;
 	float col = prop.col * prop.scale;
 	float s_tsize = prop.width * prop.scale;
@@ -145,16 +149,19 @@ MeshObject<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & 
 }
 
 
-MeshObject<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop) {
+Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop) {
 
-	MeshObject<PosNormalTangentTexcoordVertex> mesh;
+	Mesh<PosNormalTangentTexcoordVertex> mesh;
 
+	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
+		
 	float meshsize = prop.width * prop.scale;	
 	float height = prop.height;
 	float width = prop.width;
 
 	assert(prop.atlas_frames.size() > 0);
 	AtlasFrame frame = prop.atlas_frames[0];
+
 	
 	PosNormalTangentTexcoordVertex v_plane[] =
 	{

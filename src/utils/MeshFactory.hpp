@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Mesh.hpp"
 #include <utils/VertexUtils.hpp>
 #include <graphics/TextureAtlas.hpp>
 #include <vector>
 
 namespace pumpkin {
 
-enum class MeshType {
+enum class MeshObjectType {
 	TILE_MESH,
 	WALL_MESH,
 	PLANE_MESH
@@ -18,7 +19,7 @@ struct MeshProperties {
 		       float s,
 		       float w,
 		       float h,
-		       const std::vector<AtlasFrame> &af) :
+		       const std::vector<AtlasFrame> &af = std::vector<AtlasFrame>()) :
 		row(r), col(c), scale(s),
 		width(w), height(h), atlas_frames(af) {}
 
@@ -29,24 +30,7 @@ struct MeshProperties {
 	float scale;
 	std::vector<AtlasFrame> atlas_frames;
 };
-
-	
-
-template <typename T>
-class MeshObject {
-public:
-	void addVertex(const T & vertex) {
-		m_vertex_pool.push_back(vertex);
-	}
-
-	void addIndex(int index) {
-		m_index_pool.push_back(index);
-	}
-
-	std::vector<int> m_index_pool;
-	std::vector<T> m_vertex_pool;
-};
-
+       
 template <typename T>
 class MeshFactory {
 public:
@@ -54,15 +38,15 @@ public:
 	}
 
 	//possibility T::Properties
-	static MeshObject<T> construct(MeshType id, const MeshProperties & properties) {
+	static Mesh<T> construct(MeshObjectType id, const MeshProperties & properties) {
 		switch(id) {
-		case MeshType::TILE_MESH:
+		case MeshObjectType::TILE_MESH:
 			return VertexUtils::constructTile(properties);
 			break;
-		case MeshType::WALL_MESH:
+		case MeshObjectType::WALL_MESH:
 			return  VertexUtils::constructWall(properties);
 			break;
-		case MeshType::PLANE_MESH:
+		case MeshObjectType::PLANE_MESH:
 			return  VertexUtils::constructVPlane(properties);
 			break;
 		};

@@ -42,6 +42,7 @@ public:
 	void initResources();
 	void loadShaders();
 	void loadTextures();
+	void loadMeshes();
 
 	virtual void frame(const float) {};
 	virtual void init_engine() {};

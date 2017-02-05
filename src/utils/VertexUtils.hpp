@@ -3,6 +3,7 @@
 
 #include <common/common.h>
 #include <common/bgfx_utils.h>
+#include "Mesh.hpp"
 
 namespace pumpkin {
 
@@ -90,9 +91,10 @@ struct PosNormalTangentTexcoordVertex
 
 namespace VertexUtils {
 
-MeshObject<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop);	
-MeshObject<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop);
-MeshObject<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop);
+pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop);	
+pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop);
+pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop);
+	
 }
 
 }

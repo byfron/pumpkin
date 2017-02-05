@@ -3,13 +3,13 @@
 namespace pumpkin {
 namespace TileMapUtils {
 
-	MeshType tileIdToMeshObjectType(uint32_t tile_id) {
+	MeshObjectType tileIdToMeshObjectType(uint32_t tile_id) {
 		switch(tile_id) {
 		case 0:
-			return pumpkin::MeshType::TILE_MESH;
+			return pumpkin::MeshObjectType::TILE_MESH;
 			break;
 		case 1:
-			return pumpkin::MeshType::WALL_MESH;
+			return pumpkin::MeshObjectType::WALL_MESH;
 			break;
 		}
 	}

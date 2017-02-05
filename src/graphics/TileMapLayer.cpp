@@ -60,23 +60,22 @@ void TileMapLayer::createUniforms() {
 
 void TileMapLayer::addMeshObject(uint32_t row, uint32_t col, uint32_t type,
 				 float scale, float height) {
-
 	
 	std::vector<Vec2i> atlas_frame_coords = TileMapUtils::tileIdToAtlasFrameCoords(type);
 
 	switch(TileMapUtils::tileIdToMeshObjectType(type)) {
-	case MeshType::WALL_MESH:
+	case MeshObjectType::WALL_MESH:
 		addWall(row, col, scale, height, m_texture_atlas->getAtlasFrames(atlas_frame_coords));
 		break;
 
-	case MeshType::TILE_MESH:
+	case MeshObjectType::TILE_MESH:
 		addTile(row, col, scale, m_texture_atlas->getAtlasFrames(atlas_frame_coords));
 		break;
 	}
 }
 
 template <typename T>
-void TileMapLayer::addMeshToPool(const MeshObject<T> & mesh) {
+void TileMapLayer::addMeshToPool(const Mesh<T> & mesh) {
 	int starting_idx = m_vertexPool.size();
 	for (auto v : mesh.m_vertex_pool) {
 		m_vertexPool.push_back(v);
@@ -91,8 +90,8 @@ void TileMapLayer::addWall(uint32_t row, uint32_t col,
 			   float scale, float height,
 			   const std::vector<AtlasFrame> & frame_list) {
 
-	MeshObject<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
-		construct(MeshType::WALL_MESH,
+	Mesh<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
+		construct(MeshObjectType::WALL_MESH,
 			  MeshProperties(row, col, scale, 1.0, height,
 					 frame_list));
 
@@ -102,8 +101,8 @@ void TileMapLayer::addWall(uint32_t row, uint32_t col,
 void TileMapLayer::addTile(uint32_t row, uint32_t col, float scale,
 			   const std::vector<AtlasFrame> & frame_list) {
 
-	MeshObject<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
-		construct(MeshType::TILE_MESH,
+	Mesh<PosNormalTangentTexcoordVertex> mesh = MeshFactory<PosNormalTangentTexcoordVertex>::
+		construct(MeshObjectType::TILE_MESH,
 			  MeshProperties(row, col, scale, 1.0, 0.0,
 					 frame_list));
 
