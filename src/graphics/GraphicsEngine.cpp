@@ -87,12 +87,13 @@ void GraphicsEngine::run() {
 
 	m_camera.update(deltaTime);
 
+//	m_particle_system_pool.update(deltaTime);
+
 	float view[16];
 	float proj[16];
 	m_camera.mtxLookAt(view);
 	bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f);
 	bgfx::setViewTransform(0, view, proj);
-
 }
 
 void GraphicsEngine::stop() {

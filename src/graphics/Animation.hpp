@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsObject.hpp"
+#include "SpriteObject.hpp"
 #include "TextureAtlas.hpp"
 #include <map>
 
@@ -8,7 +8,7 @@ namespace pumpkin {
 
 class AnimationFactory;
 
-class Animation : public GraphicsObject {
+class Animation : public SpriteObject {
 
 public:
 
@@ -33,7 +33,7 @@ public:
 	}
 
 	void init() {
-		GraphicsObject::init();
+		SpriteObject::init();
 	}
 
 	bool isValid() {
@@ -43,7 +43,7 @@ public:
 
 	void update(float dt) {
 		if (isTimeToSwitchFrames(dt) && m_enabled) { frameForward(); }
-		GraphicsObject::update(dt);
+		SpriteObject::update(dt);
 	}
 
 	void addFrame(uint32_t anim_id, const AtlasFrame & frame) {

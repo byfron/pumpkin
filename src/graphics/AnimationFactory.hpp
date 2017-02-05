@@ -18,8 +18,8 @@ public:
 	//TODO: change all to this style
 	bool generate(Animation* anim) {
 
-		voyage::GraphicsObjectCfg graphics_cfg = m_animation_list_cfg.config().graphics_properties();
-		anim->loadTextureAtlas(graphics_cfg.atlas_id());
+		voyage::SpriteObjectCfg sprite_cfg = m_animation_list_cfg.config().graphics_properties();
+		anim->loadTextureAtlas(sprite_cfg.atlas_id());
 
 		// Add all animation frames
 		for (int i = 0; i < m_animation_list_cfg.config().animation().size(); i++) {
@@ -40,9 +40,9 @@ public:
 
 
 		// graphics initialisation
-		anim->loadShader(graphics_cfg.shader_id());
-		anim->m_width = graphics_cfg.width();
-		anim->m_height = graphics_cfg.height();
+		anim->loadShader(sprite_cfg.shader_id());
+		anim->m_width = sprite_cfg.width();
+		anim->m_height = sprite_cfg.height();
 
 		anim->switchToAnim(m_animation_list_cfg.config().animation(0).animation_id());
 		anim->updateAtlasOffset();

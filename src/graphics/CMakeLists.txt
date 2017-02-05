@@ -5,6 +5,8 @@ add_library(graphics_engine
   GraphicsEngine.cpp
   Animation.hpp
   Animation.cpp
+  SpriteObject.hpp
+  SpriteObject.cpp
   GraphicsObject.hpp
   GraphicsObject.cpp
   DebugGraphicsObject.hpp

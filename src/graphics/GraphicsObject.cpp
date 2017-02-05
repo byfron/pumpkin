@@ -12,27 +12,11 @@ namespace pumpkin {
 // A possible solution would be to pass to the constructors the
 // protobuf structures rather than the config files!!!
 GraphicsObject::GraphicsObject() :
-		m_flipped(0),
 		m_transform(Eigen::MatrixXf(4,4)){
-
-	m_atlas_offset[0] = 0.0;
-	m_atlas_offset[1] = 0.0;
-	m_atlas_offset[2] = 1.0/4.0;
 }
 
 GraphicsObject::GraphicsObject(const std::string & config_file) :
-	m_flipped(0),
 	m_transform(Eigen::MatrixXf(4,4)) {
-
-	GraphicsObjectFactory factory(config_file);
-	factory.generate(this);
-
-	// sprite texture width: this comes from the grid of the atlas!
-	// we pack it in the z coord of the atlas offset (vec4)
-	// PUT IT IN FACTORY
-	m_atlas_offset[0] = 0.0;
-	m_atlas_offset[1] = 0.0;
-	m_atlas_offset[2] = 1.0/4.0;
 }
 
 GraphicsObject::~GraphicsObject() {
@@ -40,32 +24,14 @@ GraphicsObject::~GraphicsObject() {
 }
 
 void GraphicsObject::destroyUniforms() {
-
-	bgfx::destroyUniform(u_texOffset);
-	bgfx::destroyUniform(u_flip);
-	bgfx::destroyUniform(u_lightPosRadius);
 }
 
 void GraphicsObject::init() {
-
-	m_texture_atlas->init();
-	m_shader->init();
 	initialiseBuffers();
 	createUniforms();
 
 	// debugging
 	ddInit();
-}
-
-
-bool GraphicsObject::loadTextureAtlas(uint32_t id) {
-	m_texture_atlas = ResourceManager::getResource<TextureAtlas>(id);
-	if (!m_texture_atlas) {
-		//log error
-		std::cout << "error loading texture atlas cfg" << std::endl;
-		return false;
-	}
-	return true;
 }
 
 bool GraphicsObject::loadShader(uint32_t id) {
@@ -113,36 +79,10 @@ void GraphicsObject::initialiseBuffers() {
 		// Static data can be passed with bgfx::makeRef
 		bgfx::makeRef(s_playerTriStrip, sizeof(s_playerTriStrip) )
 		);
-
-	// TODO: use the modern mesh object
-
-	// MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
-	// 	construct(MeshType::PLANE_MESH,
-	// 		  MeshProperties(0, 0, m_scale, m_width, m_height));
-
-
-	// // TODO: have this vertex buffer static?
-	// m_vbh = bgfx::createVertexBuffer(
-	// 	// Static data can be passed with bgfx::makeRef
-	// 	bgfx::makeRef(&mesh.m_vertex_pool[0],
-	// 		      sizeof(PosNormalTexCoordVertex) *
-	// 		      mesh.m_vertex_pool.size() )
-	// 	, PosNormalTexCoordVertex::ms_decl
-	// 	);
-
-	// // Create static index buffer.
-	// m_ibh = bgfx::createIndexBuffer(
-	// 	// Static data can be passed with bgfx::makeRef
-	// 	bgfx::makeRef(&mesh.m_index_pool[0],
-	// 		      sizeof(uint16_t) * mesh.m_index_pool.size())
-	// 	);
 }
 
 void GraphicsObject::createUniforms() {
 
-	u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
-	u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
-	u_lightPosRadius = bgfx::createUniform("u_lightPosRadius", bgfx::UniformType::Vec4, 1);
 }
 
 void GraphicsObject::update(float d) {
@@ -155,61 +95,14 @@ void GraphicsObject::update(float d) {
 					       BGFX_STATE_BLEND_INV_SRC_ALPHA )
 		);
 
-
-	float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
-	bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
-
-	Eigen::Vector3f at = GraphicsEngine::camera().getAt();
-
-	Eigen::Affine3f translation(Eigen::Translation3f(m_position(0),
-							 m_position(1),
-							 m_position(2)));
-	// TODO: Rotation!
-
-//	m_rotation = getTowardsCameraRotation();
-//	Eigen::Affine3f rotation = Eigen::Affine3f(m_rotation);
-
-	Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
-
-	// TODO: this is being computed in Bodycmp already. Maybe pass directly the transf.
-	m_transform = (translation.matrix() * m_rotation);
-	bgfx::setTransform(m_transform.data());
-
+//	bgfx::setTransform(m_transform.data());
 	bgfx::setVertexBuffer(m_vbh);
 	bgfx::setIndexBuffer(m_ibh);
-	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getColorHandle());
-
-	bgfx::setUniform(u_texOffset, m_atlas_offset, 1);
-	bgfx::setUniform(u_flip, &m_flipped, 1);
+//	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getColorHandle());
 
 	// Submit primitive for rendering to view 0.
 	bgfx::submit(0, m_shader->getHandle());
 
-	//TODO refactor to debug helper
-	if (GraphicsEngine::debugEnabled()) {
-		ddBegin(0);
-
-		float normal[4] = {
-			0.0, 0.0, -1.0, 0.0
-		};
-
-		float center[4] = {
-			-0.25, 0.0, 0.0, 1.0
-		};
-
-		ddPush();
-		ddSetTransform(m_transform.data());
-		ddMoveTo(center);
-		ddLineTo(center[0] + normal[0],
-			 center[1] + normal[1],
-			 center[2] + normal[2]);
-		float size = 0.5;
-		ddDrawQuad(normal, center, size);
-
-		ddPop();
-
-		ddEnd();
-	}
 }
 
 }
