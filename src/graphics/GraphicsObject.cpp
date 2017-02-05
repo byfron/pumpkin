@@ -1,6 +1,5 @@
 #include "GraphicsObject.hpp"
 #include "GraphicsEngine.hpp"
-#include "GraphicsObjectFactory.hpp"
 #include <utils/MeshFactory.hpp>
 #include <iostream>
 #include <common/debugdraw/debugdraw.h>

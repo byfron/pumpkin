@@ -51,7 +51,6 @@ void SpriteObject::destroyUniforms() {
 void SpriteObject::init() {
 
 	m_texture_atlas->init();
-
 	GraphicsObject::init();
 }
 
@@ -106,13 +105,6 @@ void SpriteObject::update(float d) {
 	// Submit primitive for rendering to view 0.
 	bgfx::submit(0, m_shader->getHandle());
 
-
-	std::cout << m_atlas_offset[0] << ","
-		  << m_atlas_offset[1] << ","
-		  << m_atlas_offset[2] << ","
-		  << m_atlas_offset[0] << std::endl;
-	       
-	
 	//TODO refactor to debug helper
 	if (GraphicsEngine::debugEnabled()) {
 		ddBegin(0);

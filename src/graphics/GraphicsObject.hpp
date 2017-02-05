@@ -21,13 +21,13 @@ public:
 	GraphicsObject(const std::string & config_file);
 	
 	~GraphicsObject();
-	void init();
 	
+	virtual void init();	
 	virtual void update(float d);
-
-	void destroyUniforms();
-	void initialiseBuffers();
-	void createUniforms();
+	virtual void createUniforms();	
+	virtual void destroyUniforms();	
+	virtual void initialiseBuffers();
+	
 	bool loadShader(uint32_t);
 
 	void setTransform(const Eigen::MatrixXf & transform) {
