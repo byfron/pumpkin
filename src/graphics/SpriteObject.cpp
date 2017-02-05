@@ -13,7 +13,7 @@ namespace pumpkin {
 // protobuf structures rather than the config files!!!
 SpriteObject::SpriteObject() :
 		m_flipped(0),
-		m_transform(Eigen::MatrixXf(4,4)){
+		GraphicsObject() {
 
 	m_atlas_offset[0] = 0.0;
 	m_atlas_offset[1] = 0.0;
@@ -22,7 +22,7 @@ SpriteObject::SpriteObject() :
 
 SpriteObject::SpriteObject(const std::string & config_file) :
 	m_flipped(0),
-	m_transform(Eigen::MatrixXf(4,4)) {
+	GraphicsObject() {
 
 	SpriteObjectFactory factory(config_file);
 	factory.generate(this);
@@ -44,17 +44,15 @@ void SpriteObject::destroyUniforms() {
 	bgfx::destroyUniform(u_texOffset);
 	bgfx::destroyUniform(u_flip);
 	bgfx::destroyUniform(u_lightPosRadius);
+
+	GraphicsObject::destroyUniforms();
 }
 
 void SpriteObject::init() {
 
 	m_texture_atlas->init();
-	m_shader->init();
-	initialiseBuffers();
-	createUniforms();
 
-	// debugging
-	ddInit();
+	GraphicsObject::init();
 }
 
 
@@ -68,74 +66,8 @@ bool SpriteObject::loadTextureAtlas(uint32_t id) {
 	return true;
 }
 
-bool SpriteObject::loadShader(uint32_t id) {
-	m_shader = ResourceManager::getResource<Shader>(id);
-	std::cout << "Loading shader" << std::endl;
-	if (!m_shader) {
-		//log error
-		std::cout << "error loading shader cfg" << std::endl;
-		return false;
-	}
-	return true;
-}
-
 void SpriteObject::initialiseBuffers() {
-
-		// size of a single sprite. TODO: This depends on the grid!!
-	int16_t tsize = 0x7fff/4;
-
-	static PosNormalTangentTexcoordVertex s_playerVertices[] =
-	{
-		// Horizonally aligned
-		{  0.0f,      m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, tsize, tsize },
-		{  0.0f,     -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, 0, tsize },
-		{ -m_height,  m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, tsize, 0 },
-		{ -m_height, -m_width/2.0f, 0.0f, packF4u( 0.0f,  0.0f,  1.0f), 0, 0, 0 }
-
-	};
-
-	static const uint16_t s_playerTriStrip[] =
-	{
-		0, 1, 2,
-		3
-	};
-
-	// TODO: have this vertex buffer static? same for all!!
-	// Create static vertex buffer.
-	m_vbh = bgfx::createVertexBuffer(
-		// Static data can be passed with bgfx::makeRef
-		bgfx::makeRef(s_playerVertices, sizeof(s_playerVertices) )
-		, PosNormalTangentTexcoordVertex::ms_decl
-		);
-
-	// Create static index buffer.
-	m_ibh = bgfx::createIndexBuffer(
-		// Static data can be passed with bgfx::makeRef
-		bgfx::makeRef(s_playerTriStrip, sizeof(s_playerTriStrip) )
-		);
-
-	// TODO: use the modern mesh object
-
-	// MeshObject<PosNormalTexCoordVertex> mesh = MeshFactory<PosNormalTexCoordVertex>::
-	// 	construct(MeshType::PLANE_MESH,
-	// 		  MeshProperties(0, 0, m_scale, m_width, m_height));
-
-
-	// // TODO: have this vertex buffer static?
-	// m_vbh = bgfx::createVertexBuffer(
-	// 	// Static data can be passed with bgfx::makeRef
-	// 	bgfx::makeRef(&mesh.m_vertex_pool[0],
-	// 		      sizeof(PosNormalTexCoordVertex) *
-	// 		      mesh.m_vertex_pool.size() )
-	// 	, PosNormalTexCoordVertex::ms_decl
-	// 	);
-
-	// // Create static index buffer.
-	// m_ibh = bgfx::createIndexBuffer(
-	// 	// Static data can be passed with bgfx::makeRef
-	// 	bgfx::makeRef(&mesh.m_index_pool[0],
-	// 		      sizeof(uint16_t) * mesh.m_index_pool.size())
-	// 	);
+	GraphicsObject::initialiseBuffers();
 }
 
 void SpriteObject::createUniforms() {
@@ -161,20 +93,9 @@ void SpriteObject::update(float d) {
 
 	Eigen::Vector3f at = GraphicsEngine::camera().getAt();
 
-	Eigen::Affine3f translation(Eigen::Translation3f(m_position(0),
-							 m_position(1),
-							 m_position(2)));
-	// TODO: Rotation!
-
-//	m_rotation = getTowardsCameraRotation();
-//	Eigen::Affine3f rotation = Eigen::Affine3f(m_rotation);
-
 	Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
 
-	// TODO: this is being computed in Bodycmp already. Maybe pass directly the transf.
-	m_transform = (translation.matrix() * m_rotation);
 	bgfx::setTransform(m_transform.data());
-
 	bgfx::setVertexBuffer(m_vbh);
 	bgfx::setIndexBuffer(m_ibh);
 	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getColorHandle());
@@ -185,6 +106,13 @@ void SpriteObject::update(float d) {
 	// Submit primitive for rendering to view 0.
 	bgfx::submit(0, m_shader->getHandle());
 
+
+	std::cout << m_atlas_offset[0] << ","
+		  << m_atlas_offset[1] << ","
+		  << m_atlas_offset[2] << ","
+		  << m_atlas_offset[0] << std::endl;
+	       
+	
 	//TODO refactor to debug helper
 	if (GraphicsEngine::debugEnabled()) {
 		ddBegin(0);

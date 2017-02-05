@@ -2,6 +2,7 @@
 #define GRAPHICSOBJECT_H_HEADER_GUARD
 
 #include "Shader.hpp"
+#include <common/math.hpp>
 #include <utils/VertexUtils.hpp>
 #include <string>
 #include <Eigen/Dense>
@@ -22,13 +23,16 @@ public:
 	~GraphicsObject();
 	void init();
 	
-	void update(float d);
+	virtual void update(float d);
 
 	void destroyUniforms();
 	void initialiseBuffers();
 	void createUniforms();
 	bool loadShader(uint32_t);
-	       
+
+	void setTransform(const Eigen::MatrixXf & transform) {
+		m_transform = transform;
+	}
 
 protected:
 	
@@ -40,7 +44,6 @@ protected:
 	float m_width;
 	float m_scale;
 
-	Eigen::Vector3f m_position;
 	Eigen::MatrixXf m_transform;
 
 	std::string m_vertex_shader;

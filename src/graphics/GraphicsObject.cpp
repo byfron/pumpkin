@@ -27,6 +27,9 @@ void GraphicsObject::destroyUniforms() {
 }
 
 void GraphicsObject::init() {
+
+	m_shader->init();
+
 	initialiseBuffers();
 	createUniforms();
 
@@ -99,6 +102,7 @@ void GraphicsObject::update(float d) {
 	bgfx::setVertexBuffer(m_vbh);
 	bgfx::setIndexBuffer(m_ibh);
 //	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getColorHandle());
+
 
 	// Submit primitive for rendering to view 0.
 	bgfx::submit(0, m_shader->getHandle());
