@@ -11,8 +11,9 @@
 namespace pumpkin {
 
 class SpriteObjectFactory;
-class AnimationFactory;	
-	
+class AnimationFactory;
+
+	//we should template this as well
 class SpriteObject : public GraphicsObject<> {
 
 public:
@@ -22,24 +23,24 @@ public:
 
 	SpriteObject();
 	SpriteObject(const std::string & config_file);
-	
+
 	~SpriteObject();
 	void init();
-	
+
 	void update(float d);
 
 	void destroyUniforms();
 	void initialiseBuffers();
 	void createUniforms();
 	bool loadTextureAtlas(uint32_t);
-	       
+
 	static Eigen::MatrixXf getTowardsCameraRotation(Vec3f);
-	
+
 
 protected:
-	
+
 	bgfx::UniformHandle s_texColor;
-	
+
 	bgfx::UniformHandle u_flip;
 	bgfx::UniformHandle u_texOffset;
 	bgfx::UniformHandle u_lightPosRadius;

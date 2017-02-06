@@ -13,7 +13,7 @@ enum class MeshObjectType {
 	WALL_MESH,
 	PLANE_MESH
 };
-	
+
 struct MeshProperties {
 	MeshProperties(uint32_t r,
 		       uint32_t c,
@@ -31,7 +31,7 @@ struct MeshProperties {
 	float scale;
 	std::vector<AtlasFrame> atlas_frames;
 };
-       
+
 template <typename T>
 class MeshFactory {
 public:
@@ -44,8 +44,8 @@ public:
 
 	bool generate(Mesh<T> *mesh) {
 
-		
-		
+
+
 	}
 
 	//possibility T::Properties

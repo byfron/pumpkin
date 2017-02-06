@@ -21,6 +21,26 @@ struct MeshProperties;
 uint32_t packUint32(uint8_t _x, uint8_t _y, uint8_t _z, uint8_t _w);
 uint32_t packF4u(float _x, float _y = 0.0f, float _z = 0.0f, float _w = 0.0f);
 
+
+struct PosColorVertex
+{
+	float m_x;
+	float m_y;
+	float m_z;
+	uint32_t m_abgr;
+
+	static void init()
+	{
+		ms_decl
+			.begin()
+			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Color0,   4, bgfx::AttribType::Uint8, true)
+			.end();
+	};
+
+	static bgfx::VertexDecl ms_decl;
+};
+
 struct PosTexCoordVertex
 {
 	float m_x;
@@ -91,10 +111,12 @@ struct PosNormalTangentTexcoordVertex
 
 namespace VertexUtils {
 
-pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop);	
+pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop);
 pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop);
 pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop);
-	
+pumpkin::Mesh<PosColorVertex> constructColorVPlane(const MeshProperties & prop);
+pumpkin::Mesh<PosColorVertex> constructBulletLine(const MeshProperties & prop);
+
 }
 
 }

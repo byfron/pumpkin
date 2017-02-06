@@ -2,12 +2,13 @@
 #include <common/bgfx_utils.h>
 
 namespace pumpkin {
-	
+
 uint16_t InputManager::m_keys;
 uint32_t InputManager::m_debug = BGFX_DEBUG_TEXT;
 uint32_t InputManager::m_reset = BGFX_RESET_VSYNC;
 float InputManager::m_mouse_angle;
 entry::MouseState InputManager::m_mouseState;
+entry::MouseState InputManager::m_oldMouseState;
 Mouse InputManager::m_mouse;
 
 float computeMouseAngle(entry::MouseState mstate, const uint32_t & width,
@@ -16,11 +17,11 @@ float computeMouseAngle(entry::MouseState mstate, const uint32_t & width,
 	Eigen::Vector2f mvec;
 	Eigen::Vector2d refvec = Eigen::Vector2d(-1.0f, -1.0f);
 	refvec.normalize();
-	
+
 	mvec(0) = mstate.m_mx - width/2.0;
 	mvec(1) = mstate.m_my - height/2.0;
 	mvec.normalize();
-	
+
 	return atan2f(mvec(0)*refvec(1) - mvec(1)*refvec(0),
 		      mvec(0)*refvec(0) + mvec(1)*refvec(1));
 }
@@ -92,7 +93,7 @@ static const InputBinding s_camBindings[] =
 
 void InputManager::init() {
 	cmdAdd("move", cmdMove);
-	cmdAdd("rotate", cmdRotateCamera);		
+	cmdAdd("rotate", cmdRotateCamera);
 	inputAddBindings("camBindings", s_camBindings);
 }
 

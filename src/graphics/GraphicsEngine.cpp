@@ -39,6 +39,7 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 			   , 1.0f
 			   , 0);
 
+	PosColorVertex::init();
 	PosNormalTexCoordVertex::init();
 	PosNormalTangentTexcoordVertex::init();
 	PosTexCoordVertex::init();

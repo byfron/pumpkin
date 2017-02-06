@@ -12,7 +12,8 @@ namespace pumpkin {
 // A possible solution would be to pass to the constructors the
 // protobuf structures rather than the config files!!!
 SpriteObject::SpriteObject() :
-	m_flipped(0) {	
+	GraphicsObject("cfg"),
+	m_flipped(0) {
 
 	m_transform = Eigen::MatrixXf(4,4);
 	m_atlas_offset[0] = 0.0;
