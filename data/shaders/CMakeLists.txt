@@ -3,6 +3,8 @@ set(COMP_SHADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/glsl/)
 #TODO: automatize the script for every shader in the folder
 set(FSHADER_FILES "")
 set(VSHADER_FILES "")
+list(APPEND FSHADER_FILES "fs_default.sc")
+list(APPEND VSHADER_FILES "vs_default.sc")
 list(APPEND FSHADER_FILES "fs_terrain.sc")
 list(APPEND VSHADER_FILES "vs_terrain.sc")
 list(APPEND FSHADER_FILES "fs_character.sc")
