@@ -2,6 +2,7 @@
 
 #include "Mesh.hpp"
 #include <utils/VertexUtils.hpp>
+#include <utils/Configuration.hpp>
 #include <graphics/TextureAtlas.hpp>
 #include <vector>
 
@@ -34,7 +35,17 @@ struct MeshProperties {
 template <typename T>
 class MeshFactory {
 public:
-	MeshFactory() {
+
+	typedef Configuration<voyage::MeshCfg> Config;
+
+	MeshFactory(const std::string & config_file) :
+		m_config(Config(config_file)) {
+	}
+
+	bool generate(Mesh<T> *mesh) {
+
+		
+		
 	}
 
 	//possibility T::Properties
@@ -51,6 +62,10 @@ public:
 			break;
 		};
 	}
+
+private:
+
+	Config m_config;
 
 };
 

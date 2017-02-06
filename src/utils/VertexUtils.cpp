@@ -166,10 +166,10 @@ Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop
 	PosNormalTangentTexcoordVertex v_plane[] =
 	{
 	// Horizonally aligned	
-	{ 0.0f,width/2.0f, 0.0f,packF4u(0.0f,0.0f,1.0f),0,frame.bottom_right(0),frame.bottom_right(1)},
-	{ 0.0f,-width/2.0f, 0.0f,packF4u(0.0f,0.0f,1.0f),0,frame.top_left(0),frame.bottom_right(1)},
-	{-height,width/2.0f,0.0f,packF4u(0.0f,0.0f,1.0f),0,frame.bottom_right(0),frame.top_left(1)},
-	{-height,-width/2.0f,0.0f,packF4u(0.0f,0.0f,1.0f),0, frame.top_left(0),frame.top_left(1)},
+	{ 0.0f,width/2.0f, 0.0f,packF4u(0.0f,0.0f, 1.0f),0,frame.bottom_right(0),frame.bottom_right(1)},
+	{ 0.0f,-width/2.0f, 0.0f,packF4u(0.0f,0.0f, 1.0f),0,frame.top_left(0),frame.bottom_right(1)},
+	{-height,width/2.0f,0.0f,packF4u(0.0f,0.0f, 1.0f),0,frame.bottom_right(0),frame.top_left(1)},
+	{-height,-width/2.0f,0.0f,packF4u(0.0f,0.0f, 1.0f),0, frame.top_left(0),frame.top_left(1)},
 
 	};
 	

@@ -22,7 +22,6 @@ public:
 	}
 
 private:
-	std::string m_config_file;
 	Config m_config;
 };
 

@@ -5,6 +5,7 @@
 #include "TextureAtlas.hpp"
 #include <common/math.hpp>
 #include <utils/VertexUtils.hpp>
+#include <utils/MeshFactory.hpp>
 #include <string>
 #include <Eigen/Dense>
 #include <common/debugdraw/debugdraw.h>
@@ -19,16 +20,43 @@ class GraphicsObject {
 public:
 
 	friend class GraphicsObjectFactory;
-
 	
 // When we build Animation we do not call directly the constructor of
 // GraphicObject because we cannot inherit settings with protocol buffers.
 // A possible solution would be to pass to the constructors the
 // protobuf structures rather than the config files!!!
-	GraphicsObject() : m_transform(Eigen::MatrixXf(4,4)) {
+	GraphicsObject() : m_transform(Eigen::MatrixXf::Identity(4,4)) {
+
+		// This should come from the config file,
+		// or with a tailored constructor using the VertexUtils
+		int16_t tsize = 0x7fff/4;		
+		std::vector<AtlasFrame> frames;
+		AtlasFrame af;
+		af.top_left = AtlasFrame::Corner(0,0);
+		af.bottom_right = AtlasFrame::Corner(tsize,tsize);
+		frames.push_back(af);
+		m_width = 0.5;
+		m_height = 0.5;
+		
+		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
+		addMeshToPool(m_mesh);
+		loadShader(0);
 	}
 	
 	GraphicsObject(const std::string & config_file) : m_transform(Eigen::MatrixXf(4,4)) {
+		MeshFactory<T> factory(config_file);
+		factory.generate(&m_mesh);
+		m_width = 0.5;
+		m_height = 0.5;
+		int16_t tsize = 0x7fff/4;		
+		std::vector<AtlasFrame> frames;
+		AtlasFrame af;
+		af.top_left = AtlasFrame::Corner(0,0);
+		af.bottom_right = AtlasFrame::Corner(tsize,tsize);
+		frames.push_back(af);
+		
+		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
+		addMeshToPool(m_mesh);
 	}
 	
 	~GraphicsObject() {
@@ -47,10 +75,10 @@ public:
 		
 	virtual void update(float d) {
 		
-		// Set render states.
+		//Set render states.
 		bgfx::setState(0
 			       | BGFX_STATE_DEFAULT
-			       | BGFX_STATE_PT_TRISTRIP
+			       | BGFX_STATE_PT_TRISTRIP//m_mesh.getType()
 			       | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA ,
 						       BGFX_STATE_BLEND_INV_SRC_ALPHA )
 			);
@@ -67,28 +95,16 @@ public:
 	virtual void destroyUniforms() {}; 	
 
 	void addMeshToPool(const Mesh<T> & mesh) {
-		int starting_idx = m_vertexPool.size();
 		for (auto v : mesh.m_vertex_pool) {
 			m_vertexPool.push_back(v);
 		}
 		
 		for (auto i : mesh.m_index_pool) {
-			m_indices.push_back(i + starting_idx);
+			m_indices.push_back(i);
 		}
 	}
 
 	virtual void initialiseBuffers() {
-
-		// This can also come from config
-		int16_t tsize = 0x7fff/4;		
-		std::vector<AtlasFrame> frames;
-		AtlasFrame af;
-		af.top_left = AtlasFrame::Corner(0,0);
-		af.bottom_right = AtlasFrame::Corner(tsize,tsize);
-		frames.push_back(af);
-		
-		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
-		addMeshToPool(m_mesh);
 	
 		// Create static vertex buffer.
 		m_vbh = bgfx::createVertexBuffer(
@@ -106,12 +122,12 @@ public:
 	
 	bool loadShader(uint32_t id) {
 		m_shader = ResourceManager::getResource<Shader>(id);
-		std::cout << "Loading shader" << std::endl;
 		if (!m_shader) {
 			//log error
 			std::cout << "error loading shader cfg" << std::endl;
 			return false;
 		}
+		std::cout << "Loading shader" << std::endl;
 		return true;
 	}
 

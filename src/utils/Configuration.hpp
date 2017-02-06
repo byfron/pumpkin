@@ -33,7 +33,8 @@ private:
 		if (!google::protobuf::TextFormat::Parse(&fileInput, &m_config))
 		{
 			//log
-			std::cout << "Failed to parse file!" << std::endl;
+			assert(false);
+			//std::cout << "Failed to parse file!" << std::endl;
 			return false;
 		}
 
