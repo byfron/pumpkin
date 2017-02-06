@@ -14,7 +14,7 @@
 #define KEY_MOVE_DOWN      UINT8_C(0x20)
 
 namespace pumpkin {
-	
+
 struct Mouse
 {
 	Mouse()
@@ -44,8 +44,8 @@ struct Mouse
 		m_scrollPrev = _mz;
 	}
 
-	
-	
+
+
 	float m_dx; // Screen space.
 	float m_dy;
 	float m_prevMx;
@@ -53,7 +53,7 @@ struct Mouse
 	int32_t m_scroll;
 	int32_t m_scrollPrev;
 
-	
+
 };
 
 
@@ -66,30 +66,40 @@ public:
 
 	void init();
 
-	
+
 	static void setKeyState(uint8_t _key, bool _down)
 	{
 		m_keys &= ~_key;
 		m_keys |= _down ? _key : 0;
 	}
 
+	static bool isLeftMouseButtonJustPressed() {
+		if (not m_oldMouseState.m_buttons[entry::MouseButton::Left] &&
+		    m_mouseState.m_buttons[entry::MouseButton::Left]) return true;
+		return false;
+	}
+
 	static bool isLeftMouseButtonPressed() {
 		return m_mouseState.m_buttons[entry::MouseButton::Left];
 	}
-	
+
 	static bool processEvents(uint32_t & width, uint32_t & height) {
+
+		m_oldMouseState = m_mouseState;
+
 		m_mouse.update(float(m_mouseState.m_mx),
 			       float(m_mouseState.m_my),
 			       m_mouseState.m_mz, width, height);
 
 		m_mouse_angle = computeMouseAngle(m_mouseState, width, height);
-	
+
 		return entry::processEvents(width, height, m_debug, m_reset, &m_mouseState);
 	}
-	
+
 	static uint32_t m_debug;
 	static uint32_t m_reset;
 	static entry::MouseState m_mouseState;
+	static entry::MouseState m_oldMouseState;
 	static Mouse m_mouse;
 	static uint16_t m_keys;
 	static float m_mouse_angle;
