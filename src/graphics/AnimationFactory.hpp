@@ -31,8 +31,8 @@ public:
 				voyage::AtlasFrameCfg frame = anim_cfg.frames(i);
 
 				anim->addFrame(anim_cfg.animation_id(),
-					       Animation::AtlasFrame(float(frame.x())/4.0,
-								     float(frame.y())/4.0,
+					       Animation::AtlasFrame(float(frame.x())/21.0,
+								     float(frame.y())/1.0,
 								     frame.flipped()));
 			}
 

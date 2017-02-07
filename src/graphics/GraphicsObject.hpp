@@ -49,7 +49,7 @@ public:
 		std::vector<AtlasFrame> frames;
 		AtlasFrame af;
 		af.top_left = AtlasFrame::Corner(0,0);
-		af.bottom_right = AtlasFrame::Corner(tsize,tsize);
+		af.bottom_right = AtlasFrame::Corner(0x7fff/21,0x7fff);
 		frames.push_back(af);
 
 		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));

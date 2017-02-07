@@ -25,8 +25,8 @@ add_library(graphics_engine
 
 target_link_libraries(graphics_engine
   utils_meshUtils
-  utils_camera
   utils_inputManager
+  utils_camera
   utils_tilemapUtils
   proto
   ${BGFX_COMMON_LIBRARIES}
