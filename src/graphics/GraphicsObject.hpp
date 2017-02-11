@@ -43,13 +43,13 @@ public:
 		// MeshFactory<T> factory(config_file);
 		// factory.generate(&m_mesh);
 		// TODO put this back
-		m_width = 0.5;
-		m_height = 0.5;
+		m_width = 0.75;
+		m_height = 0.75;
 		int16_t tsize = 0x7fff/4;
 		std::vector<AtlasFrame> frames;
 		AtlasFrame af;
 		af.top_left = AtlasFrame::Corner(0,0);
-		af.bottom_right = AtlasFrame::Corner(0x7fff/21,0x7fff);
+		af.bottom_right = AtlasFrame::Corner(0x7fff,0x7fff); // /14,5
 		frames.push_back(af);
 
 		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));

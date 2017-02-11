@@ -39,8 +39,8 @@ public:
 
 protected:
 
-	bgfx::UniformHandle s_texColor;
-
+	bgfx::UniformHandle u_texColor;
+	bgfx::UniformHandle u_texNormal;
 	bgfx::UniformHandle u_flip;
 	bgfx::UniformHandle u_texOffset;
 	bgfx::UniformHandle u_lightPosRadius;

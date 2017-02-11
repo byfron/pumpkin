@@ -18,7 +18,7 @@ SpriteObject::SpriteObject() :
 	m_transform = Eigen::MatrixXf(4,4);
 	m_atlas_offset[0] = 0.0;
 	m_atlas_offset[1] = 0.0;
-	m_atlas_offset[2] = 1.0/4.0;
+	m_atlas_offset[2] = 0.0;
 }
 
 SpriteObject::SpriteObject(const std::string & config_file) :
@@ -34,7 +34,7 @@ SpriteObject::SpriteObject(const std::string & config_file) :
 	// PUT IT IN FACTORY
 	m_atlas_offset[0] = 0.0;
 	m_atlas_offset[1] = 0.0;
-	m_atlas_offset[2] = 1.0/4.0;
+	m_atlas_offset[2] = 0.0;
 }
 
 SpriteObject::~SpriteObject() {
@@ -44,6 +44,8 @@ SpriteObject::~SpriteObject() {
 void SpriteObject::destroyUniforms() {
 
 	bgfx::destroyUniform(u_texOffset);
+	bgfx::destroyUniform(u_texNormal);
+	bgfx::destroyUniform(u_texColor);
 	bgfx::destroyUniform(u_flip);
 	bgfx::destroyUniform(u_lightPosRadius);
 
@@ -73,6 +75,8 @@ void SpriteObject::initialiseBuffers() {
 
 void SpriteObject::createUniforms() {
 
+	u_texNormal = bgfx::createUniform("s_texNormal",  bgfx::UniformType::Int1);
+	u_texColor  = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
 	u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
 	u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
 	u_lightPosRadius = bgfx::createUniform("u_lightPosRadius", bgfx::UniformType::Vec4, 1);
@@ -99,7 +103,11 @@ void SpriteObject::update(float d) {
 	bgfx::setTransform(m_transform.data());
 	bgfx::setVertexBuffer(m_vbh);
 	bgfx::setIndexBuffer(m_ibh);
-	bgfx::setTexture(0, s_texColor,  m_texture_atlas->getColorHandle());
+	bgfx::setTexture(0, u_texColor,  m_texture_atlas->getColorHandle());
+
+	if (m_texture_atlas->hasNormalMap()) {
+		bgfx::setTexture(0, u_texNormal,  m_texture_atlas->getNormalHandle());
+	}
 
 	bgfx::setUniform(u_texOffset, m_atlas_offset, 1);
 	bgfx::setUniform(u_flip, &m_flipped, 1);

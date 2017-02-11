@@ -46,8 +46,8 @@ void main()
 // If we have no normal map, use the geometry normal!
 
 	vec3 normal = v_normal;
-//	normal.xy = texture2D(s_texNormal, v_texcoord0).xy * 2.0 - 1.0;
-//	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy) );
+	normal.xy = texture2D(s_texNormal, v_texcoord0).xy * 2.0 - 1.0;
+	normal.z = sqrt(1.0 - dot(normal.xy, normal.xy) );
 	
 	vec3 view = -normalize(v_view);
 
@@ -60,8 +60,8 @@ void main()
 	vec4 color = toLinear(texture2D(s_texColor, v_texcoord0) );
 
 	gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz)*color.xyz;
-	gl_FragColor = toGamma(gl_FragColor) * color.w;
-//	gl_FragColor.w = color.w;
+	gl_FragColor.w = 1.0;
+	gl_FragColor = toGamma(gl_FragColor);
 
 
 	// vec3 view_pos = mul(u_view, vec4(v_wpos, 1)).xyz;
@@ -78,3 +78,4 @@ void main()
 	
 	// gl_FragColor = texture2D(s_texColor, v_texcoord0) * cosTheta;
 }
+

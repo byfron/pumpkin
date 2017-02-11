@@ -79,8 +79,8 @@ void Camera::reset()
 	m_target.curr[0] = 0.0f;
 	m_target.curr[1] = 0.0f;
 	m_target.curr[2] = 0.0f;
-	m_target.dest[0] = 2.0f;
-	m_target.dest[1] = 2.0f;
+	m_target.dest[0] = 0.0f;
+	m_target.dest[1] = 0.0f;
 	m_target.dest[2] = 0.0f;
 
 	m_pos.curr[0] =  0.0f;
@@ -98,15 +98,15 @@ void Camera::reset()
 
 	m_eye[0] =   0.0f;
 	m_eye[1] =   0.0f;
-	m_eye[2] = -5.0f;
-	m_at[0]  =   1.5f;
-	m_at[1]  =   1.5f;
-	m_at[2]  =  -2.5f;
+	m_eye[2] = -6.5f;
+	m_at[0]  =   0.0f;
+	m_at[1]  =   0.0f;
+	m_at[2]  =   0.0f;
 	m_cam_up[0]  =   0.0f;
 	m_cam_up[1]  =   1.0f;
 	m_cam_up[2]  =   0.0f;
 	m_horizontalAngle = 0.01f;
-	m_verticalAngle = 1.2f;
+	m_verticalAngle = M_PI/2.0;
 	m_gamepadSpeed = 0.04f;
 	m_moveSpeed = 5.0f;
 	m_rotateSpeed = 3.0f;

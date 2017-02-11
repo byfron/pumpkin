@@ -4,7 +4,7 @@
 namespace pumpkin {
 
 Animation::Animation(std::string anim_cfg) :
-	m_frame_period(0.01),
+	m_frame_period(0.04),
 	m_enabled(true) {
 
 	AnimationFactory factory(anim_cfg);

@@ -30,6 +30,8 @@ public:
 		m_atlas_offset[0] = m_animation[m_active_anim][m_active_frame].atlas_offset_x;
 		m_atlas_offset[1] = m_animation[m_active_anim][m_active_frame].atlas_offset_y;
 		m_flipped = m_animation[m_active_anim][m_active_frame].flipped;
+
+		std::cout << "offset:" << m_atlas_offset[0] << "," <<  m_atlas_offset[1] << std::endl;
 	}
 
 	void init() {
@@ -53,6 +55,7 @@ public:
 	void switchToAnim(uint32_t id) {
 		m_enabled = true;
 		if (id != m_active_anim) {
+
 			m_active_anim = id;
 			m_active_frame = 0;
 		}

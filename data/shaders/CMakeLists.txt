@@ -9,6 +9,8 @@ list(APPEND FSHADER_FILES "fs_terrain.sc")
 list(APPEND VSHADER_FILES "vs_terrain.sc")
 list(APPEND FSHADER_FILES "fs_character.sc")
 list(APPEND VSHADER_FILES "vs_character.sc")
+list(APPEND FSHADER_FILES "fs_character_normal.sc")
+list(APPEND VSHADER_FILES "vs_character_normal.sc")
 
 function(compileShader SHADER_FILE TYPE)
 
