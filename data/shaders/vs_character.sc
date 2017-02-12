@@ -1,5 +1,5 @@
 $input a_position, a_normal, a_texcoord0
-$output v_wpos, v_wnormal, v_texcoord0
+$output v_wpos, v_normal, v_texcoord0
 
 
 uniform vec4 packed_input;
@@ -45,5 +45,5 @@ void main()
 	
 	v_texcoord0 = flipped_texcoord0;
         v_wpos = world_pos;
-	v_wnormal = wnormal;	
+	v_normal = wnormal;	
 }

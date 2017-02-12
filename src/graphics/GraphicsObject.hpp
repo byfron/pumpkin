@@ -3,6 +3,7 @@
 
 #include "Shader.hpp"
 #include "TextureAtlas.hpp"
+#include "GraphicsEngine.hpp"
 #include <common/math.hpp>
 #include <utils/VertexUtils.hpp>
 #include <utils/MeshFactory.hpp>
@@ -75,12 +76,22 @@ public:
 	virtual void update(float d) {
 
 		//Set render states.
+			// Set render states.
 		bgfx::setState(0
-			       | BGFX_STATE_DEFAULT
+			       | BGFX_STATE_RGB_WRITE
+			       | BGFX_STATE_ALPHA_WRITE
+			       | BGFX_STATE_DEPTH_WRITE
+			       | BGFX_STATE_DEPTH_TEST_LESS
+			       | BGFX_STATE_MSAA
 			       | m_mesh.getType()
-			       // | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA ,
-			       // 			       BGFX_STATE_BLEND_INV_SRC_ALPHA )
 			);
+						
+		// bgfx::setState(0
+		// 	       | BGFX_STATE_DEFAULT
+		// 	       | m_mesh.getType()
+		// 	       | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA ,
+		// 				       BGFX_STATE_BLEND_INV_SRC_ALPHA )
+		// 	);
 
 		bgfx::setTransform(m_transform.data());
 		bgfx::setVertexBuffer(m_vbh);
@@ -109,7 +120,7 @@ public:
 		// ddPop();
 
 		// Submit primitive for rendering to view 0.
-		bgfx::submit(0, m_shader->getHandle());
+		bgfx::submit(RENDER_PASS_GEOMETRY, m_shader->getHandle());
 
 	}
 

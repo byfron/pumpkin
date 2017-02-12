@@ -59,10 +59,11 @@ void main()
 
 	vec4 color = toLinear(texture2D(s_texColor, v_texcoord0) );
 
-	gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz)*color.xyz;
-	gl_FragColor = toGamma(gl_FragColor) * color.w;
+//	gl_FragColor.xyz = max(vec3_splat(0.05), lightColor.xyz)*color.xyz;
+//	gl_FragColor = toGamma(gl_FragColor) * color.w;
 //	gl_FragColor.w = color.w;
 
+	gl_FragData[0] = vec4(max(vec3_splat(0.05), lightColor.xyz)*color.xyz, toGamma(gl_FragColor) * color.w);
 
 	// vec3 view_pos = mul(u_view, vec4(v_wpos, 1)).xyz;
 	// vec3 eye_dir_view = vec3(0,0,0) - view_pos;
