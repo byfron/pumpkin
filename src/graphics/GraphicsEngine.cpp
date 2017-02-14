@@ -161,30 +161,13 @@ void GraphicsEngine::initResources() {
 	loadShaders();
 
 	// Refactor in PostProcessor::init()
-	
-	const uint32_t samplerFlags = 0
-		| BGFX_TEXTURE_RT
-		| BGFX_TEXTURE_MIN_POINT
-		| BGFX_TEXTURE_MAG_POINT
-		| BGFX_TEXTURE_MIP_POINT
-		| BGFX_TEXTURE_U_CLAMP
-		| BGFX_TEXTURE_V_CLAMP
-		;
-
-	u_postTex  = bgfx::createUniform("u_postTex",  bgfx::UniformType::Int1);
+	u_postTex  = bgfx::createUniform("u_postTex",  bgfx::UniformType::Int1);	
 	m_geometryBuffer.idx = bgfx::invalidHandle;
 	m_gbufferTex[0].idx = bgfx::invalidHandle;
 	m_gbufferTex[1].idx = bgfx::invalidHandle;
 	m_gbufferTex[2].idx = bgfx::invalidHandle;
-
 	m_postProcessProgram = ResourceManager::getResource<Shader>(4);
 	m_postProcessProgram->init();
-		
-	m_gbufferTex[0] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
-	m_gbufferTex[1] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
-	m_gbufferTex[2] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::D24, samplerFlags);
-
-	m_geometryBuffer = bgfx::createFrameBuffer(BX_COUNTOF(m_gbufferTex), m_gbufferTex, true);	
 }
 
 void GraphicsEngine::loadMeshes() {
@@ -221,13 +204,39 @@ void GraphicsEngine::run() {
 
 	const float deltaTime = getDeltaTime();
 
+	// If the size of the window changes, update the size of framebuffers
+	if (m_oldWidth  != m_width  ||  m_oldHeight != m_height) {
+		m_oldWidth = m_width;
+		m_oldHeight = m_height;
+
+		if (bgfx::isValid(m_geometryBuffer) )
+		{
+			bgfx::destroyFrameBuffer(m_geometryBuffer);
+		}
+
+		
+		const uint32_t samplerFlags = 0
+			| BGFX_TEXTURE_RT
+			| BGFX_TEXTURE_MIN_POINT
+			| BGFX_TEXTURE_MAG_POINT
+			| BGFX_TEXTURE_MIP_POINT
+			| BGFX_TEXTURE_U_CLAMP
+			| BGFX_TEXTURE_V_CLAMP;		
+		
+		m_gbufferTex[0] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
+		m_gbufferTex[1] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
+		m_gbufferTex[2] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::D24, samplerFlags);
+
+		m_geometryBuffer = bgfx::createFrameBuffer(BX_COUNTOF(m_gbufferTex), m_gbufferTex, true);	
+
+	}
+	
 	// Default view
 	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, m_width, m_height);
 
 	// Post-process
 	bgfx::setViewRect(RENDER_PASS_POSTPROCESS, 0, 0, m_width, m_height);
-
-	
+       
 	// rename this functions and classes so that it makes more sense
 //	m_particle_system_pool.update(deltaTime);
 

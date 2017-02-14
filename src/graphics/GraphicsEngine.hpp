@@ -64,6 +64,8 @@ protected:
 
 	uint32_t m_width;
 	uint32_t m_height;
+	uint32_t m_oldWidth = 0;
+	uint32_t m_oldHeight = 0;
 	static Camera m_camera;
 	static bool m_debug;
 
