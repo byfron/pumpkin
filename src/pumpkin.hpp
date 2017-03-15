@@ -9,3 +9,4 @@
 #include <graphics/DebugManager.hpp>
 #include <graphics/DebugGraphicsObject.hpp>
 #include <graphics/GraphicsObject.hpp>
+#include <graphics/Scene.hpp>

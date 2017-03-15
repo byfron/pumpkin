@@ -9,6 +9,8 @@ namespace pumpkin {
 
 	public:
 
+		typedef std::shared_ptr<SceneObject> Ptr;
+
 		SceneObject();
 		void loadFromFbxFile(std::string file);
 
