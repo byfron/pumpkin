@@ -18,3 +18,8 @@ add_library(utils_tilemapUtils
   TileMapUtils.hpp
   TileMapUtils.cpp
   )
+
+add_library(utils_fbxLoader
+  FbxLoader.hpp
+  FbxLoader.cpp
+  )
