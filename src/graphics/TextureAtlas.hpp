@@ -19,7 +19,7 @@ struct AtlasFrame {
 	Corner top_left;
 	Corner bottom_right;
 };
-	
+
 class TextureAtlasFactory;
 
 class TextureAtlas : public Resource {
@@ -54,11 +54,11 @@ public:
 	std::vector<AtlasFrame> getAtlasFrames(const std::vector<Vec2i> & coords) {
 
 		uint16_t texel_height = 0x7fff / (m_sprite_height * m_grid_height);
-		uint16_t frame_height = 0x7fff/m_grid_height;
-		uint16_t texel_width = 0x7fff / (m_sprite_width * m_grid_width);
-		uint16_t frame_width = 0x7fff/m_grid_width;
+		uint16_t frame_height = 0x7fff /  m_grid_height;
+		uint16_t texel_width  = 0x7fff / (m_sprite_width * m_grid_width);
+		uint16_t frame_width  = 0x7fff /  m_grid_width;
 		std::vector<AtlasFrame> out;
-		
+
 		for (auto coord: coords) {
 			AtlasFrame af;
 			af.top_left = AtlasFrame::Corner(frame_width*coord(0) + texel_width/2.0,
@@ -75,7 +75,7 @@ public:
 	bool hasNormalMap() const {
 		return m_has_normalmap;
 	}
-	
+
 	// const AtlasFrame & getFrame(uint32_t id) const {
 	// 	assert(id < m_frames.size());
 	// 	return m_framfaes[id];
