@@ -21,6 +21,8 @@ add_library(graphics_engine
   TileMap.cpp
   TileMapLayer.hpp
   TileMapLayer.cpp
+  Scene.hpp
+  Scene.cpp
   )
 
 target_link_libraries(graphics_engine

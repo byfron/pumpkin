@@ -93,6 +93,7 @@ void SpriteObject::update(float d) {
 		);
 
 
+	// TODO: move lights to some kind of generic light manager
 	float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
 	bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
 

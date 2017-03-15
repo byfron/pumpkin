@@ -34,9 +34,9 @@ public:
 		m_width = 0.5;
 		m_height = 0.5;
 
-		m_mesh = VertexUtils::constructBulletLine(MeshProperties(0,0,1.0,0.1,0.1));
+//		m_mesh = VertexUtils::constructBulletLine(MeshProperties(0,0,1.0,0.1,0.1));
 
-		addMeshToPool(m_mesh);
+//		addMeshToPool(m_mesh);
 		loadShader(0);
 	}
 
@@ -53,8 +53,8 @@ public:
 		af.bottom_right = AtlasFrame::Corner(0x7fff,0x7fff); // /14,5
 		frames.push_back(af);
 
-		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
-		addMeshToPool(m_mesh);
+//		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
+//		addMeshToPool(m_mesh);
 	}
 
 	~GraphicsObject() {
@@ -85,7 +85,7 @@ public:
 			       | BGFX_STATE_MSAA
 			       | m_mesh.getType()
 			);
-						
+
 		// bgfx::setState(0
 		// 	       | BGFX_STATE_DEFAULT
 		// 	       | m_mesh.getType()
@@ -147,16 +147,6 @@ public:
 		m_vbh = bgfx::createDynamicVertexBuffer(mem, T::ms_decl);
 		mem = bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * m_indices.size() );
 		m_ibh = bgfx::createDynamicIndexBuffer(mem);
-
-
-		// m_vbh = bgfx::createVertexBuffer(
-		// 	bgfx::makeRef(&m_vertexPool[0], sizeof(T)*m_vertexPool.size() )
-		// 	, T::ms_decl
-		// 	);
-
-		// m_ibh = bgfx::createIndexBuffer(
-		// 	bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * m_indices.size() )
-		// 	);
 	}
 
 	bool loadShader(uint32_t id) {
