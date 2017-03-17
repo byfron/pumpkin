@@ -2,6 +2,7 @@ add_library(utils_meshUtils
   VertexUtils.hpp
   VertexUtils.cpp
   MeshFactory.hpp
+  MeshFactory.cpp
   )
 
 add_library(utils_camera
@@ -17,9 +18,4 @@ add_library(utils_inputManager
 add_library(utils_tilemapUtils
   TileMapUtils.hpp
   TileMapUtils.cpp
-  )
-
-add_library(utils_fbxLoader
-  FbxLoader.hpp
-  FbxLoader.cpp
   )

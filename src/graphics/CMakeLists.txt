@@ -30,7 +30,6 @@ target_link_libraries(graphics_engine
   utils_inputManager
   utils_camera
   utils_tilemapUtils
-  utils_fbxLoader
   fbxsdk
   proto
   ${BGFX_COMMON_LIBRARIES}

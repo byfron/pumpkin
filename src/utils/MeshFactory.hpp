@@ -5,14 +5,18 @@
 #include <utils/Configuration.hpp>
 #include <graphics/TextureAtlas.hpp>
 #include <vector>
+#include <fbxsdk.h>
 
 namespace pumpkin {
-
+	
 enum class MeshObjectType {
 	TILE_MESH,
 	WALL_MESH,
-	PLANE_MESH
+	PLANE_MESH,
+	FBX_MESH
 };
+
+typedef Mesh<PosNormalTexCoordVertex> FMesh;
 
 struct MeshProperties {
 	MeshProperties(uint32_t r,
@@ -32,6 +36,9 @@ struct MeshProperties {
 	std::vector<AtlasFrame> atlas_frames;
 };
 
+FMesh generateMesh(FbxNode* pNode);       
+std::vector<FMesh> loadMeshes(FbxNode *pRootNode);
+	
 template <typename T>
 class MeshFactory {
 public:
@@ -61,7 +68,7 @@ public:
 			return  VertexUtils::constructVPlane(properties);
 			break;
 		};
-	}
+	}	
 
 private:
 

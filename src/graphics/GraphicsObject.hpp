@@ -35,9 +35,8 @@ public:
 		m_height = 0.5;
 
 //		m_mesh = VertexUtils::constructBulletLine(MeshProperties(0,0,1.0,0.1,0.1));
-
 //		addMeshToPool(m_mesh);
-		loadShader(0);
+//		loadShader(0);
 	}
 
 	GraphicsObject(const std::string & config_file) : m_transform(Eigen::MatrixXf(4,4)) {
@@ -53,8 +52,9 @@ public:
 		af.bottom_right = AtlasFrame::Corner(0x7fff,0x7fff); // /14,5
 		frames.push_back(af);
 
-//		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
-//		addMeshToPool(m_mesh);
+		// TODO: Change this shit with a proper initializer
+		m_mesh = VertexUtils::constructVPlane(MeshProperties(0,0,1.0,0.5,0.5,frames));
+		addMeshToPool(m_mesh);
 	}
 
 	~GraphicsObject() {

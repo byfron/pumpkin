@@ -1,7 +1,7 @@
 #pragma once
 
-#include <utils/FbxLoader.hpp>
 #include "GraphicsObject.hpp"
+#include "TextureAtlas.hpp"
 
 namespace pumpkin {
 
@@ -12,14 +12,19 @@ namespace pumpkin {
 		typedef std::shared_ptr<SceneObject> Ptr;
 
 		SceneObject();
-		void loadFromFbxFile(std::string file);
 
+		void destroyUniforms();
+		void createUniforms();
+		
+		void loadFromFbxNode(FbxNode*);
 		void init();
 		void update(float d);
 
 	protected:
 
-		std::vector<FbxLoader::FMesh> m_meshes;
+		std::vector<FMesh> m_meshes;
+		bgfx::UniformHandle u_texColor;		
+		TextureAtlas::Ptr m_texture;
 		//std::vector<Light> m_lights;
 
 	};
