@@ -75,6 +75,9 @@ public:
 
 	virtual void update(float d) {
 
+	TODO: change a GraphicsOBject to support several meshes with different materials
+
+
 		//Set render states.
 			// Set render states.
 		bgfx::setState(0
@@ -129,7 +132,6 @@ public:
 
 	void addMeshToPool(const Mesh<T> & mesh) {
 		for (auto v : mesh.m_vertex_pool) {
-			std::cout << v.m_x << "," << v.m_y << "," << v.m_z << "," << std::endl;
 			m_vertexPool.push_back(v);
 		}
 

@@ -111,11 +111,11 @@ struct PosNormalTangentTexcoordVertex
 
 namespace VertexUtils {
 
-pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop);
-pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop);
-pumpkin::Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop);
-pumpkin::Mesh<PosColorVertex> constructColorVPlane(const MeshProperties & prop);
-pumpkin::Mesh<PosColorVertex> constructBulletLine(const MeshProperties & prop);
+pumpkin::Mesh constructTile(const MeshProperties & prop);
+pumpkin::Mesh constructWall(const MeshProperties & prop);
+pumpkin::Mesh constructVPlane(const MeshProperties & prop);
+pumpkin::Mesh constructColorVPlane(const MeshProperties & prop);
+pumpkin::Mesh constructBulletLine(const MeshProperties & prop);
 
 }
 

@@ -1,22 +1,27 @@
 #include "MeshFactory.hpp"
 
 namespace pumpkin {
-	
-FMesh generateMesh(FbxNode* pNode) {
 
-	FMesh mesh;
-	mesh.m_mesh_type = 10;
-	
+Mesh generateMesh(FbxNode* pNode) {
+
+	Mesh mesh;
+	mesh.m_decl = bgfx::VertexTextureNormal;
+
 	FbxMesh* pMesh = (FbxMesh*) pNode->GetNodeAttribute();
 	int num_vertices = pMesh->GetControlPointsCount();
 	FbxVector4* controlPoints = pMesh->GetControlPoints();
 	int num_triangles = pMesh->GetPolygonCount();
-	
+
 	// Layer 0?
 	FbxGeometryElementUV* leUV = pMesh->GetElementUV(0);
-		
+
 	assert(pMesh->GetElementUVCount() == 1);
-		
+
+
+	std::vector<>
+
+	Group g;
+
 	for (int i = 0; i < num_vertices; i++)
 	{
 		pumpkin::PosNormalTexCoordVertex p;
@@ -29,7 +34,7 @@ FMesh generateMesh(FbxNode* pNode) {
 		p.m_v = uvCoord[1]*0x7fff;
 		mesh.addVertex(p);
 	}
-	
+
 	for (int i = 0; i < num_triangles; i++) {
 		assert(pMesh->GetPolygonSize(i) == 3);
 		for (int t = 0; t < pMesh->GetPolygonSize(i); t++) {
@@ -37,14 +42,14 @@ FMesh generateMesh(FbxNode* pNode) {
 			mesh.addIndex(vertexIndex);
 		}
 	}
-	
+
 	return mesh;
 }
 
-	
-std::vector<FMesh> loadMeshes(FbxNode *pRootNode) {
 
-	std::vector<FMesh> mesh_vector;
+std::vector<Mesh> loadMeshes(FbxNode *pRootNode) {
+
+	std::vector<Mesh> mesh_vector;
 
 	if(pRootNode)
 	{
@@ -70,7 +75,7 @@ std::vector<FMesh> loadMeshes(FbxNode *pRootNode) {
 				}
 			}
 
-				
+
 
 		}
 	}

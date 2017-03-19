@@ -36,132 +36,13 @@ bgfx::VertexDecl PosNormalTangentTexcoordVertex::ms_decl;
 
 namespace VertexUtils {
 
-//I could load this from protobufs!!
-
-Mesh<PosNormalTangentTexcoordVertex> constructTile(const MeshProperties & prop) {
-
-	Mesh<PosNormalTangentTexcoordVertex> mesh;
-	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
-	float row = prop.row * prop.scale;
-	float col = prop.col * prop.scale;
-	float s_tsize = prop.width * prop.scale;
-	float z_pos = 0.0; //prop.z_pos
+Mesh constructVPlane(const MeshProperties & prop) {
 
 	assert(prop.atlas_frames.size() > 0);
 	AtlasFrame frame = prop.atlas_frames[0];
-
-	PosNormalTangentTexcoordVertex v_tile[4] = {
-	{row, col + s_tsize, z_pos, NORMAL_NEGZ, 0, frame.bottom_right(1), frame.top_left(0)},
-	{row + s_tsize, col+s_tsize, z_pos,NORMAL_NEGZ,0,frame.bottom_right(1), frame.bottom_right(0)},
-	{row + s_tsize, col, z_pos, NORMAL_NEGZ, 0, frame.top_left(1), frame.bottom_right(0)},
-	{row, col, z_pos, NORMAL_NEGZ, 0, frame.top_left(1),frame.top_left(0)},
-	};
-
-	int i_tile[6] = {
-		3,2,1,
-		1,0,3
-	};
-
-	for (int i = 0; i < 4; i++) {
-		mesh.addVertex(v_tile[i]);
-	}
-
-	for (int i = 0; i < 6; i++) {
-		mesh.addIndex(i_tile[i]);
-	}
-
-	return mesh;
-}
-
-// Move this to a static function in vertex_utils
-Mesh<PosNormalTangentTexcoordVertex> constructWall(const MeshProperties & prop) {
-
-	Mesh<PosNormalTangentTexcoordVertex> mesh;
-	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
-	float row = prop.row * prop.scale;
-	float col = prop.col * prop.scale;
-	float s_tsize = prop.width * prop.scale;
-	float h = prop.height;
-
-	assert(prop.atlas_frames.size() > 1);
-	AtlasFrame topf = prop.atlas_frames[0];
-	AtlasFrame sidef = prop.atlas_frames[1];
-
-	// 20 vertices. 4 per each side and 4 for the top
-	PosNormalTangentTexcoordVertex v_wall[20] = {
-	//top -z normal
-	{row, col + s_tsize,-h,NORMAL_NEGZ,0, topf.bottom_right(1), topf.top_left(0)},
-	{row + s_tsize, col + s_tsize, -h, NORMAL_NEGZ, 0, topf.bottom_right(1), topf.bottom_right(0)},
-	{row + s_tsize, col, -h, NORMAL_NEGZ, 0, topf.top_left(1), topf.bottom_right(0)},
-	{row, col, -h, NORMAL_NEGZ, 0, topf.top_left(1),topf.top_left(0)},
-
-	//side A
-	{row, col + s_tsize, -h, NORMAL_POSX, 0, sidef.bottom_right(1), sidef.top_left(0)},
-	{row, col,           -h, NORMAL_POSX, 0, sidef.top_left(1), sidef.top_left(0)},
-	{row, col + s_tsize,  0, NORMAL_POSX, 0, sidef.bottom_right(1), sidef.bottom_right(0)},
-	{row, col,            0, NORMAL_POSX, 0, sidef.top_left(1), sidef.bottom_right(0)},
-
-	//side B
-	{row,           col, -h, NORMAL_POSY, 0, sidef.bottom_right(1), sidef.top_left(0)},
-	{row + s_tsize, col, -h, NORMAL_POSY, 0, sidef.top_left(1), sidef.top_left(0)},
-	{row,           col,  0, NORMAL_POSY, 0, sidef.bottom_right(1), sidef.bottom_right(0)},
-	{row + s_tsize, col,  0, NORMAL_POSY, 0, sidef.top_left(1), sidef.bottom_right(0)},
-
-	//side C
-	{row + s_tsize, col + s_tsize,-h,NORMAL_NEGX, 0, sidef.top_left(1),sidef.top_left(0)},
-	{row + s_tsize, col,          -h,NORMAL_NEGX, 0, sidef.bottom_right(1),sidef.top_left(0)},
-	{row + s_tsize, col + s_tsize, 0,NORMAL_NEGX, 0, sidef.top_left(1),sidef.bottom_right(0)},
-	{row + s_tsize, col,           0,NORMAL_NEGX, 0, sidef.bottom_right(1), sidef.bottom_right(0)},
-
-	//side D
-	{row,           col + s_tsize,-h,NORMAL_NEGY, 0, sidef.top_left(1),sidef.top_left(0)},
-	{row + s_tsize, col + s_tsize,-h,NORMAL_NEGY, 0, sidef.bottom_right(1),sidef.top_left(0)},
-	{row          , col + s_tsize, 0,NORMAL_NEGY, 0, sidef.top_left(1),sidef.bottom_right(0)},
-	{row + s_tsize, col + s_tsize, 0,NORMAL_NEGY, 0, sidef.bottom_right(1),sidef.bottom_right(0)},
-	};
-
-	int i_wall[30] = {
-		3,2,1, //top
-		1,0,3,
-
-		4,6,7, //side A
-		7,5,4,
-
-		8,10,11, //side B
-		11,9,8,
-
-		13,15,14, //side C
-		14,12,13,
-
-		17,19,18, //side D
-		18,16,17
-	};
-
-	for (int i = 0; i < 20; i++) {
-		mesh.addVertex(v_wall[i]);
-	}
-
-	for (int i = 0; i < 30; i++) {
-		mesh.addIndex(i_wall[i]);
-	}
-
-
-	return mesh;
-}
-
-
-Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop) {
-
-	Mesh<PosNormalTangentTexcoordVertex> mesh;
-	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
-
 	float meshsize = prop.width * prop.scale;
 	float height = prop.height;
 	float width = prop.width;
-
-	assert(prop.atlas_frames.size() > 0);
-	AtlasFrame frame = prop.atlas_frames[0];
-
 
 	PosNormalTangentTexcoordVertex v_plane[] =
 	{
@@ -177,68 +58,13 @@ Mesh<PosNormalTangentTexcoordVertex> constructVPlane(const MeshProperties & prop
 		0,1,2,3
 	};
 
-	for (int i = 0; i < 4; i++) {
-		mesh.addVertex(v_plane[i]);
-	}
-
-	for (int i = 0; i < 4; i++) {
-		mesh.addIndex(i_plane[i]);
-	}
-
-	return mesh;
-}
-
-Mesh<PosColorVertex> constructBulletLine(const MeshProperties & prop) {
-
-	Mesh<PosColorVertex> mesh;
-	mesh.m_mesh_type = BGFX_STATE_PT_LINES;
-	float length = 0.2;
-
-	PosColorVertex bullet[] = {
-	{ 0.0f, 0.0f, 0.0f, 0xffffffff},
-	{ 0.0f, length, 0.0f, 0xffffffff},
-	};
-
-	mesh.addVertex(bullet[0]);
-	mesh.addVertex(bullet[1]);
-	mesh.addIndex(0);
-	mesh.addIndex(1);
-
-	return mesh;
-}
-
-
-
-Mesh<PosColorVertex> constructColorVPlane(const MeshProperties & prop) {
-
-	Mesh<PosColorVertex> mesh;
-	mesh.m_mesh_type = BGFX_STATE_PT_TRISTRIP;
-
-	float meshsize = prop.width * prop.scale;
-	float height = prop.height;
-	float width = prop.width;
-
-	PosColorVertex v_plane[] =
-	{
-	// Horizonally aligned
-	{ 0.0f,    width/2.0f, 0.0f, 0x00034000},
-	{ 0.0f,   -width/2.0f, 0.0f, 0xff000000},
-	{-height, -width/2.0f, 0.0f, 0xff000000},
-	{-height,  width/2.0f, 0.0f, 0xff000000}
-
-	};
-
-	int i_plane[4] = {
-		0,3,1,2
-	};
-
-	for (int i = 0; i < 4; i++) {
-		mesh.addVertex(v_plane[i]);
-	}
-
-	for (int i = 0; i < 4; i++) {
-		mesh.addIndex(i_plane[i]);
-	}
+	Mesh mesh;
+	Group g;
+	mesh.m_decl = PosNormalTangentTexcoordVertex::ms_decl;
+	g.m_vbh = bgfx::createVertexBuffer(bgfx::makeRef(v_plane, sizeof(v_plane) ),
+									   mesh.m_decl);
+	g.m_ibh = bgfx::createIndexBuffer(bgfx::makeRef(i_plane, sizeof(i_plane) ) );
+	mesh.m_groups.push_back(g);
 
 	return mesh;
 }

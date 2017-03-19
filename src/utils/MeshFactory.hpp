@@ -6,17 +6,16 @@
 #include <graphics/TextureAtlas.hpp>
 #include <vector>
 #include <fbxsdk.h>
+#include <mesh.pb.h>
 
 namespace pumpkin {
-	
+
 enum class MeshObjectType {
 	TILE_MESH,
 	WALL_MESH,
 	PLANE_MESH,
 	FBX_MESH
 };
-
-typedef Mesh<PosNormalTexCoordVertex> FMesh;
 
 struct MeshProperties {
 	MeshProperties(uint32_t r,
@@ -36,9 +35,9 @@ struct MeshProperties {
 	std::vector<AtlasFrame> atlas_frames;
 };
 
-FMesh generateMesh(FbxNode* pNode);       
-std::vector<FMesh> loadMeshes(FbxNode *pRootNode);
-	
+Mesh generateMesh(FbxNode* pNode);
+std::vector<Mesh> loadMeshes(FbxNode *pRootNode);
+
 template <typename T>
 class MeshFactory {
 public:
@@ -49,26 +48,20 @@ public:
 		m_config(Config(config_file)) {
 	}
 
-	bool generate(Mesh<T> *mesh) {
-
-
-
-	}
-
 	//possibility T::Properties
-	static Mesh<T> construct(MeshObjectType id, const MeshProperties & properties) {
+	static Mesh construct(MeshObjectType id, const MeshProperties & properties) {
 		switch(id) {
-		case MeshObjectType::TILE_MESH:
-			return VertexUtils::constructTile(properties);
-			break;
-		case MeshObjectType::WALL_MESH:
-			return  VertexUtils::constructWall(properties);
-			break;
+		// case MeshObjectType::TILE_MESH:
+		// 	return VertexUtils::constructTile(properties);
+		// 	break;
+		// case MeshObjectType::WALL_MESH:
+		// 	return  VertexUtils::constructWall(properties);
+		// 	break;
 		case MeshObjectType::PLANE_MESH:
 			return  VertexUtils::constructVPlane(properties);
 			break;
 		};
-	}	
+	}
 
 private:
 
