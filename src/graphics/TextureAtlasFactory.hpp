@@ -13,13 +13,14 @@ public:
 	void generate(TextureAtlas* atlas) {
 
 		atlas->m_id = m_atlas_cfg.resource_id();
-		atlas->m_atlas_color = std::string(TEXTURE_FILE_PATH) +
+		atlas->m_atlas_file[0] = std::string(TEXTURE_FILE_PATH) +
 			m_atlas_cfg.color_file();
+		atlas->m_num_textures = 1;
 
 		if (m_atlas_cfg.has_normal_file()) {
-			atlas->m_atlas_normal = std::string(TEXTURE_FILE_PATH) +
+			atlas->m_atlas_file[1] = std::string(TEXTURE_FILE_PATH) +
 				m_atlas_cfg.normal_file();
-			atlas->m_has_normalmap = true;
+			atlas->m_num_textures++;
 		}
 
 		atlas->m_grid_width = m_atlas_cfg.grid_width();

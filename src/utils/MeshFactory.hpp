@@ -51,14 +51,8 @@ public:
 	//possibility T::Properties
 	static Mesh construct(MeshObjectType id, const MeshProperties & properties) {
 		switch(id) {
-		// case MeshObjectType::TILE_MESH:
-		// 	return VertexUtils::constructTile(properties);
-		// 	break;
-		// case MeshObjectType::WALL_MESH:
-		// 	return  VertexUtils::constructWall(properties);
-		// 	break;
 		case MeshObjectType::PLANE_MESH:
-			return  VertexUtils::constructVPlane(properties);
+			return  VertexUtils::constructVPlane(0.5, 0.5);
 			break;
 		};
 	}

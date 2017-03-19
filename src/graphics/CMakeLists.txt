@@ -5,8 +5,6 @@ add_library(graphics_engine
   GraphicsEngine.cpp
   Animation.hpp
   Animation.cpp
-  SpriteObject.hpp
-  SpriteObject.cpp
   GraphicsObject.hpp
   GraphicsObject.cpp
   DebugGraphicsObject.hpp
@@ -17,10 +15,6 @@ add_library(graphics_engine
   Shader.cpp
   TextureAtlas.hpp
   TextureAtlas.cpp
-  TileMap.hpp
-  TileMap.cpp
-  TileMapLayer.hpp
-  TileMapLayer.cpp
   Scene.hpp
   Scene.cpp
   )

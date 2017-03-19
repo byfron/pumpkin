@@ -82,7 +82,6 @@ Shader::Shader(const voyage::ShaderCfg & cfg) {
 
 
 void Shader::init() {
-	std::cout << "loading " << m_vs_shader.c_str() << std::endl;
 	m_program = pumpkinLoadProgram(m_vs_shader.c_str(), m_fs_shader.c_str());
 	m_initialized = true;
 }

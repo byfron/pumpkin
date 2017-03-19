@@ -3,11 +3,12 @@
 
 namespace pumpkin {
 
-Animation::Animation(std::string anim_cfg) :
-	m_frame_period(0.04),
-	m_enabled(true) {
+	Animation::Animation(const Animation::Config & config) :
+		GraphicsObject(config.graphics_properties()),
+		m_frame_period(0.04),
+		m_enabled(true) {	
 
-	AnimationFactory factory(anim_cfg);
+	AnimationFactory factory(config);
 	factory.generate(this);
 }
 

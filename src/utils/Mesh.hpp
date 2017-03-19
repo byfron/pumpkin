@@ -2,6 +2,8 @@
 
 #include <bgfx/bgfx.h>
 #include <vector>
+#include <graphics/TextureAtlas.hpp>
+#include <graphics/Shader.hpp>
 
 
 namespace pumpkin {
@@ -46,33 +48,36 @@ struct Group
 
 	void reset()
 	{
-		m_vbh.idx = bgfx::invalidHandle;
-		m_ibh.idx = bgfx::invalidHandle;
+		m_dvbh.idx = bgfx::invalidHandle;
+		m_dibh.idx = bgfx::invalidHandle;
 //		m_prims.clear();
 	}
 
-	bgfx::VertexBufferHandle m_vbh;
-	bgfx::IndexBufferHandle m_ibh;
+	bgfx::DynamicVertexBufferHandle m_dvbh;
+	bgfx::DynamicIndexBufferHandle m_dibh;
 	// Sphere m_sphere;
 	// Aabb m_aabb;
 	// Obb m_obb;
 	// PrimitiveArray m_prims;
 };
 
-struct MeshState
+class MeshState
 {
-	struct Texture
-	{
-		uint32_t            m_flags;
-		bgfx::UniformHandle m_sampler;
-		bgfx::TextureHandle m_texture;
-		uint8_t             m_stage;
-	};
+public:
 
-	Texture             m_textures[4];
+	MeshState(int texture_id, int shader_id, uint64_t state, uint8_t view_id) :
+		m_state(state),
+		m_viewId(view_id)
+	{
+		m_texture = ResourceManager::getResource<TextureAtlas>(texture_id);
+		m_shader = ResourceManager::getResource<Shader>(shader_id);
+		m_texture->init();
+		m_shader->init();		
+	}
+	
+	TextureAtlas::Ptr   m_texture;
+	Shader::Ptr         m_shader;
 	uint64_t            m_state;
-	bgfx::ProgramHandle m_program;
-	uint8_t             m_numTextures;
 	uint8_t             m_viewId;
 };
 
@@ -87,44 +92,47 @@ public:
 			for (GroupArray::const_iterator it = m_groups.begin(), itEnd = m_groups.end(); it != itEnd; ++it)
 			{
 				const Group& group = *it;
-				bgfx::destroyVertexBuffer(group.m_vbh);
+				bgfx::destroyDynamicVertexBuffer(group.m_dvbh);
 
-				if (bgfx::isValid(group.m_ibh) )
+				if (bgfx::isValid(group.m_dibh) )
 				{
-					bgfx::destroyIndexBuffer(group.m_ibh);
+					bgfx::destroyDynamicIndexBuffer(group.m_dibh);
 				}
 			}
 			m_groups.clear();
 		}
 
-	void submit(const MeshState*const* _state, uint8_t _numPasses, const float* _mtx, uint16_t _numMatrices) const
+	void submit(const std::vector<MeshState> & stateVec, const float* mtx, uint16_t numMatrices) const
 		{
-			uint32_t cached = bgfx::setTransform(_mtx, _numMatrices);
+			uint32_t cached = bgfx::setTransform(mtx, numMatrices);
 
-			for (uint32_t pass = 0; pass < _numPasses; ++pass)
+			for (uint32_t pass = 0; pass < stateVec.size(); ++pass)
 			{
-				bgfx::setTransform(cached, _numMatrices);
+				bgfx::setTransform(cached, numMatrices);
 
-				const MeshState& state = *_state[pass];
+				const MeshState& state = stateVec[pass];
 				bgfx::setState(state.m_state);
 
-				for (uint8_t tex = 0; tex < state.m_numTextures; ++tex)
+				const TextureAtlas::Ptr texture = state.m_texture;
+				
+				for (uint8_t tex = 0; tex < texture->m_num_textures; ++tex)
 				{
-					const MeshState::Texture& texture = state.m_textures[tex];
-					bgfx::setTexture(texture.m_stage
-									 , texture.m_sampler
-									 , texture.m_texture
-									 , texture.m_flags
+					bgfx::setTexture(texture->m_stage[tex]
+							 , texture->u_sampler[tex]
+							 , texture->m_texture[tex]
+							 , texture->m_flags[tex]
 						);
+
 				}
 
 				for (GroupArray::const_iterator it = m_groups.begin(), itEnd = m_groups.end(); it != itEnd; ++it)
 				{
 					const Group& group = *it;
-
-					bgfx::setIndexBuffer(group.m_ibh);
-					bgfx::setVertexBuffer(group.m_vbh);
-					bgfx::submit(state.m_viewId, state.m_program, 0, it != itEnd-1);
+					bgfx::setIndexBuffer(group.m_dibh);
+					bgfx::setVertexBuffer(group.m_dvbh);
+					bgfx::submit(state.m_viewId,
+						     state.m_shader->getHandle(),
+						     0, it != itEnd-1);
 				}
 			}
 		}

@@ -1,11 +1,12 @@
 #include "MeshFactory.hpp"
+#include "VertexUtils.hpp"
 
 namespace pumpkin {
 
 Mesh generateMesh(FbxNode* pNode) {
 
 	Mesh mesh;
-	mesh.m_decl = bgfx::VertexTextureNormal;
+	mesh.m_decl = PosNormalTexCoordVertex::ms_decl;
 
 	FbxMesh* pMesh = (FbxMesh*) pNode->GetNodeAttribute();
 	int num_vertices = pMesh->GetControlPointsCount();
@@ -17,9 +18,9 @@ Mesh generateMesh(FbxNode* pNode) {
 
 	assert(pMesh->GetElementUVCount() == 1);
 
-
-	std::vector<>
-
+	std::vector<PosNormalTexCoordVertex> vertices;
+	std::vector<uint16_t> indices;
+		
 	Group g;
 
 	for (int i = 0; i < num_vertices; i++)
@@ -32,17 +33,25 @@ Mesh generateMesh(FbxNode* pNode) {
 		FbxVector2 uvCoord = leUV->GetDirectArray().GetAt(i);
 		p.m_u = uvCoord[0]*0x7fff;
 		p.m_v = uvCoord[1]*0x7fff;
-		mesh.addVertex(p);
+		vertices.push_back(p);
 	}
 
 	for (int i = 0; i < num_triangles; i++) {
 		assert(pMesh->GetPolygonSize(i) == 3);
 		for (int t = 0; t < pMesh->GetPolygonSize(i); t++) {
 			int vertexIndex = pMesh->GetPolygonVertex(i, t);
-			mesh.addIndex(vertexIndex);
+			indices.push_back(vertexIndex);
 		}
 	}
 
+	const bgfx::Memory* mem;
+	mem = bgfx::makeRef(&vertices[0], sizeof(PosNormalTexCoordVertex) * vertices.size() );
+	g.m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);
+	mem = bgfx::makeRef(&indices[0], sizeof(uint16_t) * indices.size() );
+	g.m_dibh = bgfx::createDynamicIndexBuffer(mem);
+
+	mesh.m_groups.push_back(g);
+	
 	return mesh;
 }
 

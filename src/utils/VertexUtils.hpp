@@ -111,12 +111,7 @@ struct PosNormalTangentTexcoordVertex
 
 namespace VertexUtils {
 
-pumpkin::Mesh constructTile(const MeshProperties & prop);
-pumpkin::Mesh constructWall(const MeshProperties & prop);
-pumpkin::Mesh constructVPlane(const MeshProperties & prop);
-pumpkin::Mesh constructColorVPlane(const MeshProperties & prop);
-pumpkin::Mesh constructBulletLine(const MeshProperties & prop);
-
+pumpkin::Mesh constructVPlane(float width, float height);
 }
 
 }

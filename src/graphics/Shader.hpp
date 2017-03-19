@@ -21,8 +21,6 @@ public:
 	Shader(const voyage::ShaderCfg & cfg);
 	Shader(std::string fs,
 	       std::string vs) : m_vs_shader(vs), m_fs_shader(fs) {
-
-		std::cout << "loading " << fs << ", " << vs << std::endl;
 	}
 
 	~Shader() {

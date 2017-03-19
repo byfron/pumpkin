@@ -14,6 +14,8 @@
 
 namespace pumpkin {
 
+class Mesh;
+	
 struct AtlasFrame {
 	typedef Eigen::Matrix<int16_t, 2, 1> Corner;
 	Corner top_left;
@@ -32,23 +34,30 @@ public:
 	static uint32_t type() { return TEXTURE_ATLAS_RESOURCE_TYPE; }
 
 	~TextureAtlas() {
-		bgfx::destroyTexture(m_textureColor);
-		bgfx::destroyTexture(m_textureNormal);
+		for (int i = 0; i < m_num_textures; i++) {
+			bgfx::destroyTexture(m_texture[i]);
+			bgfx::destroyUniform(u_sampler[i]);
+		}
+
+		bgfx::destroyUniform(u_texOffset);
+		bgfx::destroyUniform(u_flip);
 	}
 
 	void init() {
-		m_textureColor = loadTexture(m_atlas_color.c_str());
-		if (m_has_normalmap)
-			m_textureNormal = loadTexture(m_atlas_normal.c_str());
+
+		// load texture (0)
+		m_texture[0] = loadTexture(m_atlas_file[0].c_str());
+		
+		// create uniforms
+		u_sampler[0]  = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
+		u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
+		u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
 	}
 
 	bgfx::TextureHandle & getColorHandle() {
-		return m_textureColor;
+		return m_texture[0];
 	}
 
-	bgfx::TextureHandle & getNormalHandle() {
-		return m_textureColor;
-	}
 
 	// gets atlas frames in texture coordinates
 	std::vector<AtlasFrame> getAtlasFrames(const std::vector<Vec2i> & coords) {
@@ -72,34 +81,36 @@ public:
 		return out;
 	}
 
-	bool hasNormalMap() const {
-		return m_has_normalmap;
+	void updateAtlasFrame(float offset0, float offset1, bool flipped) {
+		m_offset[0] = offset0;
+		m_offset[1] = offset1;
+		m_flipped = flipped;		       		
 	}
-
-	// const AtlasFrame & getFrame(uint32_t id) const {
-	// 	assert(id < m_frames.size());
-	// 	return m_framfaes[id];
-	// }
-
+	
 protected:
 
 	friend TextureAtlasFactory;
-	bgfx::TextureHandle m_textureColor;
-	bgfx::TextureHandle m_textureNormal;
-	std::string m_atlas_color;
-	std::string m_atlas_normal;
-
+	friend Mesh;
+	
+	int m_num_textures;
+	
+	// We only support 4 textures per mesh
+	bgfx::TextureHandle m_texture[4];
+	uint32_t m_flags[4];
+	uint8_t  m_stage[4];
+	bgfx::UniformHandle u_sampler[4];
+	std::string m_atlas_file[4];
+	
+	// Atlas properties
 	int m_grid_width;
 	int m_grid_height;
 	int m_sprite_width;
-	int m_sprite_height;
+	int m_sprite_height;	
+	bgfx::UniformHandle u_flip;
+	bgfx::UniformHandle u_texOffset;
+	bool m_flipped;
+	float m_offset[2];
 
-	bool m_has_normalmap;
-
-	// TODO load all atlases from a config file of atlases?
-	// Load them when we need them better I guess.
-	// Make TextureAtlasFactory
-	//grid size
 
 };
 

@@ -9,21 +9,17 @@ namespace pumpkin {
 class GraphicsObjectFactory {
 
 public:
-	typedef Configuration<voyage::GraphicsObjectCfg> Config;
-
-	GraphicsObjectFactory(const std::string & config_file) :
-		m_config(Config(config_file)) {}
+	GraphicsObjectFactory(const GraphicsObject::Config & config) :
+		m_config(config) {}
 
 	bool generate(GraphicsObject *go) {
-		go->loadTextureAtlas(m_config.config().atlas_id());
-		go->loadShader(m_config.config().shader_id());
-		go->m_width = m_config.config().width();
-		go->m_height = m_config.config().height();
+		go->loadTexture(m_config.atlas_id());
+		go->loadShader(m_config.shader_id());
 	}
 
 private:
 	std::string m_config_file;
-	Config m_config;
+	GraphicsObject::Config m_config;
 };
 
 }

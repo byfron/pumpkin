@@ -1,16 +1,20 @@
 #pragma once
 
-#include "SpriteObject.hpp"
+#include "GraphicsObject.hpp"
 #include "TextureAtlas.hpp"
 #include <map>
+#include <graphics.pb.h>
+#include <animation.pb.h>
 
 namespace pumpkin {
 
 class AnimationFactory;
 
-class Animation : public SpriteObject {
+class Animation : public GraphicsObject {
 
 public:
+
+	typedef voyage::AnimationListCfg Config;
 
 	// Load from data. TODO: refactor this to TextureAtlas?
 	struct AtlasFrame {
@@ -23,19 +27,17 @@ public:
 
 	};
 
-	Animation(std::string anim_cfg);
+	Animation(const Config & );
 
-	void updateAtlasOffset() {
-		assert(isValid());
-		m_atlas_offset[0] = m_animation[m_active_anim][m_active_frame].atlas_offset_x;
-		m_atlas_offset[1] = m_animation[m_active_anim][m_active_frame].atlas_offset_y;
-		m_flipped = m_animation[m_active_anim][m_active_frame].flipped;
-
-		std::cout << "offset:" << m_atlas_offset[0] << "," <<  m_atlas_offset[1] << std::endl;
+	void updateAtlasOffset(int pass = 0) {
+		m_mesh_state_vector[pass].m_texture->updateAtlasFrame(
+			m_animation[m_active_anim][m_active_frame].atlas_offset_x,
+			m_animation[m_active_anim][m_active_frame].atlas_offset_y,
+			m_animation[m_active_anim][m_active_frame].flipped);
 	}
 
 	void init() {
-		SpriteObject::init();
+		GraphicsObject::init();
 	}
 
 	bool isValid() {
@@ -45,7 +47,7 @@ public:
 
 	void update(float dt) {
 		if (isTimeToSwitchFrames(dt) && m_enabled) { frameForward(); }
-		SpriteObject::update(dt);
+		meshSubmit();
 	}
 
 	void addFrame(uint32_t anim_id, const AtlasFrame & frame) {
@@ -86,6 +88,7 @@ public:
 
 protected:
 
+	
 	float m_time_since_last_anim;
 	float m_frame_period;
 	int16_t m_active_anim;
