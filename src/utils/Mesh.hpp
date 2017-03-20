@@ -63,7 +63,7 @@ struct Group
 
 //	bgfx::VertexBufferHandle m_dvbh;
 //	bgfx::IndexBufferHandle m_dibh;
-	
+
 	// Sphere m_sphere;
 	Aabb m_aabb;
 	// Obb m_obb;
@@ -74,8 +74,8 @@ class MeshState
 {
 public:
 
-	MeshState() {}	
-	
+	MeshState() {}
+
 	TextureAtlas::Ptr   m_texture;
 	Shader::Ptr         m_shader;
 	uint64_t            m_state = BGFX_STATE_DEFAULT;
@@ -117,7 +117,7 @@ public:
 				bgfx::setState(state.m_state);
 
 				const TextureAtlas::Ptr texture = state.m_texture;
-				
+
 				for (uint8_t tex = 0; tex < texture->m_num_textures; ++tex)
 				{
 					bgfx::setTexture(texture->m_stage[tex]
@@ -132,17 +132,19 @@ public:
 				{
 					const Group& group = *it;
 					bgfx::setIndexBuffer(group.m_dibh);
-					bgfx::setVertexBuffer(group.m_dvbh);				
-				
+					bgfx::setVertexBuffer(group.m_dvbh);
+
 					bgfx::submit(state.m_viewId,
 						     state.m_shader->getHandle(),
 						     0, it != itEnd-1);
 
-					// ddBegin(0);
-					// ddDraw(group.m_aabb);
-					// ddEnd();
+
+					ddBegin(0);
+					ddSetTransform(mtx);
+					ddDraw(group.m_aabb);
+					ddEnd();
 				}
-			}			
+			}
 		}
 
 	bgfx::VertexDecl m_decl;

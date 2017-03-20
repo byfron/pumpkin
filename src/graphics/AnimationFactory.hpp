@@ -14,7 +14,7 @@ public:
 	AnimationFactory(const Animation::Config & config) : m_animation_list_cfg(config) {}
 
 	//TODO: change all to this style
-	bool generate(Animation* anim) { 
+	bool generate(Animation* anim) {
 
 		//voyage::SpriteObjectCfg sprite_cfg = m_animation_list_cfg.config().graphics_properties();
 		//anim->loadTexture(sprite_cfg.atlas_id());
@@ -29,9 +29,10 @@ public:
 				voyage::AtlasFrameCfg frame = anim_cfg.frames(i);
 
 				anim->addFrame(anim_cfg.animation_id(),
-					       Animation::AtlasFrame(float(frame.x()), //14
-								     float(frame.y()), //5
-								     frame.flipped()));
+					       Animation::AtlasFrame(
+							   float(frame.x()), //14
+							   float(frame.y()), //5
+							   frame.flipped()));
 			}
 
 		}
