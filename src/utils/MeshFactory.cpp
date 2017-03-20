@@ -21,13 +21,13 @@ bool getTextureFileNameFromNode(FbxNode *pNode, std::string & filename) {
             int lTextureIndex;
             FBXSDK_FOR_EACH_TEXTURE(lTextureIndex)
             {
-                lProperty = lMaterial->FindProperty(FbxLayerElement::sTextureChannelNames[lTextureIndex]);
-				FbxFileTexture* lTexture = lProperty.GetSrcObject<FbxFileTexture>(lTextureIndex);
-                if(lTexture)
-                {
-					filename = lTexture->GetFileName();
-					return true;
-                }
+		    lProperty = lMaterial->FindProperty(FbxLayerElement::sTextureChannelNames[lTextureIndex]);
+		    FbxFileTexture* lTexture = lProperty.GetSrcObject<FbxFileTexture>(lTextureIndex);
+		    if(lTexture)
+		    {
+			    filename = lTexture->GetFileName();
+			    return true;
+		    }
             }
 
         }//end if(lMaterial)
@@ -56,7 +56,6 @@ Mesh generateMesh(FbxNode* pNode) {
 	std::vector<uint16_t> indices;
 
 	Group g;
-
 	for (int i = 0; i < num_vertices; i++)
 	{
 		pumpkin::PosNormalTexCoordVertex p;
@@ -65,9 +64,11 @@ Mesh generateMesh(FbxNode* pNode) {
 		p.m_z = controlPoints[i][2];
 		p.m_normal = pumpkin::NORMAL_POSZ;
 		FbxVector2 uvCoord = leUV->GetDirectArray().GetAt(i);
-		p.m_u = uvCoord[0]*0x7fff;
-		p.m_v = uvCoord[1]*0x7fff;
+		p.m_u = uvCoord[1]*0x7fff;
+		p.m_v = uvCoord[0]*0x7fff;
 		vertices.push_back(p);
+
+		std::cout << uvCoord[0] << "," << uvCoord[1] << std::endl;
 	}
 
 	for (int i = 0; i < num_triangles; i++) {
@@ -79,9 +80,7 @@ Mesh generateMesh(FbxNode* pNode) {
 
 	mesh.m_groups.push_back(g);
 
-
 //	FIX THIS FOR FUCK SAKE
-
 	Group & gref = mesh.m_groups[0];
 
 	const bgfx::Memory* mem;
@@ -133,9 +132,9 @@ std::vector<Mesh> loadMeshes(FbxNode *pRootNode) {
 }
 
 //TODO move this to TextureAtlasFactory
-std::vector<TextureAtlas> loadTextures(FbxNode *pRootNode) {
+std::vector<TextureAtlas::Ptr> loadTextures(FbxNode *pRootNode) {
 
-	std::vector<TextureAtlas> textures;
+	std::vector<TextureAtlas::Ptr> textures;
 
 	if(pRootNode)
 	{
@@ -150,28 +149,26 @@ std::vector<TextureAtlas> loadTextures(FbxNode *pRootNode) {
 				bgfx::TextureInfo info;
 				bgfx::TextureHandle handle =
 					loadTexture(name.c_str(),
-								BGFX_TEXTURE_NONE, 0, &info);
+						    BGFX_TEXTURE_NONE, 0, &info);
 
-				TextureAtlas tex;
-
-				std::cout << info.width << "," << info.height << std::endl;
+				TextureAtlas::Ptr tex = std::make_shared<TextureAtlas>();
 
 				// diffuse channel
-				tex.m_texture_handle[0] = handle;
-				tex.m_stage[0] = 0;
-				tex.m_sprite_width = info.width;
-				tex.m_sprite_height = info.height;
-				tex.m_grid_height = 1;
-				tex.m_grid_width = 1;
-				tex.m_atlas_file[0] = name;
-				tex.m_num_textures = 1;
-				tex.m_flags[0] = UINT32_MAX;
-				tex.u_sampler[0] = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
-				tex.u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
-				tex.u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
+				tex->m_texture_handle[0] = handle;
+				tex->m_stage[0] = 0;
+				tex->m_sprite_width = info.width;
+				tex->m_sprite_height = info.height;
+				tex->m_grid_height = 1;
+				tex->m_grid_width = 1;
+				tex->m_atlas_file[0] = name;
+				tex->m_num_textures = 1;
+				tex->m_flags[0] = UINT32_MAX;
+				tex->u_sampler[0] = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
+				tex->u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
+				tex->u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
 
-				tex.m_offset[0] = 0.0f;
-				tex.m_offset[1] = 0.0f;
+				tex->m_offset[0] = 0.0f;
+				tex->m_offset[1] = 0.0f;
 
 				textures.push_back(tex);
 			}

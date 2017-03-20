@@ -12,21 +12,18 @@ void Scene::loadFromFbxNode(FbxNode * node) {
 
 
 	std::vector<Mesh> meshes = loadMeshes(node);
-	std::vector<TextureAtlas> textures = loadTextures(node);
+	std::vector<TextureAtlas::Ptr> textures = loadTextures(node);
 
 	assert(meshes.size() == textures.size());
 
 	//create a single pass for each mesh
 	for (int i = 0; i < meshes.size(); i++) {
-
 		std::vector<MeshState> passes;
 		MeshState pass0;
 		pass0.m_state = state;
 		loadShader(&pass0, 5);
-		loadTexture(&pass0, 5);
-//		pass0.m_texture = std::make_shared<TextureAtlas>(textures[i]);
+ 		pass0.m_texture = textures[i];
 		passes.push_back(pass0);
-
 		addPrefab(passes, meshes[i]);
 	}
 }
