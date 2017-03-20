@@ -47,7 +47,11 @@ public:
 
 	void update(float dt) {
 		if (isTimeToSwitchFrames(dt) && m_enabled) { frameForward(); }
+
 		meshSubmit();
+
+		//GraphicsObject::update(dt);
+		
 	}
 
 	void addFrame(uint32_t anim_id, const AtlasFrame & frame) {

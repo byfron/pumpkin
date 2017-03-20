@@ -1,5 +1,6 @@
 #include "MeshFactory.hpp"
 #include "VertexUtils.hpp"
+#include "Mesh.hpp"
 
 namespace pumpkin {
 
@@ -18,8 +19,8 @@ Mesh generateMesh(FbxNode* pNode) {
 
 	assert(pMesh->GetElementUVCount() == 1);
 
-	std::vector<PosNormalTexCoordVertex> vertices;
-	std::vector<uint16_t> indices;
+//	std::vector<PosNormalTexCoordVertex> vertices;
+//	std::vector<uint16_t> indices;
 		
 	Group g;
 
@@ -33,24 +34,32 @@ Mesh generateMesh(FbxNode* pNode) {
 		FbxVector2 uvCoord = leUV->GetDirectArray().GetAt(i);
 		p.m_u = uvCoord[0]*0x7fff;
 		p.m_v = uvCoord[1]*0x7fff;
-		vertices.push_back(p);
+		g.vertices.push_back(p);
 	}
 
 	for (int i = 0; i < num_triangles; i++) {
 		assert(pMesh->GetPolygonSize(i) == 3);
 		for (int t = 0; t < pMesh->GetPolygonSize(i); t++) {
 			int vertexIndex = pMesh->GetPolygonVertex(i, t);
-			indices.push_back(vertexIndex);
+			g.indices.push_back(vertexIndex);
 		}
 	}
 
-	const bgfx::Memory* mem;
-	mem = bgfx::makeRef(&vertices[0], sizeof(PosNormalTexCoordVertex) * vertices.size() );
-	g.m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);
-	mem = bgfx::makeRef(&indices[0], sizeof(uint16_t) * indices.size() );
-	g.m_dibh = bgfx::createDynamicIndexBuffer(mem);
-
 	mesh.m_groups.push_back(g);
+
+
+//	FIX THIS FOR FUCK SAKE
+	
+	Group & gref = mesh.m_groups[0];
+	
+	const bgfx::Memory* mem;
+	mem = bgfx::makeRef(&gref.vertices[0], sizeof(PosNormalTexCoordVertex) * gref.vertices.size() );
+	gref.m_dvbh = bgfx::createDynamicVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);
+//	g.m_dvbh = bgfx::createVertexBuffer(mem, PosNormalTexCoordVertex::ms_decl);
+	mem = bgfx::makeRef(&gref.indices[0], sizeof(uint16_t) * gref.indices.size() );
+	gref.m_dibh = bgfx::createDynamicIndexBuffer(mem);
+//	g.m_dibh = bgfx::createIndexBuffer(mem);
+
 	
 	return mesh;
 }

@@ -3,10 +3,11 @@
 
 #include <common/common.h>
 #include <common/bgfx_utils.h>
-#include "Mesh.hpp"
 
 namespace pumpkin {
 
+class Mesh;
+	
 #define NORMAL_POSX packF4u( 1.0f,  0.0f,  0.0f)
 #define NORMAL_NEGX packF4u(-1.0f,  0.0f,  0.0f)
 #define NORMAL_POSY packF4u( 0.0f,  1.0f,  0.0f)

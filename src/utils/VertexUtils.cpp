@@ -33,38 +33,54 @@ bgfx::VertexDecl PosTexCoordVertex::ms_decl;
 bgfx::VertexDecl PosNormalTexCoordVertex::ms_decl;
 bgfx::VertexDecl PosNormalTangentTexcoordVertex::ms_decl;
 
-
+	
 namespace VertexUtils {
 
 	Mesh constructVPlane(float width, float height) {
 
-	AtlasFrame::Corner top_left = AtlasFrame::Corner(0,0);
-	AtlasFrame::Corner bottom_right = AtlasFrame::Corner(0x7fff,0x7fff);
-		 
-	PosNormalTangentTexcoordVertex v_plane[] =
-	{
-	// Horizonally aligned
-	{ -height/2.0f,width/2.0f, 0.0f,packF4u(0.0f,0.0f, 1.0f),0, bottom_right(0), bottom_right(1)},
-	{ -height/2.0f,-width/2.0f, 0.0f,packF4u(0.0f,0.0f, 1.0f),0, top_left(0), bottom_right(1)},
-	{ height/2.0f,width/2.0f,0.0f,packF4u(0.0f,0.0f, 1.0f),0, bottom_right(0), top_left(1)},
-	{ height/2.0f,-width/2.0f,0.0f,packF4u(0.0f,0.0f, 1.0f),0, top_left(0), top_left(1)},
+		AtlasFrame::Corner top_left = AtlasFrame::Corner(0,0);
+		AtlasFrame::Corner bottom_right = AtlasFrame::Corner(0x7fff,0x7fff);
 
-	};
+		std::cout << width << "." << height << std::endl;
+		
+		static PosNormalTexCoordVertex v_plane[] =
+		{
+			// Horizonally aligned
+			{ -height/2.0f,width/2.0f, 0.0f,packF4u(0.0f,0.0f, 1.0f), bottom_right(0), bottom_right(1)},
+			{ -height/2.0f,-width/2.0f, 0.0f,packF4u(0.0f,0.0f, 1.0f),top_left(0), bottom_right(1)},
+			{ height/2.0f,width/2.0f,0.0f,packF4u(0.0f,0.0f, 1.0f), bottom_right(0), top_left(1)},
+			{ height/2.0f,-width/2.0f,0.0f,packF4u(0.0f,0.0f, 1.0f), top_left(0), top_left(1)},
+			
+		};
+	
+		static int i_plane[4] = {
+			0,1,2,3
+		};
 
-	int i_plane[4] = {
-		0,1,2,3
-	};
+		Mesh mesh;
+		mesh.m_decl = PosNormalTexCoordVertex::ms_decl;
+	
+		Group g;		
+		g.m_dvbh = bgfx::createDynamicVertexBuffer(bgfx::makeRef(v_plane, sizeof(v_plane) ),
+		 					   mesh.m_decl);
+		g.m_dibh = bgfx::createDynamicIndexBuffer(bgfx::makeRef(i_plane, sizeof(i_plane) ) );
 
-	Mesh mesh;
-	Group g;
-	mesh.m_decl = PosNormalTangentTexcoordVertex::ms_decl;
-	g.m_dvbh = bgfx::createDynamicVertexBuffer(bgfx::makeRef(v_plane, sizeof(v_plane) ),
-						   mesh.m_decl);
-	g.m_dibh = bgfx::createDynamicIndexBuffer(bgfx::makeRef(i_plane, sizeof(i_plane) ) );
-	mesh.m_groups.push_back(g);
+		// g.m_dvbh = bgfx::createVertexBuffer(bgfx::makeRef(v_plane, sizeof(v_plane) ),
+		// 							   mesh.m_decl);
+		// g.m_dibh = bgfx::createIndexBuffer(bgfx::makeRef(i_plane, sizeof(i_plane) ) );
 
-	return mesh;
-}
+		g.m_aabb =
+		{
+			{-height/2.0f,-width/2.0f, 0.0f},
+			{height/2.0f,width/2.0f,0.0f}
+		};
+		
+		mesh.m_groups.push_back(g);
+
+
+		
+		return mesh;
+	}
 
 }
 }

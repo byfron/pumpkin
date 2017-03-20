@@ -2,13 +2,15 @@
 
 namespace pumpkin {
 
-Scene::Scene(const Scene::Config & config) :
-	GraphicsObject(config.graphics_properties()) {
-
+Scene::Scene(const Scene::Config & config)  : 
+	GraphicsObject(config.graphics_properties())
+{
+	m_mesh_state_vector[0].m_state = 0 | BGFX_STATE_DEFAULT;
 }
 
 void Scene::loadFromFbxNode(FbxNode * node) {
 	m_mesh_vector = loadMeshes(node);
+	std::cout << "meshes loaded:" << m_mesh_vector.size() << std::endl;
 }
 	
 void Scene::update(float d) {

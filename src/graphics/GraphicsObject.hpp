@@ -22,6 +22,7 @@ public:
 
 	friend class GraphicsObjectFactory;
 
+	//GraphicsObject() : m_transform(Eigen::MatrixXf::Identity(4,4)) {}
 	GraphicsObject(const Config & config);
 
 	~GraphicsObject() {
@@ -34,15 +35,54 @@ public:
 		ddInit();
 	}
 
+	void addMesh(const Mesh & mesh) {
+		m_mesh_vector.push_back(mesh);
+	}
+
 	void meshSubmit() {
-		for (int i = 0; i < m_mesh_vector.size(); i++) {
+		for (int i = 0; i < m_mesh_vector.size(); i++) {			
 			m_mesh_vector[i].submit(m_mesh_state_vector,
 						(const float*)m_transform.data(),
 						(uint16_t) 1);
 		}
+
+
+	// 	uint32_t cached = bgfx::setTransform((const float*)m_transform.data(),
+// 						     1);
+// 		bgfx::setTransform(cached, 1);
+
+
+
+
+// 		// Set render states.
+// 		bgfx::setState(m_mesh_state_vector[0].m_state);	
+
+// //		bgfx::setTransform(m_transform.data());
+// 		bgfx::setVertexBuffer(m_mesh_vector[0].m_groups[0].m_dvbh);
+// 		bgfx::setIndexBuffer(m_mesh_vector[0].m_groups[0].m_dibh);
+		
+// 		bgfx::setTexture(m_mesh_state_vector[0].m_texture->m_stage[0],
+// 				 m_mesh_state_vector[0].m_texture->u_sampler[0],
+// 				 m_mesh_state_vector[0].m_texture->m_texture_handle[0]);
+
+// 		// if (m_texture_atlas->hasNormalMap()) {
+// 		// 	bgfx::setTexture(0, m_mesh_state_vector[0].m_texture->u_texNormal,
+// 		// 			 m_mesh_state_vector[0].m_texture->getNormalHandle());
+// 		// }
+
+// 		m_mesh_state_vector[0].m_texture->setUniforms();
+
+// 		// Submit primitive for rendering to view 0.
+// 		bgfx::submit(m_mesh_state_vector[0].m_viewId,
+// 			     m_mesh_state_vector[0].m_shader->getHandle(),
+// 			     0, true);
 	}
 	
-	virtual void update(float d) {};
+	virtual void update(float d) {
+		
+		//	meshSubmit();
+
+	};
 	
 	bool loadShader(uint32_t id, uint8_t pass = 0) {
 
@@ -55,9 +95,11 @@ public:
 			return false;
 		}
 
+		std::cout << "Loaded shader" << id << std::endl;
+		
 		shader->init();
 		m_mesh_state_vector[pass].m_shader = shader;
-		return true;
+ 		return true;
 	}
 
 	bool loadTexture(uint32_t id, uint8_t pass = 0) {
@@ -67,6 +109,8 @@ public:
 			std::cout << "error loading texture atlas cfg" << std::endl;
 			return false;
 		}
+
+		std::cout << "Loaded texture" << id << std::endl;
 
 		texture->init();
 		m_mesh_state_vector[pass].m_texture = texture;

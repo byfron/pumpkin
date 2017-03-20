@@ -15,6 +15,7 @@
 namespace pumpkin {
 
 class Mesh;
+class GraphicsObject;	
 	
 struct AtlasFrame {
 	typedef Eigen::Matrix<int16_t, 2, 1> Corner;
@@ -35,7 +36,7 @@ public:
 
 	~TextureAtlas() {
 		for (int i = 0; i < m_num_textures; i++) {
-			bgfx::destroyTexture(m_texture[i]);
+			bgfx::destroyTexture(m_texture_handle[i]);
 			bgfx::destroyUniform(u_sampler[i]);
 		}
 
@@ -45,19 +46,26 @@ public:
 
 	void init() {
 
-		// load texture (0)
-		m_texture[0] = loadTexture(m_atlas_file[0].c_str());
+	// 	// load texture (0)
+	 	//m_texture[0] = loadTexture(m_atlas_file[0].c_str());
 		
-		// create uniforms
-		u_sampler[0]  = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
-		u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
-		u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
+	// 	// create uniforms
+	// 	u_sampler[0]  = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
+	// 	u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
+	// 	u_flip = bgfx::createUniform("flip", bgfx::UniformType::Int1);
 	}
 
 	bgfx::TextureHandle & getColorHandle() {
-		return m_texture[0];
+		return m_texture_handle[0];
 	}
 
+	void setUniforms() {
+
+		float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
+		bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);	       
+		bgfx::setUniform(u_texOffset, m_offset, 1);		
+		bgfx::setUniform(u_flip, &m_flipped, 1);	       
+	}
 
 	// gets atlas frames in texture coordinates
 	std::vector<AtlasFrame> getAtlasFrames(const std::vector<Vec2i> & coords) {
@@ -90,12 +98,13 @@ public:
 protected:
 
 	friend TextureAtlasFactory;
+	friend GraphicsObject; //REMOVE THIS
 	friend Mesh;
 	
-	int m_num_textures;
+	int m_num_textures = 1;
 	
 	// We only support 4 textures per mesh
-	bgfx::TextureHandle m_texture[4];
+	bgfx::TextureHandle m_texture_handle[4];
 	uint32_t m_flags[4];
 	uint8_t  m_stage[4];
 	bgfx::UniformHandle u_sampler[4];
@@ -108,8 +117,10 @@ protected:
 	int m_sprite_height;	
 	bgfx::UniformHandle u_flip;
 	bgfx::UniformHandle u_texOffset;
-	bool m_flipped;
-	float m_offset[2];
+	bgfx::UniformHandle u_lightPosRadius;
+
+	bool m_flipped = false;
+	float m_offset[2];// = {0.0f, 0.0f};
 
 
 };
