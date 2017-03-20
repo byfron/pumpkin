@@ -37,8 +37,8 @@ struct MeshProperties {
 
 Mesh generateMesh(FbxNode* pNode);
 std::vector<Mesh> loadMeshes(FbxNode *pRootNode);
+std::vector<TextureAtlas> loadTextures(FbxNode *pRootNode);
 
-template <typename T>
 class MeshFactory {
 public:
 

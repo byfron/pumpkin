@@ -29,8 +29,8 @@ public:
 
 	Animation(const Config & );
 
-	void updateAtlasOffset(int pass = 0) {
-		m_mesh_state_vector[pass].m_texture->updateAtlasFrame(
+	void updateAtlasOffset(MeshState * pass) {
+		pass->m_texture->updateAtlasFrame(
 			m_animation[m_active_anim][m_active_frame].atlas_offset_x,
 			m_animation[m_active_anim][m_active_frame].atlas_offset_y,
 			m_animation[m_active_anim][m_active_frame].flipped);
@@ -51,7 +51,7 @@ public:
 		meshSubmit();
 
 		//GraphicsObject::update(dt);
-		
+
 	}
 
 	void addFrame(uint32_t anim_id, const AtlasFrame & frame) {
@@ -83,7 +83,7 @@ public:
 			m_active_frame = 0;
 		}
 		else m_active_frame++;
-		updateAtlasOffset();
+		updateAtlasOffset(m_pass0);
 	}
 
 	void stop() {
@@ -92,12 +92,14 @@ public:
 
 protected:
 
-	
+
 	float m_time_since_last_anim;
 	float m_frame_period;
 	int16_t m_active_anim;
 	int16_t m_active_frame;
 	bool m_enabled;
+
+	MeshState *m_pass0;
 
 	std::map<uint32_t, std::vector<AtlasFrame> > m_animation;
 

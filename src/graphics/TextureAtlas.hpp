@@ -15,8 +15,9 @@
 namespace pumpkin {
 
 class Mesh;
-class GraphicsObject;	
-	
+class MeshFactory;
+class GraphicsObject;
+
 struct AtlasFrame {
 	typedef Eigen::Matrix<int16_t, 2, 1> Corner;
 	Corner top_left;
@@ -30,6 +31,7 @@ public:
 
 	typedef std::shared_ptr<TextureAtlas> Ptr;
 
+	TextureAtlas() {}
 	TextureAtlas(const voyage::AtlasCfg &);
 
 	static uint32_t type() { return TEXTURE_ATLAS_RESOURCE_TYPE; }
@@ -48,7 +50,7 @@ public:
 
 	// 	// load texture (0)
 	 	//m_texture[0] = loadTexture(m_atlas_file[0].c_str());
-		
+
 	// 	// create uniforms
 	// 	u_sampler[0]  = bgfx::createUniform("s_texColor",  bgfx::UniformType::Int1);
 	// 	u_texOffset = bgfx::createUniform("packed_input",  bgfx::UniformType::Vec4);
@@ -62,9 +64,9 @@ public:
 	void setUniforms() {
 
 		float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
-		bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);	       
-		bgfx::setUniform(u_texOffset, m_offset, 1);		
-		bgfx::setUniform(u_flip, &m_flipped, 1);	       
+		bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
+		bgfx::setUniform(u_texOffset, m_offset, 1);
+		bgfx::setUniform(u_flip, &m_flipped, 1);
 	}
 
 	// gets atlas frames in texture coordinates
@@ -92,29 +94,25 @@ public:
 	void updateAtlasFrame(float offset0, float offset1, bool flipped) {
 		m_offset[0] = offset0;
 		m_offset[1] = offset1;
-		m_flipped = flipped;		       		
+		m_flipped = flipped;
 	}
-	
-protected:
 
 	friend TextureAtlasFactory;
-	friend GraphicsObject; //REMOVE THIS
-	friend Mesh;
-	
+
 	int m_num_textures = 1;
-	
+
 	// We only support 4 textures per mesh
 	bgfx::TextureHandle m_texture_handle[4];
 	uint32_t m_flags[4];
 	uint8_t  m_stage[4];
 	bgfx::UniformHandle u_sampler[4];
 	std::string m_atlas_file[4];
-	
+
 	// Atlas properties
 	int m_grid_width;
 	int m_grid_height;
 	int m_sprite_width;
-	int m_sprite_height;	
+	int m_sprite_height;
 	bgfx::UniformHandle u_flip;
 	bgfx::UniformHandle u_texOffset;
 	bgfx::UniformHandle u_lightPosRadius;

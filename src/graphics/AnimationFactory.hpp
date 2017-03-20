@@ -44,7 +44,6 @@ public:
 		//anim->m_height = sprite_cfg.height();
 
 		anim->switchToAnim(m_animation_list_cfg.animation(0).animation_id());
-		anim->updateAtlasOffset();
 		return true;
 	}
 

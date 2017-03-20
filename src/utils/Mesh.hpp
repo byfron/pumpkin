@@ -57,10 +57,6 @@ struct Group
 	bgfx::DynamicVertexBufferHandle m_dvbh;
 	bgfx::DynamicIndexBufferHandle m_dibh;
 
-	// TODO: we need a way to keep vertices/indices somewhere
-	std::vector<PosNormalTexCoordVertex> vertices;
-	std::vector<uint16_t> indices;
-
 //	bgfx::VertexBufferHandle m_dvbh;
 //	bgfx::IndexBufferHandle m_dibh;
 

@@ -1,20 +1,31 @@
-#include "GraphicsObject.hpp"
-#include "GraphicsObjectFactory.hpp"
-#include "GraphicsEngine.hpp"
-#include <utils/MeshFactory.hpp>
-#include <iostream>
-#include <common/debugdraw/debugdraw.h>
+ #include "GraphicsObject.hpp"
 
 namespace pumpkin {
 
-	GraphicsObject::GraphicsObject(const GraphicsObject::Config & config) :
-		m_transform(Eigen::MatrixXf::Identity(4,4)) {
-
-		// push a default mesh state in slot 0
-		// This is quite ugly though
-		m_mesh_state_vector.push_back(MeshState());
-		
-		GraphicsObjectFactory gof(config);
-		gof.generate(this);
+bool loadShader(MeshState *pass, uint32_t id) {
+	Shader::Ptr shader = ResourceManager::getResource<Shader>(id);
+	if (!shader) {
+		//log error
+		std::cout << "error loading shader cfg" << std::endl;
+		return false;
 	}
+
+	shader->init();
+	pass->m_shader = shader;
+	return true;
+}
+
+bool loadTexture(MeshState *pass, uint32_t id) {
+	TextureAtlas::Ptr texture = ResourceManager::getResource<TextureAtlas>(id);
+	if (!texture) {
+		//log error
+		std::cout << "error loading texture atlas cfg" << std::endl;
+		return false;
+	}
+
+	texture->init();
+	pass->m_texture = texture;
+	return true;
+}
+
 }

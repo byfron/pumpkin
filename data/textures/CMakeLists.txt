@@ -10,7 +10,8 @@ list(APPEND TEXTURE_FILES "map_atlas_color_8x8.ktx")
 list(APPEND TEXTURE_FILES "map_atlas_normal.ktx")
 list(APPEND TEXTURE_FILES "top_normal.ktx")
 list(APPEND TEXTURE_FILES "top_rgb.ktx")
-list(APPEND TEXTURE_FILES "floor.ktx")
+list(APPEND TEXTURE_FILES "room_floor_tex0.ktx")
+list(APPEND TEXTURE_FILES "room_wall_tex1.ktx")
 
 foreach(TEXTURE_FILE ${TEXTURE_FILES})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${TEXTURE_FILE}
