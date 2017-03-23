@@ -2,6 +2,7 @@
 #include "ResourceManager.hpp"
 #include "TextureAtlas.hpp"
 #include "Animation.hpp"
+#include "DebugManager.hpp"
 #include <utils/Mesh.hpp>
 #include <utils/VertexUtils.hpp>
 #include <utils/Camera.hpp>
@@ -37,18 +38,18 @@ void GraphicsEngine::screenSpaceQuad(float _textureWidth, float _textureHeight, 
 	// 	bgfx::makeRef(vb, sizeof(vb) )
 	// 	, PosTexCoordVertex::ms_decl);
 
-	
+
 	// m_ibh = bgfx::createIndexBuffer(
 	// 	// Static data can be passed with bgfx::makeRef
 	// 	bgfx::makeRef(ib, sizeof(ib) )
 	// 	);
-		
+
 	// bgfx::setVertexBuffer(m_vbh);
 	// bgfx::setIndexBuffer(m_ibh);
 	// return;
 
-	
-	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosTexCoordVertex::ms_decl) ) // 
+
+	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosTexCoordVertex::ms_decl) ) //
 	{
 
 		bgfx::TransientVertexBuffer vb;
@@ -126,10 +127,10 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 
 	// Set palette color for index 0
 	bgfx::setPaletteColor(0, UINT32_C(0x00000000) );
-	
+
 	// Set palette color for index 1
 	bgfx::setPaletteColor(1, UINT32_C(0x303030ff) );
-	
+
 	bgfx::setViewClear(RENDER_PASS_GEOMETRY
 		, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
 		, 1.0f
@@ -148,7 +149,7 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 	PosTexCoordVertex::init();
 
 	initResources();
-	
+
 	init_engine();
 
 	m_camera.init();
@@ -161,7 +162,7 @@ void GraphicsEngine::initResources() {
 	loadShaders();
 
 	// Refactor in PostProcessor::init()
-	u_postTex  = bgfx::createUniform("u_postTex",  bgfx::UniformType::Int1);	
+	u_postTex  = bgfx::createUniform("u_postTex",  bgfx::UniformType::Int1);
 	m_geometryBuffer.idx = bgfx::invalidHandle;
 	m_gbufferTex[0].idx = bgfx::invalidHandle;
 	m_gbufferTex[1].idx = bgfx::invalidHandle;
@@ -214,29 +215,29 @@ void GraphicsEngine::run() {
 			bgfx::destroyFrameBuffer(m_geometryBuffer);
 		}
 
-		
+
 		const uint32_t samplerFlags = 0
 			| BGFX_TEXTURE_RT
 			| BGFX_TEXTURE_MIN_POINT
 			| BGFX_TEXTURE_MAG_POINT
 			| BGFX_TEXTURE_MIP_POINT
 			| BGFX_TEXTURE_U_CLAMP
-			| BGFX_TEXTURE_V_CLAMP;		
-		
+			| BGFX_TEXTURE_V_CLAMP;
+
 		m_gbufferTex[0] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
 		m_gbufferTex[1] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
 		m_gbufferTex[2] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::D24, samplerFlags);
 
-		m_geometryBuffer = bgfx::createFrameBuffer(BX_COUNTOF(m_gbufferTex), m_gbufferTex, true);	
+		m_geometryBuffer = bgfx::createFrameBuffer(BX_COUNTOF(m_gbufferTex), m_gbufferTex, true);
 
 	}
-	
+
 	// Default view
 	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, m_width, m_height);
 
 	// Post-process
 	bgfx::setViewRect(RENDER_PASS_POSTPROCESS, 0, 0, m_width, m_height);
-       
+
 	// rename this functions and classes so that it makes more sense
 //	m_particle_system_pool.update(deltaTime);
 
@@ -252,9 +253,12 @@ void GraphicsEngine::run() {
 	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f);
 	bgfx::setViewTransform(RENDER_PASS_POSTPROCESS, NULL, proj);
 
+	DebugManager::update(deltaTime);
+
+
 	frame(deltaTime);
 	m_camera.update(deltaTime);
-	
+
 	// Pass geometry buffer as a post-processor shader texture
 	bgfx::setTexture(0, u_postTex,  bgfx::getTexture(m_geometryBuffer, 0) );
 
@@ -270,6 +274,7 @@ void GraphicsEngine::run() {
 	screenSpaceQuad( (float)m_width, (float)m_height, texelHalf, true);
 
 	bgfx::submit(RENDER_PASS_POSTPROCESS, m_postProcessProgram->getHandle());
+
 
 }
 
