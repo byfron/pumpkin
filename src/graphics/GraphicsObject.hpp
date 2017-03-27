@@ -24,6 +24,13 @@ struct Prefab {
 																	   m_mesh(mesh) {}
 };
 
+
+/*
+Every graphic object renders in two passes. One for the visible region
+and one (darker) for the non visible. In the darker pass, a uniform checks
+for visibility due to sound etc...
+*/
+
 class GraphicsObject {
 
 public:
@@ -61,7 +68,7 @@ public:
 		}
 	}
 
-	virtual void update(float d) {
+	virtual void draw(float d) {
 	};
 
 	void setTransform(const Eigen::MatrixXf & transform) {
