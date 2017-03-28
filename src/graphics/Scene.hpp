@@ -20,6 +20,7 @@ namespace pumpkin {
 		
 		void loadFromFbxNode(FbxNode*);
 		void update(float d);
+		void render(float d);
 
 	protected:
 

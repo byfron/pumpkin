@@ -34,6 +34,9 @@ void Scene::update(float d) {
 	Eigen::AngleAxis<float> aa(3.1416, Vec3f(0.0,1.0,0.0));
 	Eigen::MatrixXf rot = Eigen::MatrixXf::Identity(4,4);
 	rot.block(0,0,3,3) = aa.matrix();
+}
+
+void Scene::render(float d) {
 	meshSubmit();
 }
 

@@ -64,6 +64,10 @@ public:
 	virtual void update(float d) {
 	};
 
+	virtual void render(float d) {
+
+	}
+
 	void setTransform(const Eigen::MatrixXf & transform) {
 		m_transform = transform;
 	}
