@@ -68,7 +68,7 @@ public:
 		}
 	}
 
-	virtual void draw(float d) {
+	virtual void update(float d) {
 	};
 
 	virtual void render(float d) {

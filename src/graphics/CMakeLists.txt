@@ -17,7 +17,8 @@ add_library(graphics_engine
   TextureAtlas.cpp
   Scene.hpp
   Scene.cpp
-        VisibilityLayer.cpp VisibilityLayer.hpp Stencil.cpp Stencil.hpp)
+  Stencil.cpp
+  Stencil.hpp)
 
 target_link_libraries(graphics_engine
   utils_meshUtils

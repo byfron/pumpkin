@@ -49,7 +49,7 @@ public:
 		if (isTimeToSwitchFrames(dt) && m_enabled) { frameForward(); }
 	}
 
-	void draw(float dt) {
+	void render(float dt) {
 		meshSubmit();
 		//GraphicsObject::update(dt);
 	}

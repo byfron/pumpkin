@@ -249,16 +249,6 @@ void GraphicsEngine::run() {
 	bgfx::setViewFrameBuffer(RENDER_PASS_GEOMETRY, m_geometryBuffer);
 	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
 
-	// 1. Craft stencil
-	m_visibility_layer->
-
-	// 2. Render depending on stencil values
-	// 2.a full vision (clear)
-	// 2.b hidden vision (darkened)
-	// The rest of the screen will show black
-
-	//we render this to the m_geometryBuffer
-
 
 	// Set post processing view
 	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f);
