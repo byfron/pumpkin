@@ -8,10 +8,13 @@
 #include "Shader.hpp"
 
 namespace pumpkin {
-		
+
 // Views
-#define RENDER_PASS_GEOMETRY 0
-#define RENDER_PASS_POSTPROCESS 1	
+enum RenderPasses {
+	RENDER_PASS_GEOMETRY,
+	RENDER_PASS_POSTPROCESS,
+	RENDER_PASS_MAKE_STENCIL,
+};
 
 class GraphicsEngine : public entry::AppI {
 
