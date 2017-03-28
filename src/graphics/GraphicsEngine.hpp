@@ -16,6 +16,16 @@ enum RenderPasses {
 	RENDER_PASS_MAKE_STENCIL,
 };
 
+
+struct RenderState
+{
+	uint64_t m_state;
+	uint32_t m_blendFactorRgba;
+	uint32_t m_fstencil;
+	uint32_t m_bstencil;
+};
+
+
 class GraphicsEngine : public entry::AppI {
 
 public:

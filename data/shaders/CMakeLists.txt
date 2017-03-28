@@ -17,6 +17,7 @@ list(APPEND FSHADER_FILES "fs_test.sc")
 list(APPEND VSHADER_FILES "vs_test.sc")
 list(APPEND FSHADER_FILES "fs_character_normal.sc")
 list(APPEND VSHADER_FILES "vs_character_normal.sc")
+list(APPEND FSHADER_FILES "fs_black.sc")
 
 function(compileShader SHADER_FILE TYPE)
 
