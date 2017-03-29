@@ -12,21 +12,25 @@
 #include <vector>
 
 namespace pumpkin {
-    class Stencil {
-
-    public:
+	class Stencil {
+	    
+	public:
 		Stencil();
 		void clearStencil();
-        void craftStencil(const std::vector<Vec2f> &);
-		void updateDynamicVertexBuffer(const std::vector<Vec2f> & triangles);
-
+		void craftStencil(const std::vector<Vec2f> & polygon,
+				  const Vec2f & player_pos);
+		void updateDynamicVertexBuffer();
+		
 	protected:
-
+	    
 		RenderState m_craftStencilState;
-		bgfx::DynamicVertexBufferHandle m_dvbh;
-		bgfx::DynamicIndexBufferHandle m_dibh;
+		bgfx::VertexBufferHandle m_vbh;
+		bgfx::IndexBufferHandle m_ibh;
 		uint8_t m_viewId;
 		Shader::Ptr m_shaderColorBlack;
+	    
+		std::vector<Vec3f> m_vertices;
+		std::vector<uint16_t> m_indices;
 	};
 }
 

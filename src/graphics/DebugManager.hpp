@@ -3,7 +3,7 @@
 #include <common/math.hpp>
 #include <common/bgfx_utils.h>
 #include <common/debugdraw/debugdraw.h>
-
+#include <graphics/GraphicsEngine.hpp>
 
 namespace pumpkin {
 
@@ -28,7 +28,7 @@ public:
 
 	static void update(float delta) {
 
-		ddBegin(0);
+		ddBegin(RENDER_PASS_GEOMETRY);
 		ddPush();
 
 		for (auto aabb : aabb_vec) {

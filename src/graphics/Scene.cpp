@@ -8,8 +8,25 @@ Scene::Scene(const Scene::Config & config)
 
 void Scene::loadFromFbxNode(FbxNode * node) {
 
-	uint64_t state = 0 | BGFX_STATE_DEFAULT;
+	uint64_t state = 0 |
+		BGFX_STATE_DEFAULT;
+//			BGFX_STATE_PT_TRISTRIP |
+			// BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA ,
+			// 		      BGFX_STATE_BLEND_INV_SRC_ALPHA);
 
+//		BGFX_STATE_DEFAULT;// BGFX_STATE_RGB_WRITE
+		// | BGFX_STATE_DEPTH_WRITE
+		// | BGFX_STATE_DEPTH_TEST_LESS
+		// | BGFX_STATE_CULL_CCW
+		// | BGFX_STATE_MSAA;
+	
+	uint8_t stencil_state =
+		BGFX_STENCIL_TEST_NOTEQUAL
+		| BGFX_STENCIL_FUNC_REF(1)
+		| BGFX_STENCIL_FUNC_RMASK(1)
+		| BGFX_STENCIL_OP_FAIL_S_KEEP
+		| BGFX_STENCIL_OP_FAIL_Z_KEEP
+		| BGFX_STENCIL_OP_PASS_Z_KEEP;
 
 	std::vector<Mesh> meshes = loadMeshes(node);
 	std::vector<TextureAtlas::Ptr> textures = loadTextures(node);
@@ -21,6 +38,7 @@ void Scene::loadFromFbxNode(FbxNode * node) {
 		std::vector<MeshState> passes;
 		MeshState pass0;
 		pass0.m_state = state;
+		//pass0.m_fstencil = stencil_state;
 		loadShader(&pass0, 5);
  		pass0.m_texture = textures[i];
 		passes.push_back(pass0);

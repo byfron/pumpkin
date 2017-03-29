@@ -4,5 +4,5 @@ $input v_color0
 
 void main()
 {
-	gl_FragData[0] = v_color0;
+	gl_FragData[0] = vec4(0.0, 0.0, 0.0, 0.0); //_color0;
 }

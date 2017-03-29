@@ -11,7 +11,7 @@ namespace pumpkin {
 			BGFX_STATE_DEFAULT |
 			BGFX_STATE_PT_TRISTRIP |
 			BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA ,
-								  BGFX_STATE_BLEND_INV_SRC_ALPHA);
+			 		      BGFX_STATE_BLEND_INV_SRC_ALPHA);
 
 		std::vector<MeshState> passes;
 		MeshState pass0;

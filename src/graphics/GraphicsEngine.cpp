@@ -131,18 +131,24 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 	// Set palette color for index 1
 	bgfx::setPaletteColor(1, UINT32_C(0x303030ff) );
 
+	bgfx::setViewClear(RENDER_PASS_MAKE_STENCIL
+			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+			   , 1.0f
+			   , 0
+			   , 1);
+		
 	bgfx::setViewClear(RENDER_PASS_GEOMETRY
-		, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
-		, 1.0f
-		, 0
-		, 1);
+			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+			   , 1.0f
+			   , 0
+			   , 1);
 
 	bgfx::setViewClear(RENDER_PASS_POSTPROCESS
-		, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
-		, 1.0f
-		, 0
-		, 1);
-
+			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+			   , 1.0f
+			   , 0
+			   , 1);
+	
 	PosColorVertex::init();
 	PosNormalTexCoordVertex::init();
 	PosNormalTangentTexcoordVertex::init();
@@ -232,6 +238,9 @@ void GraphicsEngine::run() {
 
 	}
 
+	// Stencil view
+	bgfx::setViewRect(RENDER_PASS_MAKE_STENCIL, 0, 0, m_width, m_height);
+		
 	// Default view
 	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, m_width, m_height);
 
@@ -246,13 +255,13 @@ void GraphicsEngine::run() {
 	float proj[16];
 	m_camera.mtxLookAt(view);
 	bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f);
-	bgfx::setViewFrameBuffer(RENDER_PASS_GEOMETRY, m_geometryBuffer);
+	//bgfx::setViewFrameBuffer(RENDER_PASS_GEOMETRY, m_geometryBuffer);
 	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
-
+	//bgfx::setViewTransform(RENDER_PASS_MAKE_STENCIL, view, proj);
 
 	// Set post processing view
-	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f);
-	bgfx::setViewTransform(RENDER_PASS_POSTPROCESS, NULL, proj);
+	//bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f);
+	//bgfx::setViewTransform(RENDER_PASS_POSTPROCESS, NULL, proj);
 
 	DebugManager::update(deltaTime);
 
@@ -260,22 +269,22 @@ void GraphicsEngine::run() {
 	frame(deltaTime);
 	m_camera.update(deltaTime);
 
-	// Pass geometry buffer as a post-processor shader texture
-	bgfx::setTexture(0, u_postTex,  bgfx::getTexture(m_geometryBuffer, 0) );
+	// // Pass geometry buffer as a post-processor shader texture
+	// bgfx::setTexture(0, u_postTex,  bgfx::getTexture(m_geometryBuffer, 0) );
 
-	// Create a quad geometry to display the post-processed texture
-	const bgfx::RendererType::Enum renderer = bgfx::getRendererType();
-	float texelHalf = bgfx::RendererType::Direct3D9 == renderer ? 0.5f : 0.0f;
+	// // Create a quad geometry to display the post-processed texture
+	// const bgfx::RendererType::Enum renderer = bgfx::getRendererType();
+	// float texelHalf = bgfx::RendererType::Direct3D9 == renderer ? 0.5f : 0.0f;
 
-	bgfx::setState(0
-		       | BGFX_STATE_RGB_WRITE
-		       | BGFX_STATE_ALPHA_WRITE
-		);
+	// bgfx::setState(0
+	// 	       | BGFX_STATE_RGB_WRITE
+	// 	       | BGFX_STATE_ALPHA_WRITE
+	// 	);
 
-	screenSpaceQuad( (float)m_width, (float)m_height, texelHalf, true);
+	// screenSpaceQuad( (float)m_width, (float)m_height, texelHalf, true);
 
 
-	bgfx::submit(RENDER_PASS_POSTPROCESS, m_postProcessProgram->getHandle());
+	// bgfx::submit(RENDER_PASS_POSTPROCESS, m_postProcessProgram->getHandle());
 
 
 }
