@@ -3,6 +3,10 @@
 //
 
 #include "Stencil.hpp"
+#include "DebugManager.hpp"
+#include <clip2tri/clip2tri.h>
+
+using namespace c2t;
 
 namespace pumpkin {
 
@@ -19,38 +23,88 @@ namespace pumpkin {
 			uint16_t vertex_count = 0;
 
 			if (polygon.size() == 0) return;
-			 
-			// sort points by angle
-			typedef std::pair<Vec2f, float> AnglePoly;
-			std::vector<AnglePoly> sorted_poly;
-			for (size_t i = 0; i < polygon.size(); i++) {
 
-				Vec2f vec = polygon[i] - player_pos;
-				vec.normalize();
-				float d = vec.dot(Vec2f(0.0, 1.0));
-				sorted_poly.push_back(AnglePoly(polygon[i], d));
+			std::vector< std::vector<Point> > inputPolygons;
+			std::vector<Point> outputTriangles;
+			std::vector<Point> boundingPolygon;
+
+			std::vector<Point> poly;
+			for (auto p : polygon) {
+				poly.push_back(Point(p(0), p(1)));
 			}
 
-			std::sort(sorted_poly.begin(), sorted_poly.end(),
-				  [](auto &left, auto &right) {
-					  return left.second < right.second;
-				  });
-			
-			for (size_t i = 0; i < sorted_poly.size()-1; i++) {
+			inputPolygons.push_back(poly);
 
-				Vec2f point1 = sorted_poly[i].first;
-				Vec2f point2 = sorted_poly[i+1].first;
-				
-				indices.push_back(vertex_count);
-				indices.push_back(vertex_count+1);
-				indices.push_back(vertex_count+2);
-				vertex_count += 3;			
-				triangles.push_back(Vec3f(point1(0), point1(1), 0.0f));
-				triangles.push_back(Vec3f(player_pos(0), player_pos(1), 0.0f));
-				triangles.push_back(Vec3f(point2(0), point2(1), 0.0f));
+			clip2tri clip2tri;
+			clip2tri.triangulate(inputPolygons, outputTriangles, boundingPolygon);
+
+
+			for (size_t i = 0; i < outputTriangles.size(); i+=3) {
+
+				triangles.push_back(Vec3f(outputTriangles[i].x,
+										 outputTriangles[i].y,
+										 0.0f));
+
+				triangles.push_back(Vec3f(outputTriangles[i+1].x,
+										 outputTriangles[i+1].y,
+										 0.0f));
+
+				triangles.push_back(Vec3f(outputTriangles[i+2].x,
+										 outputTriangles[i+2].y,
+										 0.0f));
+
+				std::vector<Vec2f> poly;
+				poly.push_back(Vec2f(outputTriangles[i].x,
+									 outputTriangles[i].y));
+				poly.push_back(Vec2f(outputTriangles[i+1].x,
+									 outputTriangles[i+1].y));
+				poly.push_back(Vec2f(outputTriangles[i+2].x,
+									 outputTriangles[i+2].y));
+
+				pumpkin::DebugManager::push_polygon(poly);
+
+				indices.push_back(i);
+				indices.push_back(i+1);
+				indices.push_back(i+2);
 			}
+
+
+			return;
 		}
-		
+
+
+		// 	// sort points by angle
+		// 	typedef std::pair<Vec2f, float> AnglePoly;
+		// 	std::vector<AnglePoly> sorted_poly;
+		// 	for (size_t i = 0; i < polygon.size(); i++) {
+
+		// 		Vec2f vec = polygon[i] - player_pos;
+		// 		vec.normalize();
+		// 		float d = vec.dot(Vec2f(0.0, 1.0));
+		// 		sorted_poly.push_back(AnglePoly(polygon[i], d));
+		// 	}
+
+		// 	std::sort(sorted_poly.begin(), sorted_poly.end(),
+		// 		  [](auto &left, auto &right) {
+		// 			  return left.second < right.second;
+		// 		  });
+
+		// 	for (size_t i = 0; i < sorted_poly.size()-1; i++) {
+
+		// 		Vec2f point1 = sorted_poly[i].first;
+		// 		Vec2f point2 = sorted_poly[i+1].first;
+
+		// 		indices.push_back(vertex_count);
+		// 		indices.push_back(vertex_count+1);
+		// 		indices.push_back(vertex_count+2);
+		// 		vertex_count += 3;
+		// 		triangles.push_back(Vec3f(point1(0), point1(1), 0.0f));
+		// 		triangles.push_back(Vec3f(player_pos(0), player_pos(1), 0.0f));
+		// 		triangles.push_back(Vec3f(point2(0), point2(1), 0.0f));
+		// 	}
+		// }
+
+
 	}
 
 	Stencil::Stencil() {
@@ -147,7 +201,7 @@ namespace pumpkin {
 				   0.0f,           //depth
 				   (uint8_t) 0);   //stencil
 	}
-	
+
 	void Stencil::craftStencil(const std::vector<Vec2f> & polygon,
 				   const Vec2f & player_pos) {
 
@@ -156,22 +210,23 @@ namespace pumpkin {
 		makeTriangleStrip(polygon, player_pos, m_vertices, m_indices);
 		updateDynamicVertexBuffer();
 
-		Eigen::MatrixXf transform = Eigen::MatrixXf::Identity(4,4);
-		bgfx::setTransform(transform.data());
-		
-		bgfx::setStencil(m_craftStencilState.m_fstencil, m_craftStencilState.m_bstencil);
-		bgfx::setState(m_craftStencilState.m_state, m_craftStencilState.m_blendFactorRgba);
+		// Eigen::MatrixXf transform = Eigen::MatrixXf::Identity(4,4);
+		// bgfx::setTransform(transform.data());
 
-		bgfx::setIndexBuffer(m_ibh);
-		bgfx::setVertexBuffer(m_vbh);
+		// bgfx::setStencil(m_craftStencilState.m_fstencil, m_craftStencilState.m_bstencil);
+		// bgfx::setState(m_craftStencilState.m_state, m_craftStencilState.m_blendFactorRgba);
 
-		// render polygon to stencil buffer
-		bgfx::submit(m_viewId,
-			     m_shaderColorBlack->getHandle());
-		
+		// bgfx::setIndexBuffer(m_ibh);
+		// bgfx::setVertexBuffer(m_vbh);
+
+		// // render polygon to stencil buffer
+		// bgfx::submit(m_viewId,
+		// 	     m_shaderColorBlack->getHandle());
+
 		//clearStencil();
 
-        //pumpkin::DebugManager::push_polygon(m_polygon);
+
+//        pumpkin::DebugManager::push_polygon(m_polygon);
 	}
 
 }

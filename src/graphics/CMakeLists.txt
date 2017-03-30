@@ -27,6 +27,7 @@ target_link_libraries(graphics_engine
   utils_tilemapUtils
   fbxsdk
   proto
+  clip2tri
   ${BGFX_COMMON_LIBRARIES}
   ${BX_LIBRARIES}
   ${BGFX_LIBRARIES}

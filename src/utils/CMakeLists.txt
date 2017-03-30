@@ -3,8 +3,6 @@ add_library(utils_meshUtils
   VertexUtils.cpp
   MeshFactory.hpp
   MeshFactory.cpp
-  Triangulation.hpp
-  Triangulation.cpp
   )
 
 add_library(utils_camera
