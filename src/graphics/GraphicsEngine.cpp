@@ -16,39 +16,6 @@ namespace pumpkin {
 void GraphicsEngine::screenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf, bool _originBottomLeft, float _width = 1.0f, float _height = 1.0f)
 {
 
-	// const float minxx = -_width;
-	// const float maxxx =  _width;
-	// const float minyy = 0.0f;
-	// const float maxyy = _height;
-
-	// PosTexCoordVertex vb[] =
-	// {
-	// 	{minxx, minyy, 0, 0},
-	// 	{minxx, maxyy, 0, 1.0},
-	// 	{maxxx, maxyy, 1.0, 1.0},
-	// 	{maxxx, minyy, 1.0, 0},
-	// };
-
-	// int ib[4] = {
-	// 	0,3,1,2
-	// };
-
-
-	// m_vbh = bgfx::createVertexBuffer(
-	// 	bgfx::makeRef(vb, sizeof(vb) )
-	// 	, PosTexCoordVertex::ms_decl);
-
-
-	// m_ibh = bgfx::createIndexBuffer(
-	// 	// Static data can be passed with bgfx::makeRef
-	// 	bgfx::makeRef(ib, sizeof(ib) )
-	// 	);
-
-	// bgfx::setVertexBuffer(m_vbh);
-	// bgfx::setIndexBuffer(m_ibh);
-	// return;
-
-
 	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosTexCoordVertex::ms_decl) ) //
 	{
 
@@ -126,17 +93,17 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 	bgfx::setDebug(InputManager::m_debug);
 
 	// Set palette color for index 0
-	bgfx::setPaletteColor(0, UINT32_C(0x00000000) );
+	bgfx::setPaletteColor(0, UINT32_C(0x000000000) );
 
 	// Set palette color for index 1
 	bgfx::setPaletteColor(1, UINT32_C(0x303030ff) );
 
-	bgfx::setViewClear(RENDER_PASS_MAKE_STENCIL
+	bgfx::setViewClear(RENDER_PASS_VISIBILITY
 			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
 			   , 1.0f
 			   , 0
 			   , 1);
-		
+
 	bgfx::setViewClear(RENDER_PASS_GEOMETRY
 			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
 			   , 1.0f
@@ -148,7 +115,7 @@ void GraphicsEngine::start(int _argc, char** _argv) {
 			   , 1.0f
 			   , 0
 			   , 1);
-	
+
 	PosColorVertex::init();
 	PosNormalTexCoordVertex::init();
 	PosNormalTangentTexcoordVertex::init();
@@ -169,10 +136,14 @@ void GraphicsEngine::initResources() {
 
 	// Refactor in PostProcessor::init()
 	u_postTex  = bgfx::createUniform("u_postTex",  bgfx::UniformType::Int1);
+	u_visTex  = bgfx::createUniform("u_visTex",  bgfx::UniformType::Int1);
+
 	m_geometryBuffer.idx = bgfx::invalidHandle;
 	m_gbufferTex[0].idx = bgfx::invalidHandle;
 	m_gbufferTex[1].idx = bgfx::invalidHandle;
-	m_gbufferTex[2].idx = bgfx::invalidHandle;
+	m_vbufferTex[0].idx = bgfx::invalidHandle;
+	m_vbufferTex[1].idx = bgfx::invalidHandle;
+
 	m_postProcessProgram = ResourceManager::getResource<Shader>(4);
 	m_postProcessProgram->init();
 }
@@ -231,16 +202,20 @@ void GraphicsEngine::run() {
 			| BGFX_TEXTURE_V_CLAMP;
 
 		m_gbufferTex[0] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
-		m_gbufferTex[1] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
-		m_gbufferTex[2] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::D24, samplerFlags);
+		m_gbufferTex[1] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::D24, samplerFlags);
+
+		m_vbufferTex[0] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::BGRA8, samplerFlags);
+
+		m_vbufferTex[1] = bgfx::createTexture2D(m_width, m_height, false, 1, bgfx::TextureFormat::D24, samplerFlags);
 
 		m_geometryBuffer = bgfx::createFrameBuffer(BX_COUNTOF(m_gbufferTex), m_gbufferTex, true);
+		m_visibilityBuffer = bgfx::createFrameBuffer(BX_COUNTOF(m_vbufferTex), m_vbufferTex, true);
 
 	}
 
 	// Stencil view
-	bgfx::setViewRect(RENDER_PASS_MAKE_STENCIL, 0, 0, m_width, m_height);
-		
+	bgfx::setViewRect(RENDER_PASS_VISIBILITY, 0, 0, m_width, m_height);
+
 	// Default view
 	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, m_width, m_height);
 
@@ -255,37 +230,35 @@ void GraphicsEngine::run() {
 	float proj[16];
 	m_camera.mtxLookAt(view);
 	bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f);
-	//bgfx::setViewFrameBuffer(RENDER_PASS_GEOMETRY, m_geometryBuffer);
+	bgfx::setViewFrameBuffer(RENDER_PASS_GEOMETRY, m_geometryBuffer);
+	bgfx::setViewFrameBuffer(RENDER_PASS_VISIBILITY, m_visibilityBuffer);
+
 	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
-	//bgfx::setViewTransform(RENDER_PASS_MAKE_STENCIL, view, proj);
+	bgfx::setViewTransform(RENDER_PASS_VISIBILITY, view, proj);
 
 	// Set post processing view
-	//bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f);
-	//bgfx::setViewTransform(RENDER_PASS_POSTPROCESS, NULL, proj);
+	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f);
+	bgfx::setViewTransform(RENDER_PASS_POSTPROCESS, NULL, proj);
 
 	DebugManager::update(deltaTime);
-
 
 	frame(deltaTime);
 	m_camera.update(deltaTime);
 
 	// // Pass geometry buffer as a post-processor shader texture
-	// bgfx::setTexture(0, u_postTex,  bgfx::getTexture(m_geometryBuffer, 0) );
+	bgfx::setTexture(0, u_postTex,  bgfx::getTexture(m_geometryBuffer, 0) );
+	bgfx::setTexture(1, u_visTex,  bgfx::getTexture(m_visibilityBuffer, 0) );
 
-	// // Create a quad geometry to display the post-processed texture
-	// const bgfx::RendererType::Enum renderer = bgfx::getRendererType();
-	// float texelHalf = bgfx::RendererType::Direct3D9 == renderer ? 0.5f : 0.0f;
+	// Create a quad geometry to display the post-processed texture
+	const bgfx::RendererType::Enum renderer = bgfx::getRendererType();
+	float texelHalf = bgfx::RendererType::Direct3D9 == renderer ? 0.5f : 0.0f;
 
-	// bgfx::setState(0
-	// 	       | BGFX_STATE_RGB_WRITE
-	// 	       | BGFX_STATE_ALPHA_WRITE
-	// 	);
+	bgfx::setState(BGFX_STATE_RGB_WRITE
+		| BGFX_STATE_ALPHA_WRITE);
 
-	// screenSpaceQuad( (float)m_width, (float)m_height, texelHalf, true);
+	screenSpaceQuad( (float)m_width, (float)m_height, texelHalf, true);
 
-
-	// bgfx::submit(RENDER_PASS_POSTPROCESS, m_postProcessProgram->getHandle());
-
+	bgfx::submit(RENDER_PASS_POSTPROCESS, m_postProcessProgram->getHandle());
 
 }
 

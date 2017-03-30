@@ -17,10 +17,8 @@ using namespace p2t;
 namespace c2t
 {
 
-
-static const F32 CLIPPER_SCALE_FACT = 1000.0f;
-static const F32 CLIPPER_SCALE_FACT_INVERSE = 0.001f;
-
+static const F32 CLIPPER_SCALE_FACT = 10000.0f;
+static const F32 CLIPPER_SCALE_FACT_INVERSE = 0.0001f;
 
 /////////////////////////////////
 

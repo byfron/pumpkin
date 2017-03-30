@@ -63,10 +63,10 @@ public:
 
 	void setUniforms() {
 
-		float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
-		bgfx::setUniform(u_lightPosRadius, lightPosRadius, 1);
-		bgfx::setUniform(u_texOffset, m_offset, 1);
-		bgfx::setUniform(u_flip, &m_flipped, 1);
+//		float lightPosRadius[4] = { 4.0, 4.0, 1.0, 2.0};
+//		bgfx::setUniform(u_lightPosRadius, lightPosRadius);
+		bgfx::setUniform(u_texOffset, m_offset);
+		bgfx::setUniform(u_flip, &m_flipped);
 	}
 
 	// gets atlas frames in texture coordinates
@@ -115,7 +115,7 @@ public:
 	int m_sprite_height;
 	bgfx::UniformHandle u_flip;
 	bgfx::UniformHandle u_texOffset;
-	bgfx::UniformHandle u_lightPosRadius;
+//	bgfx::UniformHandle u_lightPosRadius;
 
 	bool m_flipped = false;
 	float m_offset[2];// = {0.0f, 0.0f};

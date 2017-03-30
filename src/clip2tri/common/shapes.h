@@ -37,6 +37,7 @@
 #include <cstddef>
 #include <assert.h>
 #include <cmath>
+#include <iostream>
 
 namespace p2t {
 
@@ -135,8 +136,10 @@ struct Edge {
         q = &p1;
         p = &p2;
       } else if (p1.x == p2.x) {
-        // Repeat points
-        assert(false);
+		  // Repeat points
+		  std::cout << p1.x << "=" << p2.x << "," << p1.y << "=" << p2.y << std::endl;
+
+		  assert(false);
       }
     }
 
@@ -321,5 +324,3 @@ inline void Triangle::IsInterior(bool b)
 }
 
 #endif
-
-

@@ -1,10 +1,11 @@
 #include "DebugGraphicsObject.hpp"
+#include "GraphicsEngine.hpp"
 
 namespace pumpkin {
-	
+
 DebugGraphicsObject::DebugGraphicsObject() : m_transform(Eigen::MatrixXf::Identity(4,4)),
 					     m_rotation(Eigen::MatrixXf::Identity(4,4)){
-       		
+
 	m_aabb =
 	{
 		{  5.0f, 1.0f, 1.0f },
@@ -12,7 +13,7 @@ DebugGraphicsObject::DebugGraphicsObject() : m_transform(Eigen::MatrixXf::Identi
 	};
 
 	m_color = 0xff00ff00;
-	
+
 }
 
 void DebugGraphicsObject::update(float delta) {
@@ -20,10 +21,10 @@ void DebugGraphicsObject::update(float delta) {
 	Eigen::Affine3f translation(Eigen::Translation3f(m_position(0),
 							 m_position(1),
 							 m_position(2)));
-	
+
 	m_transform = (translation.matrix() * m_rotation);
-	
-	ddBegin(0);
+
+	ddBegin(RENDER_PASS_GEOMETRY);
 	ddPush();
 
 	ddSetTransform(m_transform.data());
@@ -33,7 +34,7 @@ void DebugGraphicsObject::update(float delta) {
 
 	ddPop();
 	ddEnd();
-	
+
 }
 
 }

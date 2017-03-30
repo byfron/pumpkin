@@ -11,7 +11,7 @@ namespace pumpkin {
 
 // Views
 enum RenderPasses {
-	RENDER_PASS_MAKE_STENCIL = 1,
+	RENDER_PASS_VISIBILITY = 0,
 	RENDER_PASS_GEOMETRY,
 	RENDER_PASS_POSTPROCESS
 };
@@ -44,7 +44,28 @@ public:
 
 		if (!InputManager::processEvents(m_width, m_height)) {
 
-			bgfx::touch(0);
+	// 		//clear?
+	// 		bgfx::setViewClear(RENDER_PASS_MAKE_STENCIL
+	// 		   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+	// 		   , 1.0f
+	// 		   , 0
+	// 		   , 1);
+
+	// bgfx::setViewClear(RENDER_PASS_GEOMETRY
+	// 		   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+	// 		   , 1.0f
+	// 		   , 0
+	// 		   , 1);
+
+	// bgfx::setViewClear(RENDER_PASS_POSTPROCESS
+	// 		   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+	// 		   , 1.0f
+	// 		   , 0
+	// 		   , 1);
+
+
+
+//			bgfx::touch(0);
 
 			run();
 
@@ -85,9 +106,12 @@ protected:
 	InputManager m_input_manager;
 
 	// Refactor this in a PostProcessor
-	bgfx::TextureHandle m_gbufferTex[3];
+	bgfx::TextureHandle m_gbufferTex[2];
+	bgfx::TextureHandle m_vbufferTex[2];
 	bgfx::FrameBufferHandle m_geometryBuffer;
+	bgfx::FrameBufferHandle m_visibilityBuffer;
 	bgfx::UniformHandle u_postTex;
+	bgfx::UniformHandle u_visTex;
 	Shader::Ptr m_postProcessProgram;
 	bgfx::VertexBufferHandle m_vbh;
 	bgfx::IndexBufferHandle m_ibh;

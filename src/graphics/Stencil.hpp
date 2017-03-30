@@ -25,11 +25,21 @@ namespace pumpkin {
 		RenderState m_craftStencilState;
 		bgfx::VertexBufferHandle m_vbh;
 		bgfx::IndexBufferHandle m_ibh;
+
+		bgfx::DynamicVertexBufferHandle m_dvbh;
+		bgfx::DynamicIndexBufferHandle m_dibh;
+
 		uint8_t m_viewId;
 		Shader::Ptr m_shaderColorBlack;
 
-		std::vector<Vec3f> m_vertices;
-		std::vector<uint16_t> m_indices;
+		// We need to support double-buffering of the
+		// vertex buffers given that we need to ensure memory stays consistent
+		// within two bgfx::frame calls. Otherwise mesh flickers when updating.
+		std::vector<PosColorVertex> m_vertices[2];
+		std::vector<uint16_t> m_indices[2];
+
+		int m_vertex_count;
+		int m_current_buffer;
 	};
 }
 

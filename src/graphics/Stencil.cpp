@@ -8,21 +8,23 @@
 
 using namespace c2t;
 
+#define MAX_VERTEX_COUNT 512
+
 namespace pumpkin {
 
 	namespace {
 
-		void makeTriangleStrip(const std::vector<Vec2f> & polygon,
-				       const Vec2f & player_pos,
-				       std::vector<Vec3f> & triangles,
-				       std::vector<uint16_t> & indices) {
+		int makeTriangleStrip(const std::vector<Vec2f> & polygon,
+							  const Vec2f & player_pos,
+							  std::vector<PosColorVertex> & triangles,
+							  std::vector<uint16_t> & indices) {
 
+			if (polygon.size() == 0) {
+				assert(false);
+				return 0;
+			}
 
-			indices.clear();
-			triangles.clear();
-			uint16_t vertex_count = 0;
-
-			if (polygon.size() == 0) return;
+			int vertex_count = 0;
 
 			std::vector< std::vector<Point> > inputPolygons;
 			std::vector<Point> outputTriangles;
@@ -41,78 +43,47 @@ namespace pumpkin {
 
 			for (size_t i = 0; i < outputTriangles.size(); i+=3) {
 
-				triangles.push_back(Vec3f(outputTriangles[i].x,
-										 outputTriangles[i].y,
-										 0.0f));
+				triangles[i] = {outputTriangles[i].x, outputTriangles[i].y, -0.5f, 0x00000000};
+				triangles[i+1] = {outputTriangles[i+1].x, outputTriangles[i+1].y, -0.5f, 0x00000000};
+				triangles[i+2] = {outputTriangles[i+2].x, outputTriangles[i+2].y, -0.5f, 0x00000000};
+				// std::vector<Vec2f> poly;
+				// poly.push_back(Vec2f(outputTriangles[i].x,
+				// 					 outputTriangles[i].y));
+				// poly.push_back(Vec2f(outputTriangles[i+1].x,
+				// 					 outputTriangles[i+1].y));
+				// poly.push_back(Vec2f(outputTriangles[i+2].x,
+				// 					 outputTriangles[i+2].y));
+				// pumpkin::DebugManager::push_polygon(poly);
 
-				triangles.push_back(Vec3f(outputTriangles[i+1].x,
-										 outputTriangles[i+1].y,
-										 0.0f));
+				indices[i] = uint16_t(i);
+				indices[i+1] = uint16_t(i+1);
+				indices[i+2] = uint16_t(i+2);
 
-				triangles.push_back(Vec3f(outputTriangles[i+2].x,
-										 outputTriangles[i+2].y,
-										 0.0f));
-
-				std::vector<Vec2f> poly;
-				poly.push_back(Vec2f(outputTriangles[i].x,
-									 outputTriangles[i].y));
-				poly.push_back(Vec2f(outputTriangles[i+1].x,
-									 outputTriangles[i+1].y));
-				poly.push_back(Vec2f(outputTriangles[i+2].x,
-									 outputTriangles[i+2].y));
-
-				pumpkin::DebugManager::push_polygon(poly);
-
-				indices.push_back(i);
-				indices.push_back(i+1);
-				indices.push_back(i+2);
 			}
 
+			vertex_count = outputTriangles.size();
 
-			return;
+			return vertex_count;
 		}
-
-
-		// 	// sort points by angle
-		// 	typedef std::pair<Vec2f, float> AnglePoly;
-		// 	std::vector<AnglePoly> sorted_poly;
-		// 	for (size_t i = 0; i < polygon.size(); i++) {
-
-		// 		Vec2f vec = polygon[i] - player_pos;
-		// 		vec.normalize();
-		// 		float d = vec.dot(Vec2f(0.0, 1.0));
-		// 		sorted_poly.push_back(AnglePoly(polygon[i], d));
-		// 	}
-
-		// 	std::sort(sorted_poly.begin(), sorted_poly.end(),
-		// 		  [](auto &left, auto &right) {
-		// 			  return left.second < right.second;
-		// 		  });
-
-		// 	for (size_t i = 0; i < sorted_poly.size()-1; i++) {
-
-		// 		Vec2f point1 = sorted_poly[i].first;
-		// 		Vec2f point2 = sorted_poly[i+1].first;
-
-		// 		indices.push_back(vertex_count);
-		// 		indices.push_back(vertex_count+1);
-		// 		indices.push_back(vertex_count+2);
-		// 		vertex_count += 3;
-		// 		triangles.push_back(Vec3f(point1(0), point1(1), 0.0f));
-		// 		triangles.push_back(Vec3f(player_pos(0), player_pos(1), 0.0f));
-		// 		triangles.push_back(Vec3f(point2(0), point2(1), 0.0f));
-		// 	}
-		// }
-
-
 	}
 
 	Stencil::Stencil() {
 
-        m_vbh.idx = bgfx::invalidHandle;
-        m_ibh.idx = bgfx::invalidHandle;
+		m_vbh.idx = bgfx::invalidHandle;
+		m_ibh.idx = bgfx::invalidHandle;
+        m_dvbh.idx = bgfx::invalidHandle;
+        m_dibh.idx = bgfx::invalidHandle;
 
-	m_viewId = RENDER_PASS_GEOMETRY;//RENDER_PASS_MAKE_STENCIL;
+		m_vertex_count = 0;
+		m_current_buffer = 0;
+
+		// TODO. Using the stencil for this is a mess. We would have to add attachements
+		// to the FBO so that the post-processing shader works properly.
+		// Just create a FBO with the visibility mask and pass it to the post-processing
+		// or to whatever intermediate view that handles this stuff
+
+
+		m_viewId = RENDER_PASS_VISIBILITY;
 
 		m_craftStencilState = {
 			BGFX_STATE_RGB_WRITE
@@ -129,58 +100,43 @@ namespace pumpkin {
 			, BGFX_STENCIL_NONE
 		};
 
-		//initialise shader
+			//initialise shader
 		m_shaderColorBlack = ResourceManager::getResource<Shader>(6);
 		m_shaderColorBlack->init();
 
+		m_vertices[0].reserve(MAX_VERTEX_COUNT);
+		m_indices[0].reserve(MAX_VERTEX_COUNT);
+		m_vertices[1].reserve(MAX_VERTEX_COUNT);
+		m_indices[1].reserve(MAX_VERTEX_COUNT);
 
-
-        // static PosColorVertex s_vertices[] =
-        //         {
-        //                 {-2.0f, -5.0f,  0.0f, 0x00000000 },
-        //                 {-2.0f,  5.0f,  0.0f, 0x00000000 },
-        //                 { 2.0f, -5.0f,  0.0f, 0x00000000 },
-        //                 { 2.0f,  5.0f,  0.0f, 0x00000000 },
-
-        //         };
-
-        // static const uint16_t s_triList[] =
-        //         {
-        //                 0, 1, 2, 3
-        //         };
-
-        // m_dvbh =  bgfx::createDynamicVertexBuffer(bgfx::makeRef(s_vertices, sizeof(s_vertices) ),
-        //                                           PosColorVertex::ms_decl);
-
-        // m_dibh = bgfx::createDynamicIndexBuffer(bgfx::makeRef(s_triList, sizeof(s_triList) ) );
 	}
 
 	void Stencil::updateDynamicVertexBuffer() {
 
-		// fill vertices with triangles
-
-		// static PosColorVertex s_vertices[] =
-		// 	{
-		// 		{-15.0f, -5.0f,  0.0f, 0x00000000 },
-		// 		{-15.0f,  5.0f,  0.0f, 0x00000000 },
-		// 		{ 15.0f,  5.0f,  0.0f, 0x00000000 },
-		// 		{ 15.0f, -5.0f,  0.0f, 0x00000000 },
-		// 	};
-
-		// static const uint16_t s_triList[] =
-		// 	{
-		// 		0, 1, 2, 3// 0
-		// 	};
-
-
 		const bgfx::Memory* mem;
+
+		// dynamic buffer version may be more efficient
+		// if (!bgfx::isValid(m_dvbh) )
+		// {
+		// 	m_dvbh = bgfx::createDynamicVertexBuffer(MAX_VERTEX_COUNT, PosColorVertex::ms_decl);
+		// }
+		// 	mem = bgfx::makeRef(&m_vertices[0], sizeof(PosColorVertex) * m_vertex_count);
+		// bgfx::updateDynamicVertexBuffer(m_dvbh, 0, mem);
+
+		// if (!bgfx::isValid(m_dibh) )
+		// {
+		// 	m_dibh = bgfx::createDynamicIndexBuffer(MAX_VERTEX_COUNT);
+		// }
+		// mem = bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * m_vertex_count);
+		// bgfx::updateDynamicIndexBuffer(m_dibh, 0, mem);
+
 
 		if (bgfx::isValid(m_vbh) )
 		{
 			bgfx::destroyVertexBuffer(m_vbh);
 		}
 
-		mem = bgfx::makeRef(&m_vertices[0], sizeof(PosColorVertex) * m_vertices.size());
+		mem = bgfx::makeRef(&m_vertices[m_current_buffer][0], sizeof(PosColorVertex) * m_vertex_count);
 		m_vbh = bgfx::createVertexBuffer(mem, PosColorVertex::ms_decl);
 
 		if (bgfx::isValid(m_ibh) )
@@ -188,7 +144,7 @@ namespace pumpkin {
 			bgfx::destroyIndexBuffer(m_ibh);
 		}
 
-		mem = bgfx::makeRef(&m_indices[0], sizeof(uint16_t) * m_indices.size());
+		mem = bgfx::makeRef(&m_indices[m_current_buffer][0], sizeof(uint16_t) * m_vertex_count);
 		m_ibh = bgfx::createIndexBuffer(mem);
 
 	}
@@ -198,35 +154,39 @@ namespace pumpkin {
 		bgfx::setViewClear(m_viewId,
 				   BGFX_CLEAR_STENCIL,
 				   (uint16_t) 0,   //rgba
-				   0.0f,           //depth
-				   (uint8_t) 0);   //stencil
+				   1.0f,           //depth
+				   (uint8_t) 1);   //stencil
 	}
 
 	void Stencil::craftStencil(const std::vector<Vec2f> & polygon,
-				   const Vec2f & player_pos) {
+		const Vec2f & player_pos) {
 
+		if (polygon.size() > 0) {
 
-		//paint polygon in stencil buffer
-		makeTriangleStrip(polygon, player_pos, m_vertices, m_indices);
-		updateDynamicVertexBuffer();
+			//paint polygon in stencil buffer
+			m_vertex_count = makeTriangleStrip(polygon, player_pos,
+			m_vertices[m_current_buffer], m_indices[m_current_buffer]);
 
-		// Eigen::MatrixXf transform = Eigen::MatrixXf::Identity(4,4);
-		// bgfx::setTransform(transform.data());
+			updateDynamicVertexBuffer();
 
-		// bgfx::setStencil(m_craftStencilState.m_fstencil, m_craftStencilState.m_bstencil);
-		// bgfx::setState(m_craftStencilState.m_state, m_craftStencilState.m_blendFactorRgba);
+			// swap vertex buffers
+			m_current_buffer = m_current_buffer?0:1;
 
-		// bgfx::setIndexBuffer(m_ibh);
-		// bgfx::setVertexBuffer(m_vbh);
+			Eigen::MatrixXf transform = Eigen::MatrixXf::Identity(4,4);
+			bgfx::setTransform(transform.data());
 
-		// // render polygon to stencil buffer
-		// bgfx::submit(m_viewId,
-		// 	     m_shaderColorBlack->getHandle());
+			//bgfx::setStencil(m_craftStencilState.m_fstencil, m_craftStencilState.m_bstencil);
+			bgfx::setState(m_craftStencilState.m_state, m_craftStencilState.m_blendFactorRgba);
+
+			bgfx::setIndexBuffer(m_ibh);
+			bgfx::setVertexBuffer(m_vbh);
+
+			//render polygon to stencil buffer
+			bgfx::submit(m_viewId,
+						 m_shaderColorBlack->getHandle());
+		}
 
 		//clearStencil();
-
-
-//        pumpkin::DebugManager::push_polygon(m_polygon);
 	}
 
 }
