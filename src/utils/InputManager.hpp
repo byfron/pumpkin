@@ -83,6 +83,10 @@ public:
 		return m_mouseState.m_buttons[entry::MouseButton::Left];
 	}
 
+	static bool isRightMouseButtonPressed() {
+		return m_mouseState.m_buttons[entry::MouseButton::Right];
+	}
+
 	static bool processEvents(uint32_t & width, uint32_t & height) {
 
 		m_oldMouseState = m_mouseState;
