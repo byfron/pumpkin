@@ -7,6 +7,8 @@ add_library(graphics_engine
   Animation.cpp
   GraphicsObject.hpp
   GraphicsObject.cpp
+  ParticleObject.hpp
+  ParticleObject.cpp
   DebugGraphicsObject.hpp
   DebugGraphicsObject.cpp
   DebugManager.hpp

@@ -30,6 +30,7 @@ uint32_t packF4u(float _x, float _y, float _z, float _w)
 
 bgfx::VertexDecl PosColorVertex::ms_decl;
 bgfx::VertexDecl PosTexCoordVertex::ms_decl;
+bgfx::VertexDecl PosColorTexCoordVertex::ms_decl;
 bgfx::VertexDecl PosNormalTexCoordVertex::ms_decl;
 bgfx::VertexDecl PosNormalTangentTexcoordVertex::ms_decl;
 
