@@ -13,31 +13,36 @@ namespace pumpkin {
 			| (uint8_t(a*255.0f)<<24)
 			;
 	}
+
+	ParticleRenderer::ParticleRenderer(uint16_t type) : m_particle_type(type) {
+			m_shader = ResourceManager::getResource<Shader>(0);
+			m_shader->init();
+	}
+	
 	
 	void ParticleRenderer::render(uint8_t _view,
 								  const std::vector<ParticleGraphicsObject> & particles) {
 
 	if (particles.size() > 0) {
 
-		std::cout << uint32_t(particles.size() * m_vertices_per_particle) << std::endl;
-	
-
-		const uint32_t numVertices =
-			bgfx::getAvailTransientVertexBuffer(uint32_t(particles.size() * m_vertices_per_particle),
-												PosColorTexCoordVertex::ms_decl);
-		const uint32_t numIndices  =
-			bgfx::getAvailTransientIndexBuffer(uint32_t(particles.size() * m_indices_per_particle));
-		const uint32_t max = std::min(numVertices/m_vertices_per_particle,
-									  numIndices/m_indices_per_particle);
+		bgfx::TransientVertexBuffer tvb;
+		bgfx::TransientIndexBuffer tib;
+		
+		const uint32_t numVertices = bgfx::getAvailTransientVertexBuffer(
+			particles.size(),
+			PosColorVertex::ms_decl);
+		const uint32_t numIndices  = bgfx::getAvailTransientIndexBuffer(particles.size());	  
 
 		//fill VBO and paint. why a transient?
-		bgfx::allocTransientBuffers(&tvb
-									, PosColorTexCoordVertex::ms_decl
-									, max * m_vertices_per_particle
-									, &tib
-									, max * m_indices_per_particle);
+		if (not bgfx::allocTransientBuffers( &tvb
+											 ,PosColorVertex::ms_decl
+											 ,numVertices, 
+											 ,&tib
+											 ,numIndices)) {
+			return;
+		}
 
-		PosColorTexCoordVertex* vertices = (PosColorTexCoordVertex*)tvb.data;
+		PosColorVertex* vertices = (PosColorVertex*)tvb.data;
 		uint16_t* indices = (uint16_t*)tib.data;
 
 		uint32_t color = toAbgr(1.0, 0.0, 0.0, 0.5);
@@ -53,14 +58,11 @@ namespace pumpkin {
 			Vec3f loc = particles[i].getLocation() - R * line * size/2.0;
 
 			//vertices
-			PosColorTexCoordVertex* vertex = (PosColorTexCoordVertex*) &tvb.data[i*m_vertices_per_particle];
+			PosColorVertex* vertex = (PosColorVertex*) &tvb.data[i*m_vertices_per_particle];
 			vertex->m_x = loc(0);
 			vertex->m_y = loc(1);
 			vertex->m_z = loc(2);	
 			vertex->m_abgr = color;
-			vertex->m_u = 0.0;
-			vertex->m_v = 0.0;
-			vertex->m_blend = 1.0;
 			++vertex;
 
 			loc = particles[i].getLocation() + R * line * size/2.0;
@@ -69,9 +71,6 @@ namespace pumpkin {
 			vertex->m_y = loc(1);
 			vertex->m_z = loc(2);	
 			vertex->m_abgr = color;
-			vertex->m_u = 0.0;
-			vertex->m_v = 1.0;
-			vertex->m_blend = 1.0;
 			++vertex;
 
 			//indices
@@ -89,7 +88,7 @@ namespace pumpkin {
 			);
 		bgfx::setVertexBuffer(&tvb);
 		bgfx::setIndexBuffer(&tib);
-		bgfx::setTexture(0, s_texColor, m_texture->getColorHandle());
+//		bgfx::setTexture(0, s_texColor, m_texture->getColorHandle());
 		bgfx::submit(_view, m_shader->getHandle());
 	}
 }

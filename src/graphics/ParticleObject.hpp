@@ -18,7 +18,8 @@ enum class ParticleType {
 class ParticleGraphicsObject {
 
 public:
-	ParticleGraphicsObject() {		
+	ParticleGraphicsObject() {
+//		bgfx::allocTransientVertexBuffer(&tvb, 4, PosTexCoord0Vertex::ms_decl);
 	}
 
 	void setPosition(const Eigen::Vector3f & p) {
@@ -48,7 +49,7 @@ class ParticleRenderer {
 
 public:
 
-	ParticleRenderer(uint16_t type) : m_particle_type(type) {};
+	ParticleRenderer(uint16_t type);
 	void render(uint8_t _view, const std::vector<ParticleGraphicsObject> & particles);
 	uint16_t id() const { return m_particle_type; }
 	
@@ -59,8 +60,8 @@ private:
 	uint16_t m_particle_type;
 	bgfx::UniformHandle s_texColor;
 	ParticleType m_type;
-	bgfx::TransientVertexBuffer tvb;
-	bgfx::TransientIndexBuffer tib;
+//	bgfx::TransientVertexBuffer tvb;
+//	bgfx::TransientIndexBuffer tib;
 	TextureAtlas::Ptr   m_texture;
 	Shader::Ptr         m_shader;
 };
