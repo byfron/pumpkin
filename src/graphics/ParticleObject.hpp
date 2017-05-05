@@ -28,14 +28,22 @@ public:
 
 	void setRotation(const Eigen::MatrixXf & rot) {
 		m_transform.block(0,0,3,3) = rot;
-	}	
+	}
+
+	void setTransform(const Eigen::MatrixXf &t) {
+		m_transform = t;
+	}
 
 	Eigen::Matrix3f getRotation() const {
 		return m_transform.topLeftCorner(3,3);
 	}
-	
+
 	Vec3f getLocation() const {
 		return m_transform.col(3).head(3);
+	}
+
+	void update(float delta) {
+		// whatever
 	}
 
 	Eigen::MatrixXf m_transform = Eigen::MatrixXf::Identity(4,4);
@@ -50,10 +58,20 @@ class ParticleRenderer {
 public:
 
 	ParticleRenderer(uint16_t type);
-	void render(uint8_t _view, const std::vector<ParticleGraphicsObject> & particles);
+
+	// loads resources once available
+	void init();
+
+	void render(uint8_t view);
 	uint16_t id() const { return m_particle_type; }
-	
+
+	void pushParticle(const ParticleGraphicsObject & p) {
+		m_particles.push_back(p);
+	}
+
 private:
+
+	std::vector<ParticleGraphicsObject> m_particles;
 
 	uint16_t m_vertices_per_particle = 4;
 	uint16_t m_indices_per_particle = 4;
@@ -64,6 +82,11 @@ private:
 //	bgfx::TransientIndexBuffer tib;
 	TextureAtlas::Ptr   m_texture;
 	Shader::Ptr         m_shader;
+
+
+	// bgfx::DynamicVertexBufferHandle tvb;
+	// bgfx::DynamicIndexBufferHandle tib;
+
 };
 
 }
