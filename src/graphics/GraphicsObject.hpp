@@ -82,7 +82,7 @@ public:
 protected:
 
 	std::vector<Prefab> m_prefabs;
-	Eigen::MatrixXf m_transform;
+	Eigen::MatrixXf m_transform = Eigen::MatrixXf::Identity(4,4);
 };
 
 }

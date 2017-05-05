@@ -1,4 +1,4 @@
-//
+/
 // Created by rubio on 24/03/17.
 //
 
@@ -41,13 +41,13 @@ namespace pumpkin {
 			Triangulate::Process(m_polygon, triangles);
 			updateDynamicVertexBuffer(triangles);
 
-			bgfx::setState(m_craftStencilState)
+			bgfx::setState(m_craftStencilState);
 
 			bgfx::setIndexBuffer(m_dibh);
 			bgfx::setVertexBuffer(m_dvbh);
 
 			bgfx::submit(m_viewId,
-						 m_shader->getHandle())
+						 m_shader->getHandle());
 
             pumpkin::DebugManager::push_polygon(m_polygon);
 
@@ -66,7 +66,6 @@ namespace pumpkin {
 		View m_viewId;
 		Shader::Ptr m_shader;
     };
-
-
 }
+
 #endif //VOYAGE_VISIBILITYLAYER_H

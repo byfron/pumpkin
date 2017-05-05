@@ -1,8 +1,31 @@
 #include "ParticleObject.hpp"
+#include "DebugManager.hpp"
 #include <utils/VertexUtils.hpp>
 
 namespace pumpkin {
 
+	struct QuadParticle {
+
+	public:
+
+		QuadParticle(float scale) {
+			m_vertices = {
+				Vec3f(-1.0,-1.0, 0.0) * scale,
+				Vec3f(-1.0, 1.0, 0.0) * scale,
+				Vec3f( 1.0, 1.0, 0.0) * scale,
+				Vec3f( 1.0,-1.0, 0.0) * scale
+			};			
+		}
+		
+		Vec3f getVertex(int i) {
+			assert(i < 4);
+			return m_vertices[i];
+		}
+
+		std::vector<Vec3f> m_vertices;
+	};
+
+	
 	inline uint32_t toAbgr(const float r, const float g,
 						   const float b, const float a)
 	{
@@ -15,7 +38,7 @@ namespace pumpkin {
 	}
 
 	ParticleRenderer::ParticleRenderer(uint16_t type) : m_particle_type(type) {
-			m_shader = ResourceManager::getResource<Shader>(0);
+		m_shader = ResourceManager::getResource<Shader>(0); //load default shader
 			m_shader->init();
 	}
 	
@@ -25,72 +48,95 @@ namespace pumpkin {
 
 	if (particles.size() > 0) {
 
+
+		// TODO try dynamic vertex buffer
+		
 		bgfx::TransientVertexBuffer tvb;
 		bgfx::TransientIndexBuffer tib;
 		
 		const uint32_t numVertices = bgfx::getAvailTransientVertexBuffer(
-			particles.size(),
+			particles.size()*4,
 			PosColorVertex::ms_decl);
-		const uint32_t numIndices  = bgfx::getAvailTransientIndexBuffer(particles.size());	  
+		
+		const uint32_t numIndices = bgfx::getAvailTransientIndexBuffer(particles.size()*4);
+		
+		const uint32_t max = bx::uint32_min(numVertices/4, numIndices/4);
 
 		//fill VBO and paint. why a transient?
-		if (not bgfx::allocTransientBuffers( &tvb
-											 ,PosColorVertex::ms_decl
-											 ,numVertices, 
-											 ,&tib
-											 ,numIndices)) {
-			return;
+		if (max > 0) {
+			if (not bgfx::allocTransientBuffers( &tvb
+												 ,PosColorVertex::ms_decl
+												 ,max*4
+												 ,&tib
+												 ,max*4)) {
+				return;
+			}
 		}
-
+		
 		PosColorVertex* vertices = (PosColorVertex*)tvb.data;
 		uint16_t* indices = (uint16_t*)tib.data;
-
-		uint32_t color = toAbgr(1.0, 0.0, 0.0, 0.5);
-		s_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
-	
-		// Only for line particles
-		Vec3f line = Vec3f(0.0, 1.0, 0.0);
-	
-		for (int i = 0; i < particles.size(); i++) {
+		
+		uint32_t color = toAbgr(0.0, 1.0, 0.0, 1.0);
+			
+		for (int i = 0; i < max; i++) {
 		
 			float size = particles[i].m_size;
 			Eigen::Matrix3f R = particles[i].getRotation();
-			Vec3f loc = particles[i].getLocation() - R * line * size/2.0;
-
-			//vertices
-			PosColorVertex* vertex = (PosColorVertex*) &tvb.data[i*m_vertices_per_particle];
-			vertex->m_x = loc(0);
-			vertex->m_y = loc(1);
-			vertex->m_z = loc(2);	
-			vertex->m_abgr = color;
-			++vertex;
-
-			loc = particles[i].getLocation() + R * line * size/2.0;
-		
-			vertex->m_x = loc(0);
-			vertex->m_y = loc(1);
-			vertex->m_z = loc(2);	
-			vertex->m_abgr = color;
-			++vertex;
-
-			//indices
-			uint16_t *index = &indices[i];
-			index[0] = i*m_vertices_per_particle;
-			index[1] = i*m_vertices_per_particle + 1;
+			
+			QuadParticle qpart(0.1);
+			
+			uint16_t *index = &indices[i*4];
+			PosColorVertex* vertex = (PosColorVertex*) &tvb.data[i*4];
+			
+			std::vector<Vec2f> poly;
+			
+			for (int j = 0; j < 4; j++) {
+				
+//				Vec3f loc = particles[i].getLocation() + R * qpart.getVertex(j);
+				Vec3f loc = qpart.getVertex(j);
+				
+				poly.push_back(loc.head(2));				
+				
+				//vertices
+				vertex->m_x = loc(0);
+				vertex->m_y = loc(1);
+				vertex->m_z = loc(2) + 0.1;
+				vertex->m_abgr = color;
+				++vertex;
+				
+//				std::cout << loc << std::endl;
+			}
+			
+			index[0] = i*4 + 0;
+			index[1] = i*4 + 1;
+			index[2] = i*4 + 2;
+			index[3] = i*4 + 3;
+			
+			DebugManager::push_polygon(poly);
 		}
-
-		bgfx::setState(0
-					   | BGFX_STATE_RGB_WRITE
-					   | BGFX_STATE_ALPHA_WRITE
-					   | BGFX_STATE_DEPTH_TEST_LESS
-					   | BGFX_STATE_CULL_CW
-					   | BGFX_STATE_BLEND_NORMAL
-			);
+		
+		// bgfx::setState(0
+		// 				| BGFX_STATE_RGB_WRITE
+		// 				| BGFX_STATE_ALPHA_WRITE
+		// 				| BGFX_STATE_DEPTH_TEST_LESS
+		// 				| BGFX_STATE_CULL_CW
+		// 				| BGFX_STATE_BLEND_NORMAL
+		// 				);
+		
+		bgfx::setState(0 |
+					   BGFX_STATE_DEFAULT |
+					   BGFX_STATE_PT_TRISTRIP);
+		
+		// 			   // | BGFX_STATE_RGB_WRITE
+		// 			   // | BGFX_STATE_ALPHA_WRITE
+		// 			   // | BGFX_STATE_DEPTH_TEST_LESS
+		// 			   // | BGFX_STATE_CULL_CW
+		// 			   // | BGFX_STATE_BLEND_NORMAL
+//			);
 		bgfx::setVertexBuffer(&tvb);
 		bgfx::setIndexBuffer(&tib);
-//		bgfx::setTexture(0, s_texColor, m_texture->getColorHandle());
+		
 		bgfx::submit(_view, m_shader->getHandle());
 	}
-}
-
+	}
 }
